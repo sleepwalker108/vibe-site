@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "mockup",
+      "runtimeExecutable": "py",
+      "runtimeArgs": ["-m", "http.server", "5173", "--directory", "mockup"],
+      "port": 5173
+    }
+  ]
+}

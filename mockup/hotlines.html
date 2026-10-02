@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Гарячі лінії і евакуація</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #104d82; --navy-deep: #0b2f52; --navy-ink: #0a2440;
+    --sky: #eaf2fa; --sky-2: #d6e6f5; --yellow: #ffd500;
+    --ink: #14202e; --muted: #5a6878; --line: #dbe4ee; --radius: 22px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font-family: "e-Ukraine", "Manrope", system-ui, sans-serif; line-height: 1.5; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1240px, 100% - 32px); margin-inline: auto; }
+
+  /* перемикач варіантів — лише для макета */
+  .switch { position: sticky; top: 0; z-index: 10; background: #0a2440; color: #fff; padding: 10px 0; }
+  .switch .wrap { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+  .switch button { font: inherit; font-weight: 700; border: 1px solid rgba(255,255,255,.35); background: transparent; color: #fff; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .switch button[aria-pressed="true"] { background: var(--yellow); color: var(--navy-ink); border-color: var(--yellow); }
+  .switch span { opacity: .7; margin-right: 6px; }
+
+  .statement { padding: 56px 0 28px; text-align: center; }
+  .statement h2 { margin: 0 auto; max-width: 1000px; color: var(--navy); font-size: clamp(1.6rem, 3.4vw, 2.6rem); line-height: 1.18; font-weight: 800; }
+  .statement p { color: var(--muted); max-width: 720px; margin: 16px auto 0; }
+
+  /* картки */
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-bottom: 80px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform .2s, box-shadow .2s; }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(16,77,130,.14); }
+  .label { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .big { font-size: clamp(2.3rem, 3.6vw, 3.3rem); font-weight: 800; line-height: 1; color: var(--navy); }
+  .card h3 { margin: 0; font-size: 1.15rem; line-height: 1.25; color: var(--navy); }
+  .card p { margin: 0; color: var(--muted); font-size: .93rem; }
+  .more { font-weight: 700; color: var(--navy); font-size: .9rem; }
+  .navy { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .navy .label, .navy p { color: rgba(255,255,255,.78); }
+  .navy .big, .navy h3, .navy .more { color: #fff; }
+  .yellow { background: var(--yellow); border-color: var(--yellow); }
+  .yellow .label, .yellow p { color: #4a4100; }
+  .yellow .big, .yellow h3, .yellow .more { color: var(--navy-ink); }
+  .sky { background: var(--sky); border-color: var(--sky-2); }
+  .c-2x2 { grid-column: span 2; grid-row: span 2; }
+  .c-2 { grid-column: span 2; }
+  .c-4 { grid-column: 1 / -1; }
+  .live { display: inline-flex; align-items: center; gap: 8px; }
+  .live::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 4px rgba(61,220,132,.25); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 8px 14px; border-radius: 999px; font-size: .86rem; font-weight: 700; background: rgba(255,255,255,.14); color: #fff; }
+  .ico { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--sky); color: var(--navy); }
+  .navy .ico { background: rgba(255,255,255,.14); color: #fff; }
+  .yellow .ico { background: rgba(255,255,255,.55); color: var(--navy-ink); }
+  .head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+
+  /* евакуація */
+  .evac { background: #f6f6f4; border: 0; padding: 28px; }
+  .evac-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .evac h3 { color: var(--ink); font-size: clamp(1.3rem, 2.2vw, 1.75rem); font-weight: 800; line-height: 1.2; text-transform: uppercase; letter-spacing: -.01em; }
+  .hl { background: var(--yellow); box-decoration-break: clone; -webkit-box-decoration-break: clone; padding: 0 .2em; }
+  .evac-hot { text-align: right; flex: none; }
+  .evac-hot b { display: block; font-size: 2.8rem; line-height: 1; font-weight: 800; color: var(--ink); }
+  .evac-hot span { font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 22px 0 0; padding: 0; list-style: none; }
+  .steps li { padding: 0 18px; border-left: 1px solid #d9d9d4; }
+  .steps li:first-child { padding-left: 0; border-left: 0; }
+  .n { width: 40px; height: 40px; border-radius: 50%; background: var(--yellow); display: grid; place-items: center; font-weight: 800; font-size: 1.2rem; margin-bottom: 10px; }
+  .steps h4 { margin: 0 0 6px; font-size: .92rem; text-transform: uppercase; letter-spacing: .04em; }
+  .steps p { color: #333; font-size: .9rem; line-height: 1.45; }
+  .steps p + p { margin-top: 4px; }
+  .evac-foot { margin-top: 20px; text-align: right; font-weight: 800; text-transform: uppercase; font-size: .95rem; line-height: 1.5; }
+  .evac-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; background: var(--navy-ink); color: #fff; font-weight: 700; padding: 11px 18px; border-radius: 999px; font-size: .9rem; }
+
+  /* варіант Б: кроки 2×2 поруч з карткою 1548 */
+  .v-b .evac { grid-column: span 2; grid-row: span 2; }
+  .v-b .steps { grid-template-columns: 1fr 1fr; row-gap: 18px; }
+  .v-b .steps li { padding: 0 14px 0 0; border-left: 0; }
+  .v-b .steps li:nth-child(even) { padding: 0 0 0 14px; border-left: 1px solid #d9d9d4; }
+  .v-b .evac-hot { display: none; } /* поруч уже велика картка 1548 */
+  .v-b .stat-chip { display: inline-flex; }
+  .stat-chip { display: none; align-items: baseline; gap: 6px; background: rgba(255,255,255,.14); color: #fff; padding: 8px 14px; border-radius: 999px; font-size: .86rem; }
+  .stat-chip b { font-size: 1rem; }
+  .v-b .only-a { display: none; }
+  .v-a .only-b { display: none; }
+
+  @media (max-width: 1080px) {
+    .bento { grid-template-columns: 1fr 1fr; }
+    .v-b .evac { grid-row: auto; }
+  }
+  @media (max-width: 720px) {
+    .bento { grid-template-columns: 1fr; }
+    .c-2x2, .c-2, .v-b .evac { grid-column: auto; grid-row: auto; }
+    .steps, .v-b .steps { grid-template-columns: 1fr 1fr; row-gap: 18px; }
+    .steps li:nth-child(3) { border-left: 0; padding-left: 0; }
+    .evac-hot { text-align: left; }
+  }
+  @media (max-width: 420px) {
+    .steps, .v-b .steps { grid-template-columns: 1fr; }
+    .steps li, .v-b .steps li, .v-b .steps li:nth-child(even) { border-left: 0; padding: 0; }
+  }
+  @media (max-width: 420px) {
+    .steps li { display: grid; grid-template-columns: 34px 1fr; column-gap: 12px; }
+    .steps li .n { grid-row: 1 / span 3; width: 34px; height: 34px; font-size: 1rem; margin: 0; }
+    .steps h4 { margin-bottom: 2px; }
+    .evac { padding: 22px; }
+    .evac-hot b { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body class="v-a">
+
+<div class="switch">
+  <div class="wrap">
+    <span>Макет. Варіант:</span>
+    <button type="button" data-v="a" aria-pressed="true">А — кроки евакуації окремою смугою</button>
+    <button type="button" data-v="b" aria-pressed="false">Б — компактно, поруч з 1548</button>
+  </div>
+</div>
+
+<section class="statement wrap">
+  <h2>Гарячі лінії 1548 та 1648: швидка й надійна допомога українцям — щодня, цілодобово</h2>
+  <p>Консультуємо з питань евакуації, житла, соціальних виплат, військовополонених, примусово депортованих та зниклих безвісти осіб.</p>
+</section>
+
+<section class="wrap">
+  <div class="bento">
+
+    <!-- 1548 -->
+    <a class="card navy c-2x2" href="#">
+      <div class="head-row">
+        <div class="label live">Цілодобово · безкоштовно</div>
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></span>
+      </div>
+      <div>
+        <div class="big" style="font-size:clamp(4rem,8vw,7rem)">1548</div>
+        <h3 style="margin-top:10px">Гаряча лінія з кризових питань</h3>
+        <p style="margin-top:8px">Надаємо швидку та надійну допомогу українським громадянам у складних ситуаціях: евакуація, житло, виплати для ВПО</p>
+      </div>
+      <div class="chips">
+        <span class="chip">+38 (096) 078-84-33 · Viber / WhatsApp / Telegram</span>
+        <span class="chip">@1548_MinRe_bot</span>
+        <span class="stat-chip"><b>1,4 млн</b> звернень з 2022 року</span>
+      </div>
+      <span class="more">Детальніше →</span>
+    </a>
+
+    <!-- Варіант Б: евакуація поруч з 1548 -->
+    <div class="card evac only-b">
+      <div class="evac-top">
+        <h3><span class="hl">Подзвоніть зараз та дізнайтеся</span><br>все, що вас хвилює про виїзд</h3>
+        <div class="evac-hot"><b>1548</b><span>гаряча лінія</span></div>
+      </div>
+      <ol class="steps">
+        <li><div class="n">1</div><h4>Транспорт</h4><p>Вас заберуть автобусом або спецтранспортом для маломобільних людей із можливістю перевезення лежачих</p></li>
+        <li><div class="n">2</div><h4>Транзитний центр</h4><p>Тут допоможуть з документами, квитками, нагодують та поселять</p></li>
+        <li><div class="n">3</div><h4>Житло</h4><p>За кілька днів вам підшукають безкоштовне місце тимчасового проживання (МТП)</p></li>
+        <li><div class="n">4</div><h4>Виплати</h4><p>→ Одноразова виплата 12 300 грн на людину</p><p>→ Щомісячні виплати для ВПО</p></li>
+      </ol>
+      <div class="evac-foot">Буде складно<br><span class="hl">але врешті все буде добре</span></div>
+    </div>
+
+    <!-- 1648 -->
+    <a class="card yellow" href="#">
+      <div class="head-row">
+        <div class="label">Гаряча лінія</div>
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="3.2"/><path d="M4 19c.6-3.3 3-5 6-5 1.1 0 2.1.2 3 .7"/><circle cx="17" cy="16" r="2.6"/><path d="m19 18 2 2"/></svg></span>
+      </div>
+      <div><div class="big">1648</div><p style="margin-top:8px">Військовополонені, примусово депортовані та зниклі безвісти особи</p></div>
+      <span class="more">Детальніше →</span>
+    </a>
+
+    <!-- 1,4 млн (лише у варіанті А; у Б — плашка в картці 1548) -->
+    <div class="card sky only-a">
+      <div class="label">З 2022 року</div>
+      <div><div class="big">1,4 млн</div><p style="margin-top:8px">українців звернулися на гарячу лінію 1548</p></div>
+    </div>
+
+    <!-- Уповноважений ВПО -->
+    <a class="card c-2 only-a" href="#">
+      <div class="label">Уповноважений з питань ВПО</div>
+      <div><h3>Цілодобова гаряча лінія Уповноваженого</h3><p style="margin-top:6px">+38 (066) 813-62-39</p></div>
+      <span class="more">Детальніше →</span>
+    </a>
+    <a class="card only-b" href="#">
+      <div class="head-row">
+        <div class="label">Уповноважений з питань ВПО</div>
+      </div>
+      <div><h3>Цілодобова гаряча лінія</h3><p style="margin-top:6px">+38 (066) 813-62-39</p></div>
+      <span class="more">Детальніше →</span>
+    </a>
+
+    <!-- Актуальний перелік -->
+    <a class="card" href="#" data-size-a="c-2">
+      <div class="head-row">
+        <div class="label">Актуальний перелік</div>
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>
+      </div>
+      <h3>Території, на яких ведуться (велися) бойові дії або тимчасово окуповані РФ</h3>
+      <span class="more">Переглянути перелік →</span>
+    </a>
+
+    <!-- Корисна інформація -->
+    <a class="card sky" href="#" data-size-a="c-2">
+      <div class="head-row">
+        <div class="label">Корисна інформація</div>
+        <span class="ico" style="background:#fff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span>
+      </div>
+      <h3>Інформація для громадян, які звертаються на гарячі лінії 1548 та 1648</h3>
+      <span class="more">Читати →</span>
+    </a>
+
+    <!-- Варіант А: евакуація окремою смугою -->
+    <div class="card evac c-4 only-a">
+      <div class="evac-top">
+        <h3><span class="hl">Подзвоніть зараз та дізнайтеся</span><br>все, що вас хвилює про виїзд</h3>
+        <div class="evac-hot"><b>1548</b><span>гаряча лінія</span></div>
+      </div>
+      <ol class="steps">
+        <li><div class="n">1</div><h4>Транспорт</h4><p>Вас заберуть автобусом або спецтранспортом для маломобільних людей із можливістю перевезення лежачих</p></li>
+        <li><div class="n">2</div><h4>Транзитний центр</h4><p>Тут допоможуть з документами, квитками, нагодують та поселять</p></li>
+        <li><div class="n">3</div><h4>Житло</h4><p>За кілька днів вам підшукають безкоштовне місце тимчасового проживання (МТП)</p></li>
+        <li><div class="n">4</div><h4>Виплати</h4><p>→ Одноразова виплата 12 300 грн на людину</p><p>→ Щомісячні виплати для ВПО</p></li>
+      </ol>
+      <div class="evac-top" style="margin-top:20px;align-items:flex-end">
+        <a class="evac-cta" href="tel:1548">☎ Подзвонити 1548</a>
+        <div class="evac-foot" style="margin:0">Буде складно<br><span class="hl">але врешті все буде добре</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // Перемикач варіантів макета
+  const apply = (v) => {
+    document.body.className = 'v-' + v
+    document.querySelectorAll('.switch button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === v))
+    // у варіанті А «Перелік» і «Корисна інформація» — широкі картки, у Б — звичайні
+    document.querySelectorAll('[data-size-a]').forEach((el) => el.classList.toggle(el.dataset.sizeA, v === 'a'))
+  }
+  document.querySelectorAll('.switch button').forEach((b) => b.addEventListener('click', () => apply(b.dataset.v)))
+  apply('a')
+</script>
+</body>
+</html>

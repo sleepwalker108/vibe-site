@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Національна агенція розвитку територій України</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #104d82;
+    --navy-deep: #0b2f52;
+    --navy-ink: #0a2440;
+    --sky: #eaf2fa;
+    --sky-2: #d6e6f5;
+    --yellow: #ffd500;
+    --ink: #14202e;
+    --muted: #5a6878;
+    --card: #ffffff;
+    --line: #dbe4ee;
+    --radius: 22px;
+    --fs: 16px;
+  }
+  html.contrast {
+    --navy: #000; --navy-deep: #000; --navy-ink: #000;
+    --sky: #fff; --sky-2: #fff; --ink: #000; --muted: #000; --line: #000;
+  }
+  html.contrast .card, html.contrast .news-card { border: 2px solid #000; }
+
+  * { box-sizing: border-box; }
+  html { font-size: var(--fs); scroll-behavior: smooth; }
+  body {
+    margin: 0; background: #fff; color: var(--ink);
+    font-family: "e-Ukraine", "Manrope", system-ui, sans-serif; line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  .wrap { width: min(1240px, 100% - 32px); margin-inline: auto; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    background: rgba(255,255,255,.94); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+  .brand { display: flex; flex: none; align-items: center; gap: 10px; font-weight: 800; color: var(--navy); font-size: .82rem; line-height: 1.15; }
+  .brand img { height: 34px; width: auto; }
+  .nav { display: flex; gap: 4px; margin-left: auto; }
+  .nav > li { position: relative; list-style: none; }
+  .nav > li > a { display: block; white-space: nowrap; padding: 8px 10px; border-radius: 10px; font-size: .88rem; font-weight: 600; color: var(--ink); }
+  .nav > li > a:hover, .nav > li:focus-within > a { background: var(--sky); color: var(--navy); }
+  .nav .has-sub > a::after { content: " ▾"; font-size: .7em; opacity: .6; }
+  .sub {
+    display: none; position: absolute; top: 100%; left: 0; min-width: 300px; padding: 8px;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 40px rgba(10,36,64,.14);
+  }
+  .nav > li:hover .sub, .nav > li:focus-within .sub { display: block; }
+  .sub a { display: block; padding: 9px 12px; border-radius: 8px; font-size: .88rem; }
+  .sub a:hover { background: var(--sky); color: var(--navy); }
+  .tools { display: flex; align-items: center; gap: 6px; }
+  .tool {
+    border: 1px solid var(--line); background: #fff; color: var(--navy); border-radius: 10px;
+    height: 36px; min-width: 36px; padding: 0 10px; font: inherit; font-weight: 700; font-size: .8rem; cursor: pointer;
+  }
+  .tool:hover { background: var(--sky); }
+  .burger { display: none; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative; min-height: 92vh; display: grid; place-items: center; text-align: center; color: #fff;
+    background: #0057b8; overflow: hidden;
+  }
+  #flag { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: radial-gradient(ellipse at center, rgba(11,47,82,.5) 0%, rgba(11,47,82,.15) 60%, rgba(11,47,82,.45) 100%);
+  }
+  .hero-inner, .scroll-hint { z-index: 2; }
+  .hero h1, .hero p, .hero .kicker { text-shadow: 0 2px 18px rgba(0,0,0,.45); }
+
+  /* ---------- stats ---------- */
+  .stats-sec {
+    position: relative; padding: 80px 0; color: #fff; overflow: hidden;
+    background: radial-gradient(circle at 80% 20%, #1d5fa0 0%, var(--navy-deep) 55%, #061a30 100%);
+  }
+  .stats-sec::before {
+    content: ""; position: absolute; inset: auto -10% -40% auto; width: 60%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(255,213,0,.16), transparent 65%);
+  }
+  .stats-head { position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 36px; }
+  .stats-head h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 800; line-height: 1.15; }
+  .stats-head p { margin: 6px 0 0; font-size: 1.1rem; color: rgba(255,255,255,.8); }
+  .asof { background: var(--yellow); color: var(--navy-ink); font-weight: 800; padding: 10px 18px; border-radius: 12px; rotate: -2deg; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+  .stats-grid { position: relative; display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+  .bars { display: grid; gap: 10px; }
+  .bar { display: grid; grid-template-columns: minmax(180px, 38%) 1fr; gap: 16px; align-items: center; }
+  .bar .name { text-align: right; font-size: .92rem; color: rgba(255,255,255,.88); line-height: 1.3; }
+  .bar .track { position: relative; height: 30px; display: flex; align-items: center; gap: 10px; }
+  .bar .fill { height: 100%; width: 0; min-width: 6px; border-radius: 0 8px 8px 0; background: linear-gradient(90deg, #00c2e0, #3fe0f5); transition: width 1.4s cubic-bezier(.2,.8,.2,1); }
+  .bar .val { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kpis { display: grid; gap: 14px; }
+  .kpi { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: var(--radius); padding: 22px 24px; backdrop-filter: blur(6px); }
+  .kpi .k-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.7); }
+  .kpi .k-num { font-size: 2.3rem; font-weight: 800; line-height: 1.1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .kpi .k-sub { color: rgba(255,255,255,.75); font-size: .9rem; }
+  .kpi.main { background: var(--yellow); color: var(--navy-ink); border-color: var(--yellow); }
+  .kpi.main .k-label, .kpi.main .k-sub { color: #4a4100; }
+  .kpi .msgr { display: flex; gap: 6px; margin-top: 10px; }
+  .kpi .msgr span { font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.14); }
+  .stats-note { position: relative; margin-top: 28px; font-size: .95rem; color: rgba(255,255,255,.8); }
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .bar { grid-template-columns: 1fr; gap: 4px; }
+    .bar .name { text-align: left; }
+    .bar .track { height: 22px; }
+  }
+  .hero-inner { position: relative; padding: 120px 16px 80px; max-width: 900px; }
+  .hero img { height: 120px; width: auto; margin: 0 auto 22px; filter: drop-shadow(0 6px 20px rgba(0,0,0,.35)); }
+  .hero .kicker { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 700; opacity: .9; }
+  .hero h1 { margin: 10px 0 14px; font-size: clamp(1.9rem, 4.6vw, 3.4rem); line-height: 1.1; font-weight: 800; }
+  .hero p { margin: 0 auto; max-width: 620px; font-size: 1.1rem; opacity: .95; }
+  .hero .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; font-weight: 700; }
+  .btn-yellow { background: var(--yellow); color: var(--navy-ink); }
+  .btn-ghost { border: 1.5px solid rgba(255,255,255,.7); color: #fff; }
+  .btn-ghost:hover { background: rgba(255,255,255,.12); }
+  .scroll-hint { position: absolute; bottom: 22px; left: 50%; translate: -50% 0; font-size: .8rem; opacity: .8; }
+
+  /* ---------- statement ---------- */
+  .statement { padding: 72px 0 28px; text-align: center; }
+  .statement h2 { margin: 0 auto; max-width: 1000px; color: var(--navy); font-size: clamp(1.6rem, 3.4vw, 2.7rem); line-height: 1.18; font-weight: 800; }
+  .statement p { color: var(--muted); max-width: 720px; margin: 18px auto 0; font-size: 1.05rem; }
+
+  /* ---------- bento ---------- */
+  .bento-sec { padding: 40px 0 80px; }
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(170px, auto); gap: 16px; }
+  .card {
+    background: var(--card); border-radius: var(--radius); padding: 26px; display: flex; flex-direction: column;
+    justify-content: space-between; gap: 14px; border: 1px solid var(--line); transition: transform .2s, box-shadow .2s;
+  }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(16,77,130,.14); }
+  .card .label { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .card .big { font-size: clamp(2.4rem, 4vw, 3.6rem); font-weight: 800; line-height: 1; color: var(--navy); }
+  .card h3 { margin: 0; font-size: 1.3rem; line-height: 1.25; color: var(--navy); }
+  .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+  .card .more { font-weight: 700; color: var(--navy); font-size: .9rem; }
+  .card.navy { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .card.navy .label, .card.navy p { color: rgba(255,255,255,.78); }
+  .card.navy .big, .card.navy h3, .card.navy .more { color: #fff; }
+  .card.yellow { background: var(--yellow); border-color: var(--yellow); }
+  .card.yellow .label, .card.yellow p { color: #4a4100; }
+  .card.yellow .big, .card.yellow h3, .card.yellow .more { color: var(--navy-ink); }
+  .card.sky { background: var(--sky); border-color: var(--sky-2); }
+  .c-2x2 { grid-column: span 2; grid-row: span 2; }
+  .c-2 { grid-column: span 2; }
+  .c-r2 { grid-row: span 2; }
+  .phone-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; font-size: .88rem; font-weight: 700; background: rgba(255,255,255,.14); color: #fff; }
+  .chip.light { background: var(--sky); color: var(--navy); }
+  .live { display: inline-flex; align-items: center; gap: 8px; }
+  .live::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 4px rgba(61,220,132,.25); }
+
+  /* ---------- section head ---------- */
+  .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+  .sec-head h2 { margin: 0; color: var(--navy); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 800; }
+  .link-arrow { font-weight: 700; color: var(--navy); white-space: nowrap; }
+  .link-arrow::after { content: " →"; }
+
+  /* ---------- news ---------- */
+  .news-sec { padding: 80px 0; background: var(--sky); }
+  .news { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; }
+  .news-small { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .news-card { background: #fff; border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+  .news-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(16,77,130,.14); }
+  .news-card .img { aspect-ratio: 16/10; overflow: hidden; background: var(--sky-2); }
+  .news-card .img img { width: 100%; height: 100%; object-fit: cover; }
+  .news-card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .news-card time { font-size: .8rem; font-weight: 700; color: var(--muted); }
+  .news-card h3 { margin: 0; font-size: 1rem; line-height: 1.35; color: var(--navy-ink); }
+  .news-card.featured .img { aspect-ratio: 16/11; }
+  .news-card.featured h3 { font-size: 1.45rem; }
+  .news-card.featured p { margin: 0; color: var(--muted); }
+  .news-card .tag { align-self: flex-start; background: var(--yellow); color: var(--navy-ink); font-size: .72rem; font-weight: 800; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .06em; }
+  .pager { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+  .pager a { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; font-weight: 700; color: var(--navy); background: #fff; }
+  .pager a.on { background: var(--navy); color: #fff; }
+
+  /* ---------- transparency ---------- */
+  .docs-sec { padding: 80px 0; }
+  .docs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .doc { display: flex; gap: 16px; align-items: flex-start; padding: 22px; border-radius: 18px; border: 1px solid var(--line); background: #fff; }
+  .doc:hover { border-color: var(--navy); }
+  .doc .ico { flex: none; width: 44px; height: 44px; border-radius: 12px; background: var(--sky); color: var(--navy); display: grid; place-items: center; }
+  .doc h3 { margin: 0 0 4px; font-size: 1rem; color: var(--navy-ink); }
+  .doc p { margin: 0; font-size: .88rem; color: var(--muted); }
+
+  /* ---------- resources ---------- */
+  .res-sec { padding: 0 0 90px; }
+  .res { display: flex; flex-wrap: wrap; gap: 10px; }
+  .res a { padding: 12px 18px; border-radius: 999px; background: var(--sky); color: var(--navy); font-weight: 600; font-size: .92rem; }
+  .res a:hover { background: var(--navy); color: #fff; }
+
+  /* ---------- footer ---------- */
+  footer { background: var(--navy-deep); color: rgba(255,255,255,.82); padding: 64px 0 28px; font-size: .92rem; }
+  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 32px; }
+  footer h4 { color: #fff; margin: 0 0 12px; font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; }
+  footer p { margin: 0 0 8px; }
+  footer a:hover { color: var(--yellow); }
+  .foot-brand { display: flex; gap: 14px; align-items: flex-start; }
+  .foot-brand img { height: 56px; width: auto; }
+  .foot-brand strong { color: #fff; display: block; line-height: 1.3; }
+  .foot-hot { font-size: 2.2rem; font-weight: 800; color: var(--yellow); line-height: 1; margin-bottom: 6px; }
+  .foot-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.14); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: .82rem; }
+  .flag-strip { height: 6px; background: linear-gradient(90deg, #0057b8 50%, var(--yellow) 50%); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1240px) {
+    .nav { display: none; }
+    .nav.open {
+      display: flex; flex-direction: column; position: fixed; inset: 60px 0 auto 0; background: #fff; padding: 12px 16px 20px;
+      border-bottom: 1px solid var(--line); max-height: calc(100vh - 60px); overflow: auto; margin: 0;
+    }
+    .nav.open .sub { display: block; position: static; box-shadow: none; border: 0; padding: 0 0 0 12px; min-width: 0; }
+    .burger { display: inline-block; margin-left: auto; }
+    .tools { margin-left: 0; }
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .news { grid-template-columns: 1fr; }
+    .docs { grid-template-columns: 1fr 1fr; }
+    .foot { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .brand span { display: none; }
+    .tools .hide-sm { display: none; }
+    .bento { grid-template-columns: 1fr; }
+    .c-2x2, .c-2 { grid-column: auto; grid-row: auto; }
+    .c-r2 { grid-row: auto; }
+    .news-small { grid-template-columns: 1fr; }
+    .docs { grid-template-columns: 1fr; }
+    .foot { grid-template-columns: 1fr; }
+    .hero img { height: 90px; }
+    .sec-head { flex-direction: column; align-items: start; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#">
+      <img src="img/gerb.png" alt="Герб України">
+      <span>Національна агенція<br>розвитку територій України</span>
+    </a>
+    <ul class="nav" id="nav">
+      <li class="has-sub"><a href="#">Про нас</a>
+        <div class="sub"><a href="#">Діяльність</a><a href="#">Керівництво</a><a href="#">Вакансії та контакти</a></div></li>
+      <li class="has-sub"><a href="#">Гарячі лінії</a>
+        <div class="sub"><a href="#">Цілодобова гаряча лінія 1548</a><a href="#">Гаряча лінія 1648</a><a href="#">Гаряча лінія Уповноваженого з питань ВПО</a><a href="#">Корисна інформація</a></div></li>
+      <li class="has-sub"><a href="#">Прозорість</a>
+        <div class="sub"><a href="#">Фінансова звітність</a><a href="#">Бюджет</a><a href="#">Закупівлі</a><a href="#">Звіти про діяльність</a></div></li>
+      <li class="has-sub"><a href="#">Запобігання корупції</a>
+        <div class="sub"><a href="#">Антикорупційна програма</a><a href="#">Контакти Уповноваженого з питань корупції</a></div></li>
+      <li><a href="#">Законодавство</a></li>
+      <li><a href="#news">Новини</a></li>
+      <li><a href="#">Відео</a></li>
+    </ul>
+    <div class="tools">
+      <button class="tool hide-sm" data-fs="-1" aria-label="Зменшити шрифт">A−</button>
+      <button class="tool hide-sm" data-fs="1" aria-label="Збільшити шрифт">A+</button>
+      <button class="tool" id="contrast" aria-label="Висококонтрастний режим">◐</button>
+      <button class="tool" aria-label="Пошук">⌕</button>
+      <button class="tool" aria-label="English">EN</button>
+      <button class="tool burger" id="burger" aria-label="Меню" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <canvas id="flag" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <img src="img/gerb.png" alt="">
+      <div class="kicker">Державне некомерційне товариство</div>
+      <h1>Національна агенція розвитку територій України</h1>
+      <p>Цілодобова допомога громадянам у складних ситуаціях: евакуація, житло, виплати для ВПО, пошук зниклих безвісти</p>
+      <div class="cta">
+        <a class="btn btn-yellow" href="tel:1548">☎ Подзвонити 1548</a>
+        <a class="btn btn-ghost" href="#">Перелік територій бойових дій</a>
+      </div>
+    </div>
+    <div class="scroll-hint">↓ гортайте</div>
+  </section>
+
+  <section class="statement wrap">
+    <h2>Гарячі лінії 1548 та 1648: швидка й надійна допомога українцям — щодня, цілодобово</h2>
+    <p>Консультуємо з питань евакуації, житла, соціальних виплат, військовополонених, примусово депортованих та зниклих безвісти осіб.</p>
+  </section>
+
+  <section class="bento-sec wrap">
+    <div class="bento">
+      <a class="card navy c-2x2" href="#">
+        <div>
+          <div class="label live">Цілодобово · безкоштовно</div>
+        </div>
+        <div>
+          <div class="big" style="font-size:clamp(4rem,9vw,7.5rem)">1548</div>
+          <h3 style="margin-top:10px">Гаряча лінія з кризових питань</h3>
+          <p style="margin-top:8px">Евакуація, житло, виплати для ВПО та інші питання, що виникли через війну</p>
+        </div>
+        <div class="phone-row">
+          <span class="chip">+38 (096) 078-84-33 · Viber / WhatsApp / Telegram</span>
+          <span class="chip">@1548_MinRe_bot</span>
+        </div>
+      </a>
+      <a class="card yellow" href="#">
+        <div class="label">Гаряча лінія</div>
+        <div><div class="big">1648</div><p style="margin-top:8px">Військовополонені, примусово депортовані та зниклі безвісти</p></div>
+      </a>
+      <div class="card sky">
+        <div class="label">З 2022 року</div>
+        <div><div class="big">1,4 млн</div><p style="margin-top:8px">українців звернулися на гарячу лінію 1548</p></div>
+      </div>
+      <a class="card c-2" href="#">
+        <div class="label">Уповноважений з питань ВПО</div>
+        <div><h3>Цілодобова гаряча лінія Уповноваженого</h3><p style="margin-top:6px">+38 (066) 813-62-39</p></div>
+        <span class="more">Детальніше →</span>
+      </a>
+      <a class="card c-2" href="#">
+        <div class="label">Актуальний перелік</div>
+        <h3>Території, на яких ведуться (велися) бойові дії або тимчасово окуповані РФ</h3>
+        <span class="more">Переглянути перелік →</span>
+      </a>
+      <a class="card sky c-2" href="#">
+        <div class="label">Корисна інформація</div>
+        <h3>Відповіді та інфографіка для тих, хто звертається на гарячі лінії 1548 та 1648</h3>
+        <span class="more">Читати →</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="stats-sec" id="stats">
+    <div class="wrap">
+      <div class="stats-head">
+        <div>
+          <h2 id="st-title"></h2>
+          <p id="st-sub"></p>
+        </div>
+        <div class="asof">станом на <span id="st-date"></span></div>
+      </div>
+      <div class="stats-grid">
+        <div class="bars" id="st-bars"></div>
+        <div class="kpis">
+          <div class="kpi main">
+            <div class="k-label">Прийнято</div>
+            <div class="k-num" data-count id="st-total">0</div>
+            <div class="k-sub">дзвінків</div>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Зареєстровано</div>
+            <div class="k-num" data-count id="st-reg">0</div>
+            <div class="k-sub">звернень</div>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Через месенджери</div>
+            <div class="k-num" data-count id="st-msg">0</div>
+            <div class="k-sub">звернень</div>
+            <div class="msgr"><span>WhatsApp</span><span>Viber</span><span>Telegram</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="stats-note">Ми надаємо громадянам відповіді оперативно та зручно — зокрема через месенджер.</p>
+    </div>
+  </section>
+
+  <section class="news-sec" id="news">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Новини</h2>
+        <a class="link-arrow" href="#">Усі новини</a>
+      </div>
+      <div class="news">
+        <a class="news-card featured" href="#">
+          <div class="img"><img src="img/n1.png" alt=""></div>
+          <div class="body">
+            <span class="tag">Житло для ВПО</span>
+            <time>14.09.2026</time>
+            <h3>Житло для родини ВПО підбиратимуть відповідно до її реальних потреб</h3>
+            <p>На цьому принципі будується експериментальний проєкт із забезпечення людей будинками у сільській місцевості.</p>
+          </div>
+        </a>
+        <div class="news-small">
+          <a class="news-card" href="#">
+            <div class="img"><img src="img/n2.png" alt=""></div>
+            <div class="body"><time>10.09.2026</time><h3>Кабінет Міністрів України збільшив фінансування програми житла для ВПО</h3></div>
+          </a>
+          <a class="news-card" href="#">
+            <div class="img"><img src="img/n3.png" alt=""></div>
+            <div class="body"><time>07.09.2026</time><h3>Уряд продовжив виплату допомоги на проживання для ВПО ще на шість місяців</h3></div>
+          </a>
+          <a class="news-card" href="#">
+            <div class="img"><img src="img/n4.png" alt=""></div>
+            <div class="body"><time>07.09.2026</time><h3>Дізнайтеся про соціальні виплати, житло, транспорт для вчасної евакуації на гарячій лінії 1548</h3></div>
+          </a>
+          <a class="news-card" href="#">
+            <div class="img" style="display:grid;place-items:center;background:var(--navy)"><span style="color:#fff;font-size:3rem;font-weight:800">1548</span></div>
+            <div class="body"><time>03.09.2026</time><h3>З 2022 року на гарячу лінію 1548 звернулися 1,4 млн українців</h3></div>
+          </a>
+        </div>
+      </div>
+      <nav class="pager" aria-label="Сторінки новин">
+        <a class="on" href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">→</a>
+      </nav>
+    </div>
+  </section>
+
+  <section class="docs-sec wrap">
+    <div class="sec-head">
+      <h2>Прозорість і документи</h2>
+      <a class="link-arrow" href="#">Законодавство</a>
+    </div>
+    <div class="docs">
+      <a class="doc" href="#"><span class="ico">₴</span><div><h3>Фінансова звітність</h3><p>Річна та квартальна звітність товариства</p></div></a>
+      <a class="doc" href="#"><span class="ico">▤</span><div><h3>Бюджет</h3><p>Кошториси та використання коштів</p></div></a>
+      <a class="doc" href="#"><span class="ico">⇄</span><div><h3>Закупівлі</h3><p>Річні плани та процедури закупівель</p></div></a>
+      <a class="doc" href="#"><span class="ico">✓</span><div><h3>Звіти про діяльність</h3><p>Результати роботи гарячих ліній</p></div></a>
+      <a class="doc" href="#"><span class="ico">⚖</span><div><h3>Антикорупційна програма</h3><p>Програма та контакти Уповноваженого</p></div></a>
+      <a class="doc" href="#"><span class="ico">§</span><div><h3>Закони, акти та постанови</h3><p>Нормативна база діяльності</p></div></a>
+    </div>
+  </section>
+
+  <section class="res-sec wrap">
+    <div class="sec-head"><h2>Корисні ресурси</h2></div>
+    <div class="res">
+      <a href="#">Мінрозвитку</a>
+      <a href="#">Національне інформаційне бюро</a>
+      <a href="#">Перелік територій бойових дій</a>
+      <a href="#">Портал 1548</a>
+      <a href="#">United24</a>
+      <a href="#">Мінна безпека</a>
+      <a href="#">Юридичний порадник</a>
+      <a href="#">Прихисток</a>
+    </div>
+  </section>
+</main>
+
+<div class="flag-strip"></div>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <div class="foot-brand">
+          <img src="img/gerb.png" alt="">
+          <div><strong>ДНТ «Національна агенція розвитку територій України»</strong>
+          <p style="margin-top:10px">м. Київ, бульвар Лесі Українки, 26 А</p></div>
+        </div>
+      </div>
+      <div>
+        <h4>Режим роботи</h4>
+        <p>пн.–чт. 08:00–17:00</p>
+        <p>пт. 08:00–15:45</p>
+        <p>обідня перерва 12:00–12:45</p>
+      </div>
+      <div>
+        <h4>Контакти</h4>
+        <p><a href="mailto:info@dp-reintegration.gov.ua">info@dp-reintegration.gov.ua</a></p>
+        <p>+38 (093) 367-83-66</p>
+        <p>+38 (044) 248-15-48</p>
+      </div>
+      <div>
+        <h4>Гаряча лінія</h4>
+        <div class="foot-hot">1548</div>
+        <p>цілодобово, безкоштовно</p>
+        <p>+38 (096) 078-84-33 — Viber / WhatsApp / Telegram</p>
+        <p>Telegram-бот @1548_MinRe_bot</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 dp-reintegration.gov.ua</span>
+      <a href="#">Нагору ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script src="stats.js"></script>
+<script>
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- statistics (data from stats.js) ---------- */
+  (() => {
+    const S = window.STATS;
+    const fmt = n => n.toLocaleString('uk-UA');
+    const total = S.categories.reduce((s, c) => s + c.value, 0);
+    const max = Math.max(...S.categories.map(c => c.value));
+    document.getElementById('st-title').textContent = S.title;
+    document.getElementById('st-sub').textContent = S.subtitle;
+    document.getElementById('st-date').textContent = S.asOf + ' р.';
+    document.getElementById('st-bars').innerHTML = S.categories.map(c => `
+      <div class="bar">
+        <div class="name">${c.name}</div>
+        <div class="track"><div class="fill" data-w="${(c.value / max * 82).toFixed(2)}"></div><span class="val">${fmt(c.value)}</span></div>
+      </div>`).join('');
+    const nums = { 'st-total': total, 'st-reg': S.registered, 'st-msg': S.messengers };
+
+    const run = () => {
+      document.querySelectorAll('.bar .fill').forEach(f => f.style.width = f.dataset.w + '%');
+      Object.entries(nums).forEach(([id, target]) => {
+        const el = document.getElementById(id);
+        if (reduceMotion) { el.textContent = fmt(target); return; }
+        const t0 = performance.now(), dur = 1600;
+        const step = now => {
+          const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+          el.textContent = fmt(Math.round(target * e));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    new IntersectionObserver((entries, obs) => {
+      if (entries.some(e => e.isIntersecting)) { run(); obs.disconnect(); }
+    }, { threshold: 0.25 }).observe(document.getElementById('stats'));
+  })();
+
+  /* ---------- waving silk flag (WebGL) ---------- */
+  (() => {
+    const cv = document.getElementById('flag');
+    const gl = cv.getContext('webgl', { antialias: false, premultipliedAlpha: false });
+    if (!gl) { cv.style.background = 'linear-gradient(160deg,#0057b8 0 48%,#ffd500 52% 100%)'; return; }
+
+    const SPEED = 0.32; // менше число = повільніше
+
+    const vs = `attribute vec2 a; void main(){ gl_Position = vec4(a,0.,1.); }`;
+    const fs = `
+      precision highp float;
+      uniform vec2 R; uniform float T;
+      float h(vec2 p, float t){
+        float v = 0.0;
+        v += 0.50*sin(p.x*2.1 + p.y*1.1 - t*1.00);
+        v += 0.32*sin(p.x*3.4 - p.y*1.9 - t*1.35 + 1.7);
+        v += 0.18*sin(p.x*5.8 + p.y*2.9 - t*2.00 + 0.4);
+        v += 0.09*sin(p.x*8.7 - p.y*4.6 - t*2.70 + 2.3);
+        v += 0.28*sin(p.y*1.6 + p.x*0.6 + t*0.45);
+        return v;
+      }
+      void main(){
+        vec2 uv = gl_FragCoord.xy / R;
+        float asp = R.x / R.y;
+        vec2 p = vec2(uv.x * asp, uv.y) * 1.6;
+        float t = T;
+        float e = 0.003;
+        float h0 = h(p, t);
+        float hx = (h(p + vec2(e,0.), t) - h0) / e;
+        float hy = (h(p + vec2(0.,e), t) - h0) / e;
+        vec3 n = normalize(vec3(-hx*0.32, -hy*0.32, 1.0));
+
+        // diagonal border blue/yellow, bent by the folds (like the video)
+        float border = 0.30 + 0.38*uv.x + h0*0.055 + 0.03*sin(uv.x*5.0 - t*0.8);
+        float aa = 2.5 / R.y;
+        float isBlue = smoothstep(border - aa, border + aa, uv.y);
+
+        vec3 blue = vec3(0.00, 0.36, 0.72);
+        vec3 yel  = vec3(1.00, 0.80, 0.00);
+        vec3 base = mix(yel, blue, isBlue);
+        vec3 tint = mix(vec3(1.0, 0.93, 0.55), vec3(0.45, 0.88, 1.0), isBlue);
+
+        vec3 L = normalize(vec3(-0.45, 0.65, 0.65));
+        vec3 V = vec3(0., 0., 1.);
+        vec3 H = normalize(L + V);
+        float diff = max(dot(n, L), 0.0);
+        float spec = pow(max(dot(n, H), 0.0), 60.0);
+        float sheen = pow(max(dot(n, H), 0.0), 9.0);
+
+        vec3 col = base * (0.18 + 0.95*diff);
+        col += tint * (spec*0.55 + sheen*0.22);
+        col *= mix(vec3(0.62, 0.45, 0.10), vec3(1.0), smoothstep(-0.9, 0.6, h0) * (1.0 - isBlue) + isBlue);
+        float vig = smoothstep(1.25, 0.35, length(uv - 0.5));
+        col *= 0.75 + 0.25*vig;
+        gl_FragColor = vec4(col, 1.0);
+      }`;
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs));
+    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, 'a');
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const uR = gl.getUniformLocation(pr, 'R'), uT = gl.getUniformLocation(pr, 'T');
+
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 1.25);
+      cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr;
+      gl.viewport(0, 0, cv.width, cv.height);
+    };
+    const draw = s => { gl.uniform2f(uR, cv.width, cv.height); gl.uniform1f(uT, s * SPEED); gl.drawArrays(gl.TRIANGLES, 0, 3); };
+    resize();
+    addEventListener('resize', () => { resize(); if (reduceMotion) draw(4); });
+    if (reduceMotion) { draw(4); return; }
+    let visible = true;
+    new IntersectionObserver(e => visible = e[0].isIntersecting).observe(cv);
+    const loop = now => { if (visible) draw(now / 1000 + 4); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  })();
+
+  const root = document.documentElement;
+  let fs = 16;
+  document.querySelectorAll('[data-fs]').forEach(b => b.addEventListener('click', () => {
+    fs = Math.min(22, Math.max(14, fs + Number(b.dataset.fs) * 2));
+    root.style.setProperty('--fs', fs + 'px');
+  }));
+  document.getElementById('contrast').addEventListener('click', () => root.classList.toggle('contrast'));
+  const burger = document.getElementById('burger'), nav = document.getElementById('nav');
+  burger.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+</script>
+</body>
+</html>

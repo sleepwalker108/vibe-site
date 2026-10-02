@@ -1,0 +1,7 @@
+# Не заливати на GitHub: база даних (там акаунти адмінів), секрети, резервні копії, логи
+backups/
+*.log
+site/site.db
+site/*.db
+site/*.db-*
+site/.env
