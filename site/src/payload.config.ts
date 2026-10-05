@@ -12,6 +12,7 @@ import { Media } from './collections/Media'
 import { News } from './collections/News'
 import { Pages } from './collections/Pages'
 import { Videos } from './collections/Videos'
+import { Visits } from './collections/Visits'
 import { Home } from './globals/Home'
 import { Stats } from './globals/Stats'
 import { AnnualReport } from './globals/AnnualReport'
@@ -21,6 +22,8 @@ import { FaqBlock } from './blocks/Faq'
 import { CardsBlock, StatBlock } from './blocks/Highlights'
 import { editorFeatures } from './fields/editor'
 import { Contacts } from './globals/Contacts'
+import { Seo } from './globals/Seo'
+import { Resources } from './globals/Resources'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,9 +39,16 @@ export default buildConfig({
       titleSuffix: ' — Адмінка НАРТУ',
     },
     components: {
-      beforeNavLinks: ['/components/admin/ViewSiteLink#ViewSiteLink'],
+      beforeNavLinks: ['/components/admin/ViewSiteLink#ViewSiteLink', '/components/admin/DashboardLink#DashboardLink'],
       // «Структура сайту» на головній сторінці адмінки
-      beforeDashboard: ['/components/admin/SiteMap#SiteMap'],
+      beforeDashboard: ['/components/admin/StatsSummary#StatsSummary', '/components/admin/SiteMap#SiteMap'],
+      afterNavLinks: ['/components/admin/StatsNavLink#StatsNavLink', '/components/admin/ThemeToggle#ThemeToggle'],
+      // підказки й українські назви кнопок у панелі редактора тексту
+      providers: ['/components/admin/EditorHints#EditorHints'],
+      views: {
+        // Розділ «Статистика відвідувань»: /admin/stats
+        stats: { Component: '/components/admin/StatsView#StatsView', path: '/stats', meta: { title: 'Статистика відвідувань' } },
+      },
     },
     livePreview: {
       breakpoints: [
@@ -60,8 +70,8 @@ export default buildConfig({
     defaultLocale: 'uk',
     fallback: true,
   },
-  collections: [News, Pages, Videos, Media, Users],
-  globals: [Home, Navigation, Stats, AnnualReport, Territories, Contacts],
+  collections: [News, Pages, Videos, Media, Users, Visits],
+  globals: [Home, Navigation, Stats, AnnualReport, Territories, Resources, Contacts, Seo],
   editor: lexicalEditor({
     // панель інструментів, таблиці, виправлені посилання + блок «Запитання — відповіді»
     features: editorFeatures([BlocksFeature({ blocks: [FaqBlock, CardsBlock, StatBlock] })]),

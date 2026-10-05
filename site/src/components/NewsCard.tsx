@@ -2,7 +2,8 @@ import Link from 'next/link'
 import type { News } from '@/payload-types'
 import { formatDate, mediaUrl } from '@/lib/payload'
 
-export const NewsCard = ({ item, featured = false }: { item: News; featured?: boolean }) => {
+export const NewsCard = ({ item, featured = false, level = 3 }: { item: News; featured?: boolean; level?: 2 | 3 }) => {
+  const H = level === 2 ? 'h2' : 'h3'
   const img = mediaUrl(item.cover, featured ? 'wide' : 'card')
   return (
     <Link className={`news-card${featured ? ' featured' : ''}`} href={`/news/${encodeURIComponent(item.slug || '')}`}>
@@ -10,7 +11,7 @@ export const NewsCard = ({ item, featured = false }: { item: News; featured?: bo
       <div className="body">
         {featured && item.tag && <span className="tag">{item.tag}</span>}
         <time>{formatDate(item.publishedAt)}</time>
-        <h3>{item.title}</h3>
+        <H className="news-card-title">{item.title}</H>
         {featured && item.excerpt && <p>{item.excerpt}</p>}
       </div>
     </Link>

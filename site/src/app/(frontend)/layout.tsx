@@ -1,19 +1,19 @@
 import React from 'react'
+import Script from 'next/script'
 import './styles.css'
 import { getLocale } from '@/lib/i18n'
+import { VisitTracker } from '@/components/VisitTracker'
+import { getSeo, SITE_URL } from '@/lib/seo'
 
+// Загальні дані для пошуковиків; кожна сторінка доповнює їх своїми (див. src/lib/seo.ts)
 export async function generateMetadata() {
-  const locale = await getLocale()
-  return locale === 'en'
-    ? {
-        title: 'National Agency for Territorial Development of Ukraine',
-        description: 'State non-profit company “National Agency for Territorial Development of Ukraine”. Hotlines 1548 and 1648.',
-      }
-    : {
-        title: 'Національна агенція розвитку територій України',
-        description:
-          'Державне некомерційне товариство «Національна агенція розвитку територій України». Гарячі лінії 1548 та 1648.',
-      }
+  const seo = await getSeo(await getLocale())
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: seo.siteTitle,
+    description: seo.description,
+    robots: seo.allowIndexing ? undefined : { index: false, follow: false },
+  }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,12 +21,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* Вмикаємо збережені налаштування доступності ще до показу сторінки — без блимання */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var a=JSON.parse(localStorage.getItem('a11y')||'{}'),d=document.documentElement;if(a.c)d.classList.add('contrast');if(a.fs){d.style.setProperty('--fs',a.fs+'px');d.style.setProperty('--fs-scale',String(a.fs/16))}}catch(e){}`,
-          }}
-        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
@@ -34,7 +28,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Вмикаємо збережені налаштування доступності ще до показу сторінки — без блимання.
+            next/script (beforeInteractive) виконує його до «оживлення» сторінки й не викликає попереджень React */}
+        <Script id="a11y-init" strategy="beforeInteractive">
+          {`try{var a=JSON.parse(localStorage.getItem('a11y')||'{}'),d=document.documentElement;if(a.c)d.classList.add('contrast');if(a.fs){d.style.setProperty('--fs',a.fs+'px');d.style.setProperty('--fs-scale',String(a.fs/16))}}catch(e){}`}
+        </Script>
+        {children}
+        <VisitTracker />
+      </body>
     </html>
   )
 }

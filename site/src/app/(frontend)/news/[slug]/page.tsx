@@ -6,6 +6,8 @@ import { SiteShell } from '@/components/SiteShell'
 import { formatDate, getClient, isDraftMode, mediaUrl, publishedOnly } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
 import type { Locale } from '@/lib/dictionary'
+import { JsonLd } from '@/components/JsonLd'
+import { getSeo, localizedUrl, pageMetadata, plainText, SITE_URL } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,7 +44,17 @@ const getNews = async (slug: string, draft: boolean, locale: Locale) => {
 export async function generateMetadata({ params }: Props) {
   const { locale, t } = await getDict()
   const item = await getNews((await params).slug, false, locale)
-  return { title: item ? `${item.title} — НАРТУ` : t.newsNotFound, description: item?.excerpt || undefined }
+  if (!item) return { title: t.newsNotFound, robots: { index: false } }
+  return pageMetadata({
+    title: item.meta?.title || item.title,
+    description: item.meta?.description || item.excerpt || plainText(item.content),
+    path: `/news/${item.slug}`,
+    image: mediaUrl(item.meta?.image, 'wide') || mediaUrl(item.cover, 'wide'),
+    noindex: item.meta?.noindex,
+    type: 'article',
+    publishedTime: item.publishedAt,
+    modifiedTime: item.updatedAt,
+  })
 }
 
 export default async function NewsItemPage({ params, searchParams }: Props) {
@@ -64,8 +76,37 @@ export default async function NewsItemPage({ params, searchParams }: Props) {
     })
   ).docs
 
+  const seo = await getSeo(locale)
+  const url = localizedUrl(`/news/${item.slug}`, locale)
+
   return (
     <SiteShell draft={draft}>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'NewsArticle',
+          headline: item.title,
+          description: item.excerpt || plainText(item.content),
+          image: cover ? [SITE_URL + cover] : undefined,
+          datePublished: item.publishedAt,
+          dateModified: item.updatedAt,
+          inLanguage: locale,
+          mainEntityOfPage: url,
+          author: { '@type': 'Organization', name: seo.siteTitle, url: SITE_URL },
+          publisher: { '@type': 'GovernmentOrganization', name: seo.siteTitle, logo: { '@type': 'ImageObject', url: `${SITE_URL}/img/emblem.png` } },
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t.breadcrumbHome, item: localizedUrl('/', locale) },
+            { '@type': 'ListItem', position: 2, name: t.news, item: localizedUrl('/news', locale) },
+            { '@type': 'ListItem', position: 3, name: item.title, item: url },
+          ],
+        }}
+      />
       <section className="page-head">
         <div className="wrap">
           <div className="crumbs">
@@ -83,7 +124,7 @@ export default async function NewsItemPage({ params, searchParams }: Props) {
               <img src={cover} alt={typeof item.cover === 'object' ? item.cover?.alt || '' : ''} />
             </div>
           )}
-          {item.content ? <Prose data={item.content} /> : <p className="prose">{item.excerpt}</p>}
+          {item.content ? <Prose data={item.content} newTabLabel={t.newTab} /> : <p className="prose">{item.excerpt}</p>}
         </article>
         <PageSidebar path="/news" locale={locale} t={t} draft={draft}>
           {latest.length > 0 && (

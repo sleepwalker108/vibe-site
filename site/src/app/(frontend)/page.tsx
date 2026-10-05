@@ -9,6 +9,8 @@ import { StatsAnimator } from '@/components/StatsAnimator'
 import { TerritoriesSection } from '@/components/TerritoriesSection'
 import { formatDate, getClient, isDraftMode, mediaUrl, publishedOnly } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
+import { JsonLd } from '@/components/JsonLd'
+import { getSeo, pageMetadata, SITE_URL } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,17 +27,22 @@ const domainOf = (url?: string | null) => {
   }
 }
 
+export const generateMetadata = () => pageMetadata({ path: '/' })
+
 export default async function HomePage({ searchParams }: Props) {
   const draft = await isDraftMode(await searchParams)
   const { locale, t } = await getDict()
   const lq = localeQuery(locale)
   const payload = await getClient()
-  const [home, stats, report, territories, news] = await Promise.all([
+  const [home, stats, report, territories, news, contacts, seo, resources] = await Promise.all([
     payload.findGlobal({ slug: 'home', draft, depth: 1, ...lq }),
     payload.findGlobal({ slug: 'stats', draft, depth: 0, ...lq }),
     payload.findGlobal({ slug: 'annual-report', draft, depth: 0, ...lq }),
     payload.findGlobal({ slug: 'territories', draft, depth: 0, ...lq }),
     payload.find({ collection: 'news', draft, limit: 5, sort: '-publishedAt', depth: 1, where: publishedOnly(draft), ...lq }),
+    payload.findGlobal({ slug: 'contacts', depth: 0, ...lq }),
+    getSeo(locale),
+    payload.findGlobal({ slug: 'resources', draft, depth: 0, ...lq }),
   ])
 
   const { hero, statement, evacuation: evac } = home
@@ -47,11 +54,33 @@ export default async function HomePage({ searchParams }: Props) {
 
   return (
     <SiteShell draft={draft}>
+      {/* Хто ми — для Google (картка організації, телефони гарячих ліній) */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'GovernmentOrganization',
+          name: contacts.orgName || seo.siteTitle,
+          alternateName: seo.titleSuffix,
+          url: SITE_URL,
+          logo: `${SITE_URL}/img/emblem.png`,
+          description: seo.description,
+          email: contacts.email || undefined,
+          address: contacts.address ? { '@type': 'PostalAddress', streetAddress: contacts.address, addressCountry: 'UA' } : undefined,
+          contactPoint: [
+            ...(contacts.hotline?.number
+              ? [{ '@type': 'ContactPoint', telephone: contacts.hotline.number, contactType: 'customer support', areaServed: 'UA', availableLanguage: ['uk'] }]
+              : []),
+            ...(contacts.phones || []).map((p) => ({ '@type': 'ContactPoint', telephone: p.text, contactType: 'customer support' })),
+          ],
+        }}
+      />
+      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'WebSite', name: seo.siteTitle, url: SITE_URL, inLanguage: ['uk', 'en'] }} />
       <section className="hero">
         <Flag
           speed={hero?.flagSpeed}
           videoUrl={hero?.flagMode === 'video' ? mediaUrl(hero?.flagVideo) : undefined}
           videoSpeed={hero?.videoSpeed}
+          labels={{ pause: t.flagPause, play: t.flagPlay }}
         />
         <div className="hero-inner">
           <img src="/img/gerb.png" alt="" />
@@ -73,6 +102,23 @@ export default async function HomePage({ searchParams }: Props) {
         </div>
         <div className="scroll-hint">{t.scrollHint}</div>
       </section>
+
+      {/* Телефон: плитки швидких дій під першим екраном */}
+      <nav className="quick-tiles wrap" aria-label={t.quickLinks}>
+        {[
+          { href: hero?.primary?.url || 'tel:1548', label: t.quickHotline, icon: 'phone' },
+          { href: '#evacuation', label: t.quickEvac, icon: 'home' },
+          { href: '#stats', label: t.quickStats, icon: 'info' },
+          { href: '#territories', label: t.quickMap, icon: 'map' },
+        ].map((q) => (
+          <a key={q.href} href={q.href} className="quick-tile">
+            <span className="quick-ico">
+              <ResourceIcon name={q.icon} />
+            </span>
+            <span>{q.label}</span>
+          </a>
+        ))}
+      </nav>
 
       {(statement?.title || statement?.text) && (
         <section className="statement wrap">
@@ -207,13 +253,14 @@ export default async function HomePage({ searchParams }: Props) {
         </section>
       )}
 
-      {!!home.resources?.length && (
-        <section className="res-sec wrap" style={{ paddingTop: 80 }}>
+      {resources.show !== false && !!resources.items?.length && (
+        <section className="res-sec wrap" id="resources" style={{ paddingTop: 80 }}>
           <div className="sec-head">
-            <h2>{t.resources}</h2>
+            <h2>{resources.title || t.resources}</h2>
+            {resources.subtitle && <p className="res-sub">{resources.subtitle}</p>}
           </div>
           <div className="res-grid">
-            {home.resources.map((r) => (
+            {resources.items.map((r) => (
               <a key={r.id} className="res-card" href={r.url || '#'} target="_blank" rel="noopener noreferrer">
                 <span className="res-ico">
                   <ResourceIcon name={r.icon} />
@@ -221,6 +268,7 @@ export default async function HomePage({ searchParams }: Props) {
                 <span className="res-body">
                   <span className="res-name">{r.label}</span>
                   <span className="res-desc">{r.description || domainOf(r.url)}</span>
+                  <span className="sr-only"> {t.newTab}</span>
                 </span>
                 <span className="res-arrow" aria-hidden="true">
                   ↗

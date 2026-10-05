@@ -44,12 +44,12 @@ const meta: Record<string, { icon: string; description: string }> = {
   Прихисток: { icon: 'home', description: 'Компенсація за розміщення ВПО' },
 }
 
-const home = await payload.findGlobal({ slug: 'home', depth: 0 })
+const res = await payload.findGlobal({ slug: 'resources', depth: 0 })
 await payload.updateGlobal({
-  slug: 'home',
+  slug: 'resources',
   data: {
     _status: 'published',
-    resources: (home.resources || []).map((r) => ({ ...r, ...(meta[r.label] || {}) })) as any,
+    items: (res.items || []).map((r) => ({ ...r, ...(meta[r.label] || {}) })) as any,
   },
 })
 

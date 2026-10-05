@@ -3,11 +3,12 @@ import { NewsCard } from '@/components/NewsCard'
 import { SiteShell } from '@/components/SiteShell'
 import { getClient, isDraftMode, publishedOnly } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
+import { pageMetadata } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 export async function generateMetadata() {
   const { t } = await getDict()
-  return { title: `${t.news} — ${t.orgShort.replace(/\s+/g, ' ')}` }
+  return pageMetadata({ title: t.news, path: '/news' })
 }
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
@@ -47,7 +48,7 @@ export default async function NewsPage({ searchParams }: Props) {
         <div className="wrap">
           <div className="news-grid">
             {news.docs.map((n) => (
-              <NewsCard key={n.id} item={n} />
+              <NewsCard key={n.id} item={n} level={2} />
             ))}
           </div>
           {news.totalPages > 1 && (

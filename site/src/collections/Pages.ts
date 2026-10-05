@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
+import { seoFields } from '../fields/seo'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -45,5 +46,6 @@ export const Pages: CollectionConfig = {
         beforeValidate: [({ value, data }) => (value ? value : data?.title ? slugify(data.title) : value)],
       },
     },
+    seoFields(),
   ],
 }

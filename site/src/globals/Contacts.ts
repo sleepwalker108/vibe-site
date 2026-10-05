@@ -31,6 +31,38 @@ export const Contacts: GlobalConfig = {
     { name: 'address', type: 'text', label: 'Адреса', localized: true },
     lines('schedule', 'Режим роботи', true),
     { name: 'email', type: 'email', label: 'Електронна пошта' },
+    {
+      name: 'socials',
+      type: 'array',
+      label: 'Соцмережі та месенджери',
+      labels: { singular: 'Посилання', plural: 'Посилання' },
+      admin: { description: 'Кнопки в мобільному меню, напр. Telegram-бот гарячої лінії, Facebook.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'network',
+              type: 'select',
+              label: 'Мережа',
+              required: true,
+              defaultValue: 'telegram',
+              options: [
+                { label: 'Telegram', value: 'telegram' },
+                { label: 'Facebook', value: 'facebook' },
+                { label: 'Instagram', value: 'instagram' },
+                { label: 'YouTube', value: 'youtube' },
+                { label: 'Viber', value: 'viber' },
+                { label: 'X (Twitter)', value: 'x' },
+                { label: 'LinkedIn', value: 'linkedin' },
+              ],
+            },
+            { name: 'label', type: 'text', label: 'Напис на кнопці', localized: true },
+            { name: 'url', type: 'text', label: 'Посилання', required: true },
+          ],
+        },
+      ],
+    },
     lines('phones', 'Телефони'),
     {
       name: 'hotline',

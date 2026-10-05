@@ -17,8 +17,27 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
 
   return (
     <>
-      <Header shortName={c.shortName} kicker={c.kicker} logoUrl={logo} menu={(nav.items || []) as MenuItem[]} locale={locale} t={t} />
-      <main>{children}</main>
+      <a className="skip-link" href="#main">
+        {t.skipToContent}
+      </a>
+      <Header
+        shortName={c.shortName}
+        kicker={c.kicker}
+        logoUrl={logo}
+        menu={(nav.items || []) as MenuItem[]}
+        locale={locale}
+        t={t}
+        contacts={{
+          hotline: c.hotline?.number,
+          hotlineNote: c.hotline?.lines?.[0]?.text,
+          phones: (c.phones || []).map((p) => p.text),
+          email: c.email,
+          socials: (c.socials || []).map((s) => ({ network: s.network, label: s.label, url: s.url })),
+        }}
+      />
+      <main id="main" tabIndex={-1}>
+        {children}
+      </main>
       <div className="flag-strip" />
       <footer id="footer">
         <div className="wrap">
@@ -33,11 +52,11 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
               </div>
             </div>
             <div>
-              <h4>{t.schedule}</h4>
+              <h2 className="foot-h">{t.schedule}</h2>
               {c.schedule?.map((l) => <p key={l.id}>{l.text}</p>)}
             </div>
             <div>
-              <h4>{t.contacts}</h4>
+              <h2 className="foot-h">{t.contacts}</h2>
               {c.email && (
                 <p>
                   <a href={`mailto:${c.email}`}>{c.email}</a>
@@ -46,7 +65,7 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
               {c.phones?.map((l) => <p key={l.id}>{l.text}</p>)}
             </div>
             <div>
-              <h4>{t.hotline}</h4>
+              <h2 className="foot-h">{t.hotline}</h2>
               <div className="foot-hot">{c.hotline?.number}</div>
               {c.hotline?.lines?.map((l) => <p key={l.id}>{l.text}</p>)}
             </div>

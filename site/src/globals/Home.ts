@@ -2,7 +2,7 @@ import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
 
 // Іконки для карток і корисних ресурсів (малюються в components/ResourceIcon.tsx)
-const ICON_OPTIONS = [
+export const ICON_OPTIONS = [
   { label: 'Будівля (міністерство, установа)', value: 'building' },
   { label: 'Пошук людини (НІБ, зниклі)', value: 'search' },
   { label: 'Телефон (гаряча лінія)', value: 'phone' },
@@ -203,39 +203,6 @@ export const Home: GlobalConfig = {
               fields: [
                 { name: 'footer', type: 'text', label: 'Підпис унизу', localized: true },
                 { name: 'footerHighlight', type: 'text', label: 'Підпис унизу: жовта частина', localized: true },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'Корисні ресурси',
-          fields: [
-            {
-              name: 'resources',
-              type: 'array',
-              label: 'Ресурси',
-              labels: { singular: 'Ресурс', plural: 'Ресурси' },
-              fields: [
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'label', type: 'text', label: 'Назва', required: true, localized: true },
-                    { name: 'url', type: 'text', label: 'Посилання' },
-                  ],
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    {
-                      name: 'icon',
-                      type: 'select',
-                      label: 'Іконка',
-                      defaultValue: 'globe',
-                      options: ICON_OPTIONS,
-                    },
-                    { name: 'description', type: 'text', label: 'Короткий опис', localized: true },
-                  ],
-                },
               ],
             },
           ],

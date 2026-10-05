@@ -97,7 +97,15 @@ await payload.updateGlobal({
         linkLabel: 'Читати', url: '/infografika',
       },
     ] as any,
-    resources: [
+  },
+})
+
+await payload.updateGlobal({
+  slug: 'resources',
+  data: {
+    _status: 'published',
+    title: 'Корисні ресурси',
+    items: [
       { label: 'Мінрозвитку', url: 'https://www.minre.gov.ua/' },
       { label: 'Національне інформаційне бюро', url: 'https://nib.gov.ua/' },
       { label: 'Портал 1548', url: 'https://1548.in.ua/' },

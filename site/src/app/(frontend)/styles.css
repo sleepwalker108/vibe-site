@@ -173,7 +173,7 @@
   .news-card .img img { width: 100%; height: 100%; object-fit: cover; }
   .news-card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .news-card time { font-size: .8rem; font-weight: 700; color: var(--muted); }
-  .news-card h3 { margin: 0; font-size: 1rem; line-height: 1.35; color: var(--navy-ink); }
+  .news-card h3, .news-card .news-card-title { margin: 0; font-size: 1rem; line-height: 1.35; color: var(--navy-ink); }
   .news-card.featured .img { aspect-ratio: 16/11; }
   .news-card.featured h3 { font-size: 1.45rem; }
   .news-card.featured p { margin: 0; color: var(--muted); }
@@ -200,7 +200,7 @@
   /* ---------- footer ---------- */
   footer { background: var(--navy-deep); color: rgba(255,255,255,.82); padding: 64px 0 28px; font-size: .92rem; }
   .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 32px; }
-  footer h4 { color: #fff; margin: 0 0 12px; font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; }
+  footer h4, footer .foot-h { color: #fff; font-weight: 700; margin: 0 0 12px; font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; }
   footer p { margin: 0 0 8px; }
   footer a:hover { color: var(--yellow); }
   .foot-brand { display: flex; gap: 14px; align-items: flex-start; }
@@ -781,7 +781,7 @@
     .news-small .news-card .img, .news-grid .news-card .img { flex: none; width: 112px; aspect-ratio: auto; min-height: 104px; }
     .news-small .news-card .img .ph, .news-grid .news-card .img .ph { font-size: 1.3rem; }
     .news-small .news-card .body, .news-grid .news-card .body { padding: 12px 14px; gap: 4px; justify-content: center; }
-    .news-small .news-card h3, .news-grid .news-card h3 { font-size: .95rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .news-small .news-card h3, .news-grid .news-card h3, .news-grid .news-card .news-card-title { font-size: .95rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .news-small { gap: 12px; }
     .news-grid { gap: 12px; }
     .news { gap: 12px; }
@@ -829,3 +829,206 @@
   @media (max-width: 640px) { .prose-cards { grid-template-columns: 1fr; } .prose-stat { padding: 22px; } }
   html.contrast .prose-card, html.contrast .prose-stat { border: 2px solid #fff !important; }
   html.contrast .prose-stat-num { color: #ff0 !important; }
+
+/* «Корисні ресурси»: текст під заголовком (редагується в адмінці) */
+.res-sec .sec-head { flex-wrap: wrap; }
+.res-sub { margin: 0; color: var(--muted, #5b6b7f); max-width: 560px; }
+
+
+/* ---------- доступність (WCAG 2.1 AA) ---------- */
+/* текст лише для програм екранного доступу */
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* «Перейти до основного вмісту» — перша клавіша Tab на сторінці */
+.skip-link { position: fixed; left: 16px; top: -100px; z-index: 10000; padding: 12px 18px; border-radius: 10px; background: var(--navy); color: #fff;
+  font-weight: 700; text-decoration: none; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+.skip-link:focus { top: 12px; }
+main:focus { outline: none; }
+/* рамка фокусу помітна на будь-якому фоні: темний контур + жовта облямівка */
+:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; box-shadow: 0 0 0 6px var(--yellow); }
+/* кнопка «зупинити анімацію прапора» */
+.hero { position: relative; }
+.flag-toggle { position: absolute; right: 16px; bottom: 16px; z-index: 3; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.55); background: rgba(10,36,64,.55); color: #fff; cursor: pointer; backdrop-filter: blur(6px); }
+.flag-toggle:hover { background: rgba(10,36,64,.8); }
+/* людям, яким рух заважає (налаштування системи «менше руху»), — без анімацій */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+/* текст першого екрана читається навіть на жовтій частині прапора (контраст ≥ 4,5:1) */
+.hero::before { background: radial-gradient(ellipse 70% 60% at 50% 55%, rgba(8,32,60,.66) 0%, rgba(8,32,60,.42) 55%, rgba(11,47,82,.45) 100%); }
+
+/* ---------- анімовані іконки кнопок шапки ---------- */
+.ti { display: inline-flex; align-items: center; justify-content: center; pointer-events: none; }
+.tool, .nt-btn { transition: background-color .2s, transform .15s, box-shadow .2s; }
+.tool:active, .nt-btn:active { transform: scale(.92); }
+/* A− / A+: літера зменшується чи збільшується, знак «підстрибує» */
+.ti-font { gap: 1px; line-height: 1; font-weight: 800; }
+.ti-a { display: inline-block; transition: transform .25s cubic-bezier(.34,1.56,.64,1); transform-origin: 50% 80%; }
+.ti-sign { display: inline-block; font-size: .85em; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+button:hover .ti-up .ti-a, button:focus-visible .ti-up .ti-a { transform: scale(1.22); }
+button:hover .ti-up .ti-sign, button:focus-visible .ti-up .ti-sign { transform: rotate(90deg) translateY(-1px); }
+button:hover .ti-down .ti-a, button:focus-visible .ti-down .ti-a { transform: scale(.8); }
+button:hover .ti-down .ti-sign, button:focus-visible .ti-down .ti-sign { transform: translateX(2px) scaleX(1.3); }
+button:active .ti-font .ti-a { animation: ti-pop .35s ease; }
+@keyframes ti-pop { 50% { transform: scale(1.35); } }
+/* контраст: половинка кола обертається; коли режим увімкнено — залишається поверненою */
+.ti-contrast { transition: transform .45s cubic-bezier(.34,1.56,.64,1); }
+.ti-half { transition: opacity .3s; }
+button:hover .ti-contrast, button:focus-visible .ti-contrast { transform: rotate(180deg); }
+button[aria-pressed="true"] .ti-contrast { transform: rotate(180deg); }
+button[aria-pressed="true"]:hover .ti-contrast { transform: rotate(360deg); }
+/* мова: глобус крутиться */
+.ti-globe { margin-right: 4px; opacity: .85; }
+.ti-meridians { transform-origin: 12px 12px; transform-box: view-box; }
+.lang:hover .ti-meridians, .lang-btn:focus-visible .ti-meridians, .lang-btn[aria-expanded="true"] .ti-meridians { animation: ti-spin 1.6s linear infinite; }
+@keyframes ti-spin { 0% { transform: scaleX(1); } 25% { transform: scaleX(.15); } 50% { transform: scaleX(-1); } 75% { transform: scaleX(-.15); } 100% { transform: scaleX(1); } }
+/* меню на телефоні: три смужки перетворюються на хрестик */
+.ti-burger { position: relative; width: 20px; height: 14px; display: inline-block; }
+.ti-burger span { position: absolute; left: 0; width: 100%; height: 2px; border-radius: 2px; background: currentColor; transition: transform .3s cubic-bezier(.65,0,.35,1), opacity .2s, top .3s cubic-bezier(.65,0,.35,1); }
+.ti-burger span:nth-child(1) { top: 0; }
+.ti-burger span:nth-child(2) { top: 6px; }
+.ti-burger span:nth-child(3) { top: 12px; }
+.ti-burger.is-open span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+.ti-burger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(.2); }
+.ti-burger.is-open span:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+/* ---------- підменю шапки: відкрите лише одне, керується з Header.tsx (.sub-open) ---------- */
+.nav:not(.open) > li:hover .sub, .nav:not(.open) > li:focus-within .sub { display: none; }
+.nav:not(.open) > li.sub-open .sub { display: block; animation: sub-in .18s ease-out; }
+@keyframes sub-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.nav:not(.open) > li:focus-within:not(.sub-open) > .nav-parent:not(:hover) { background: transparent; }
+.nav:not(.open) > li.sub-open > .nav-parent, .nav:not(.open) > li.sub-open > a { background: var(--sky); color: var(--navy); }
+/* стрілочка: замість символу ▾ — іконка, що плавно повертається */
+.nav .has-sub > a::after, .nav > li > .nav-parent::after { content: none !important; }
+.nav-parent { display: inline-flex; align-items: center; gap: 4px; }
+.nav-caret { flex: none; opacity: .6; transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
+.has-sub > a + .nav-caret { margin-left: -2px; pointer-events: none; }
+.nav > li.sub-open .nav-caret { transform: rotate(180deg); opacity: 1; }
+.nav.open .nav-caret { display: none; }
+
+/* ---------- мобільне меню: панель праворуч (MobileMenu.tsx) ---------- */
+.mm { position: fixed; inset: 0; z-index: 2000; pointer-events: none; }
+.mm.is-open { pointer-events: auto; }
+.mm-overlay { position: absolute; inset: 0; background: rgba(10, 36, 64, .45); backdrop-filter: blur(3px); opacity: 0; transition: opacity .3s ease; }
+.mm.is-open .mm-overlay { opacity: 1; }
+.mm-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(420px, 90vw); overflow-y: auto; overscroll-behavior: contain;
+  background: #fff; color: var(--ink); box-shadow: -12px 0 40px rgba(10, 36, 64, .25); padding: 18px 18px 28px;
+  transform: translateX(100%); transition: transform .35s cubic-bezier(.22, 1, .36, 1); font-size: calc(16px * var(--fs-scale)); }
+.mm.is-open .mm-panel { transform: none; }
+
+.mm-head { display: flex; align-items: center; gap: 10px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.mm-brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-decoration: none; color: inherit; }
+.mm-brand img { width: 44px; height: 44px; object-fit: contain; flex: none; }
+.mm-brand strong { display: block; color: var(--navy); font-weight: 800; font-size: .92em; line-height: 1.2; }
+.mm-brand small { display: block; color: var(--muted); font-size: .72em; line-height: 1.25; margin-top: 2px; }
+.mm-icon-btn { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; border: 1px solid var(--sky-2);
+  background: var(--sky); color: var(--navy); cursor: pointer; transition: background-color .2s, transform .15s; }
+.mm-icon-btn:hover { background: var(--sky-2); }
+.mm-icon-btn:active { transform: scale(.92); }
+.mm-icon-btn[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+.mm-nav ul { list-style: none; margin: 0; padding: 0; }
+.mm-nav { margin-top: 10px; }
+.mm-item { border-bottom: 1px solid var(--line); }
+.mm-row-wrap { display: flex; align-items: center; }
+.mm-row { flex: 1; display: block; width: 100%; padding: 16px 12px; margin: 4px 0; border: 0; border-radius: 12px; background: none; color: var(--ink);
+  font: inherit; font-weight: 700; text-align: left; text-decoration: none; cursor: pointer; line-height: 1.3; }
+.mm-row:hover { color: var(--navy); }
+.mm-row.is-active, .mm-row-wrap.is-active > .mm-row { background: var(--sky); color: var(--navy); }
+.mm-toggle { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 12px; background: none; color: var(--navy); cursor: pointer; }
+.mm-toggle svg { transition: transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+.mm-item.is-open .mm-toggle svg { transform: rotate(180deg); }
+.mm-row-wrap > button.mm-row + .mm-toggle { margin-left: -44px; pointer-events: none; } /* стрілочка всередині кнопки-пункту */
+.mm-sub { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.mm-sub > ul { overflow: hidden; }
+.mm-item.is-open .mm-sub { grid-template-rows: 1fr; }
+.mm-sub li:last-child { padding-bottom: 10px; }
+.mm-sub-link { display: block; position: relative; padding: 11px 12px 11px 30px; border-radius: 10px; color: var(--ink); text-decoration: none; line-height: 1.35; font-size: .94em; }
+.mm-sub-link::before { content: ""; position: absolute; left: 15px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--sky-2); }
+.mm-sub-link:hover { background: var(--sky); color: var(--navy); }
+.mm-sub-link.is-active { background: var(--sky); color: var(--navy); font-weight: 700; }
+.mm-sub-link.is-active::before { background: var(--yellow); }
+
+.mm-tools { display: flex; gap: 10px; justify-content: space-between; margin: 22px 0 14px; }
+.mm-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 14px; background: var(--sky); }
+.mm-seg button { min-width: 48px; height: 40px; border: 0; border-radius: 10px; background: transparent; color: var(--navy); font: inherit; font-weight: 800; cursor: pointer; }
+.mm-seg button:hover { background: #fff; }
+.mm-seg button.on { background: var(--navy); color: #fff; }
+
+.mm-socials { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.mm-social { display: flex; align-items: center; gap: 10px; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--sky-2);
+  background: var(--sky); color: var(--navy-ink); font-weight: 700; font-size: .88em; line-height: 1.25; text-decoration: none; transition: background-color .2s, transform .15s; }
+.mm-social svg { flex: none; color: #229ed9; }
+.mm-social:hover { background: var(--sky-2); }
+.mm-social:active { transform: scale(.97); }
+
+.mm-contacts { display: grid; gap: 10px; padding: 12px; border-radius: 18px; background: var(--sky); border: 1px solid var(--sky-2); }
+.mm-contact { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #fff; border: 1px solid var(--sky-2);
+  color: var(--ink); text-decoration: none; }
+a.mm-contact:hover { border-color: var(--navy); }
+.mm-c-ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--sky); color: var(--navy); }
+.mm-hot .mm-c-ico { background: var(--yellow); color: var(--navy-ink); }
+.mm-c-text { min-width: 0; display: flex; flex-direction: column; }
+.mm-c-text strong { font-weight: 800; overflow-wrap: anywhere; }
+.mm-hot .mm-c-text strong { font-size: 1.25em; color: var(--navy); }
+.mm-c-text small { color: var(--muted); font-size: .8em; line-height: 1.3; margin-top: 2px; }
+
+/* режим високого контрасту */
+html.contrast .mm-panel, html.contrast .mm-contact, html.contrast .mm-social, html.contrast .mm-contacts, html.contrast .mm-seg, html.contrast .mm-icon-btn { background: #000 !important; color: #fff !important; border-color: #fff !important; }
+html.contrast .mm-row, html.contrast .mm-sub-link, html.contrast .mm-toggle, html.contrast .mm-brand strong, html.contrast .mm-c-text strong { color: #fff !important; background: transparent !important; }
+html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.contrast .mm-seg button.on, html.contrast .mm-icon-btn[aria-pressed="true"] { background: #ff0 !important; color: #000 !important; }
+
+/* мобільне меню: усі рядки внизу — однакової ширини й з однаковими відступами */
+.mm-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mm-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+.mm-seg button { min-width: 0; }
+.mm-socials { grid-template-columns: 1fr; gap: 10px; }
+.mm-social { gap: 12px; padding: 12px 14px; background: #fff; border-color: var(--sky-2); }
+.mm-s-ico { background: #e3f3fb; }
+.mm-s-ico svg { color: #229ed9; }
+.mm-s-text { min-width: 0; font-size: 1.05em; line-height: 1.3; }
+.mm-c-text strong { overflow-wrap: normal; word-break: normal; }
+.mm-email { font-size: .86em; }
+.mm-socials + .mm-contacts, .mm-socials { margin-bottom: 12px; }
+/* блок месенджерів у тій самій «картці», що й контакти */
+.mm-socials { padding: 12px; border-radius: 18px; background: var(--sky); border: 1px solid var(--sky-2); }
+
+/* ---------- телефон: компактний масштаб головної сторінки ---------- */
+.quick-tiles { display: none; }
+@media (max-width: 640px) {
+  /* перший екран — картка з відступами й заокругленням, а не на весь екран */
+  .hero { min-height: 0 !important; margin: calc(var(--bar-h, 64px) + 12px) 12px 0; border-radius: 24px; place-items: stretch; text-align: left; box-shadow: 0 10px 30px rgba(10,36,64,.18); }
+  .hero-inner { padding: 26px 20px 24px; max-width: none; }
+  .hero img { height: 54px; margin: 0 0 14px; }
+  .hero .kicker { font-size: .66rem; letter-spacing: .12em; }
+  .hero h1 { font-size: calc(1.55rem * var(--fs-scale)); margin: 8px 0 10px; line-height: 1.15; }
+  .hero p { font-size: calc(.95rem * var(--fs-scale)); margin: 0; max-width: none; line-height: 1.45; }
+  .hero .cta { justify-content: flex-start; gap: 10px; margin-top: 18px; }
+  .hero .cta .btn { padding: 11px 18px; font-size: .9rem; }
+  .scroll-hint { display: none; }
+  .flag-toggle { width: 36px; height: 36px; right: 12px; bottom: auto; top: 12px; }
+  .hero::before { background: linear-gradient(180deg, rgba(8,32,60,.55), rgba(8,32,60,.72)); }
+
+  /* плитки швидких дій 2×2 */
+  .quick-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 12px; padding-bottom: 4px; }
+  .quick-tile { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 12px; border-radius: 16px; background: #fff;
+    border: 1px solid var(--line); color: var(--navy-ink); font-weight: 700; font-size: calc(.86rem * var(--fs-scale)); line-height: 1.25;
+    text-decoration: none; box-shadow: 0 4px 14px rgba(10,36,64,.06); transition: transform .15s, border-color .2s; }
+  .quick-tile:active { transform: scale(.97); }
+  .quick-tile:hover { border-color: var(--navy); }
+  .quick-ico { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--sky); color: var(--navy); }
+  .quick-ico svg { width: 20px; height: 20px; }
+  .quick-tile:first-child .quick-ico { background: var(--yellow); color: var(--navy-ink); }
+
+  /* розділи: менші заголовки й відступи */
+  .statement { padding-top: 28px !important; }
+  .statement h2 { font-size: calc(1.35rem * var(--fs-scale)); }
+  .sec-head h2 { font-size: calc(1.4rem * var(--fs-scale)) !important; }
+  .stats-sec, .report-sec, .terr-sec { padding-top: 40px !important; padding-bottom: 40px !important; }
+  .news-sec { padding-top: 36px !important; padding-bottom: 40px !important; }
+  .res-sec { padding-top: 40px !important; }
+  .card { padding: 20px !important; }
+  .card .big { font-size: 2.1rem !important; }
+}
+html.contrast .quick-tile { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+html.contrast .quick-ico { background: #ff0 !important; color: #000 !important; }

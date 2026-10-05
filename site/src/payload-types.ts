@@ -72,6 +72,7 @@ export interface Config {
     videos: Video;
     media: Media;
     users: User;
+    visits: Visit;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,6 +86,7 @@ export interface Config {
     videos: VideosSelect<false> | VideosSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    visits: VisitsSelect<false> | VisitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -101,7 +103,9 @@ export interface Config {
     stats: Stat;
     'annual-report': AnnualReport;
     territories: Territory;
+    resources: Resource;
     contacts: Contact;
+    seo: Seo;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
@@ -109,7 +113,9 @@ export interface Config {
     stats: StatsSelect<false> | StatsSelect<true>;
     'annual-report': AnnualReportSelect<false> | AnnualReportSelect<true>;
     territories: TerritoriesSelect<false> | TerritoriesSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
+    seo: SeoSelect<false> | SeoSelect<true>;
   };
   locale: 'uk' | 'en';
   widgets: {
@@ -186,6 +192,21 @@ export interface News {
    * Для переадресації старих посилань.
    */
   legacyUrl?: string | null;
+  meta?: {
+    /**
+     * До 60 символів. Порожньо — використовується звичайний заголовок.
+     */
+    title?: string | null;
+    /**
+     * 120–160 символів: про що сторінка, з ключовими словами, якими люди шукають. Порожньо — береться короткий опис або початок тексту.
+     */
+    description?: string | null;
+    /**
+     * Найкраще 1200×630 px. Порожньо — обкладинка або картинка сайту за замовчуванням.
+     */
+    image?: (number | null) | Media;
+    noindex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -260,6 +281,21 @@ export interface Page {
    * Частина адреси після домену. Не змінюйте без потреби — старі посилання перестануть працювати.
    */
   slug?: string | null;
+  meta?: {
+    /**
+     * До 60 символів. Порожньо — використовується звичайний заголовок.
+     */
+    title?: string | null;
+    /**
+     * 120–160 символів: про що сторінка, з ключовими словами, якими люди шукають. Порожньо — береться короткий опис або початок тексту.
+     */
+    description?: string | null;
+    /**
+     * Найкраще 1200×630 px. Порожньо — обкладинка або картинка сайту за замовчуванням.
+     */
+    image?: (number | null) | Media;
+    noindex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -320,6 +356,20 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visits".
+ */
+export interface Visit {
+  id: number;
+  path: string;
+  visitor?: string | null;
+  referrer?: string | null;
+  device?: string | null;
+  lang?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -456,6 +506,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'visits';
+        value: number | Visit;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -513,6 +567,14 @@ export interface NewsSelect<T extends boolean = true> {
   content?: T;
   slug?: T;
   legacyUrl?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noindex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -527,6 +589,14 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   content?: T;
   slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noindex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -614,6 +684,19 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visits_select".
+ */
+export interface VisitsSelect<T extends boolean = true> {
+  path?: T;
+  visitor?: T;
+  referrer?: T;
+  device?: T;
+  lang?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -786,29 +869,6 @@ export interface Home {
     footer?: string | null;
     footerHighlight?: string | null;
   };
-  resources?:
-    | {
-        label: string;
-        url?: string | null;
-        icon?:
-          | (
-              | 'building'
-              | 'search'
-              | 'phone'
-              | 'heart'
-              | 'warning'
-              | 'scales'
-              | 'home'
-              | 'map'
-              | 'document'
-              | 'info'
-              | 'globe'
-            )
-          | null;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -987,6 +1047,50 @@ export interface Territory {
   createdAt?: string | null;
 }
 /**
+ * Картки з посиланнями на інші сайти внизу головної сторінки. Порядок змінюється перетягуванням.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: number;
+  show?: boolean | null;
+  title?: string | null;
+  subtitle?: string | null;
+  items?:
+    | {
+        label: string;
+        /**
+         * Повна адреса, напр. https://minre.gov.ua
+         */
+        url?: string | null;
+        icon?:
+          | (
+              | 'building'
+              | 'search'
+              | 'phone'
+              | 'heart'
+              | 'warning'
+              | 'scales'
+              | 'home'
+              | 'map'
+              | 'document'
+              | 'info'
+              | 'globe'
+            )
+          | null;
+        /**
+         * Порожньо — показується адреса сайту.
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts".
  */
@@ -1007,6 +1111,17 @@ export interface Contact {
       }[]
     | null;
   email?: string | null;
+  /**
+   * Кнопки в мобільному меню, напр. Telegram-бот гарячої лінії, Facebook.
+   */
+  socials?:
+    | {
+        network: 'telegram' | 'facebook' | 'instagram' | 'youtube' | 'viber' | 'x' | 'linkedin';
+        label?: string | null;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   phones?:
     | {
         text: string;
@@ -1023,6 +1138,46 @@ export interface Contact {
       | null;
   };
   _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Як сайт виглядає в Google та при поширенні посилань. Для окремих новин і сторінок — блок «Пошук Google і соцмережі» внизу їхньої сторінки.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo".
+ */
+export interface Seo {
+  id: number;
+  /**
+   * Заголовок головної сторінки. До 60 символів, найважливіші слова — на початку.
+   */
+  siteTitle?: string | null;
+  /**
+   * Додається після назви кожної сторінки, напр. «НАРТУ» → «Новини — НАРТУ».
+   */
+  titleSuffix?: string | null;
+  /**
+   * 120–160 символів. Показується під назвою сайту в Google.
+   */
+  description?: string | null;
+  /**
+   * Через кому. Google сам ці слова не враховує, але їх читають Bing і деякі каталоги. Головне для Google — щоб ці слова траплялися в заголовках і текстах сторінок.
+   */
+  keywords?: string | null;
+  /**
+   * 1200×630 px. Показується, коли посиланням на сайт діляться у Facebook, Telegram тощо.
+   */
+  shareImage?: (number | null) | Media;
+  /**
+   * search.google.com/search-console → Додати ресурс → «Тег HTML». Вставте лише значення content="…" (без лапок).
+   */
+  googleVerification?: string | null;
+  bingVerification?: string | null;
+  /**
+   * Вимикайте лише для тестової копії сайту.
+   */
+  allowIndexing?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1096,15 +1251,6 @@ export interface HomeSelect<T extends boolean = true> {
             };
         footer?: T;
         footerHighlight?: T;
-      };
-  resources?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-        icon?: T;
-        description?: T;
-        id?: T;
       };
   _status?: T;
   updatedAt?: T;
@@ -1231,6 +1377,28 @@ export interface TerritoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  show?: T;
+  title?: T;
+  subtitle?: T;
+  items?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        icon?: T;
+        description?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts_select".
  */
 export interface ContactsSelect<T extends boolean = true> {
@@ -1246,6 +1414,14 @@ export interface ContactsSelect<T extends boolean = true> {
         id?: T;
       };
   email?: T;
+  socials?:
+    | T
+    | {
+        network?: T;
+        label?: T;
+        url?: T;
+        id?: T;
+      };
   phones?:
     | T
     | {
@@ -1264,6 +1440,23 @@ export interface ContactsSelect<T extends boolean = true> {
             };
       };
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo_select".
+ */
+export interface SeoSelect<T extends boolean = true> {
+  siteTitle?: T;
+  titleSuffix?: T;
+  description?: T;
+  keywords?: T;
+  shareImage?: T;
+  googleVerification?: T;
+  bingVerification?: T;
+  allowIndexing?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, type MutableRefObject } from 'react'
 
 const VS = `attribute vec2 a; void main(){ gl_Position = vec4(a,0.,1.); }`
 const FS = `
@@ -45,19 +45,20 @@ const FS = `
   }`
 
 // Відео прапора: зациклене, без звуку, з налаштовуваною швидкістю
-const FlagVideo = ({ src, rate }: { src: string; rate: number }) => {
+const FlagVideo = ({ src, rate, paused }: { src: string; rate: number; paused: boolean }) => {
   const ref = useRef<HTMLVideoElement>(null)
   useEffect(() => {
     const v = ref.current
     if (!v) return
     const apply = () => {
       v.playbackRate = rate
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.pause()
+      if (paused) v.pause()
+      else void v.play().catch(() => {})
     }
     apply()
     v.addEventListener('loadedmetadata', apply)
     return () => v.removeEventListener('loadedmetadata', apply)
-  }, [rate, src])
+  }, [rate, src, paused])
   return (
     <video
       id="flag"
@@ -74,15 +75,55 @@ const FlagVideo = ({ src, rate }: { src: string; rate: number }) => {
   )
 }
 
-type FlagProps = { speed?: number | null; videoUrl?: string | null; videoSpeed?: number | null }
+type FlagProps = {
+  speed?: number | null
+  videoUrl?: string | null
+  videoSpeed?: number | null
+  labels: { pause: string; play: string }
+}
+const PAUSE_KEY = 'flagPaused'
 
-export const Flag = ({ speed = 0.32, videoUrl, videoSpeed }: FlagProps) => {
-  if (videoUrl) return <FlagVideo src={videoUrl} rate={Number(videoSpeed ?? 0.6)} />
-  return <FlagCanvas speed={speed} />
+// Прапор + кнопка «зупинити анімацію» (стандарт доступності WCAG 2.2.2: рух довше 5 секунд має зупинятися).
+// Вибір запам’ятовується; якщо в системі ввімкнено «менше руху» — прапор одразу нерухомий.
+export const Flag = ({ speed = 0.32, videoUrl, videoSpeed, labels }: FlagProps) => {
+  const [paused, setPaused] = useState(false)
+  const pausedRef = useRef(false)
+  useEffect(() => {
+    let p = matchMedia('(prefers-reduced-motion: reduce)').matches
+    try {
+      const saved = localStorage.getItem(PAUSE_KEY)
+      if (saved !== null) p = saved === '1'
+    } catch {}
+    setPaused(p)
+  }, [])
+  pausedRef.current = paused
+  const toggle = () => {
+    setPaused((v) => {
+      try {
+        localStorage.setItem(PAUSE_KEY, v ? '0' : '1')
+      } catch {}
+      return !v
+    })
+  }
+  const moving = videoUrl || Number(speed ?? 0.32) > 0
+  return (
+    <>
+      {videoUrl ? <FlagVideo src={videoUrl} rate={Number(videoSpeed ?? 0.6)} paused={paused} /> : <FlagCanvas speed={speed} pausedRef={pausedRef} />}
+      {moving && (
+        <button type="button" className="flag-toggle" onClick={toggle} aria-pressed={paused} aria-label={paused ? labels.play : labels.pause} title={paused ? labels.play : labels.pause}>
+          {paused ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor" /></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor" /></svg>
+          )}
+        </button>
+      )}
+    </>
+  )
 }
 
 // Шовковий прапор, що розвівається (WebGL). speed: 0 — нерухомий
-const FlagCanvas = ({ speed = 0.32 }: { speed?: number | null }) => {
+const FlagCanvas = ({ speed = 0.32, pausedRef }: { speed?: number | null; pausedRef: MutableRefObject<boolean> }) => {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -112,8 +153,10 @@ const FlagCanvas = ({ speed = 0.32 }: { speed?: number | null }) => {
     const uR = gl.getUniformLocation(pr, 'R')
     const uT = gl.getUniformLocation(pr, 'T')
 
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const s = reduceMotion ? 0 : Number(speed ?? 0.32)
+    const s = Number(speed ?? 0.32)
+    // на паузі прапор застигає там, де був
+    let t = 0
+    let last = performance.now()
     const draw = (sec: number) => {
       gl.uniform2f(uR, cv.width, cv.height)
       gl.uniform1f(uT, sec * s + 4)
@@ -124,7 +167,7 @@ const FlagCanvas = ({ speed = 0.32 }: { speed?: number | null }) => {
       cv.width = cv.clientWidth * dpr
       cv.height = cv.clientHeight * dpr
       gl.viewport(0, 0, cv.width, cv.height)
-      draw(performance.now() / 1000)
+      draw(t)
     }
     resize()
     addEventListener('resize', resize)
@@ -135,7 +178,9 @@ const FlagCanvas = ({ speed = 0.32 }: { speed?: number | null }) => {
     io.observe(cv)
     if (s > 0) {
       const loop = (now: number) => {
-        if (visible) draw(now / 1000)
+        if (!pausedRef.current) t += (now - last) / 1000
+        last = now
+        if (visible) draw(t)
         raf = requestAnimationFrame(loop)
       }
       raf = requestAnimationFrame(loop)

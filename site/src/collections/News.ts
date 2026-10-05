@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
+import { seoFields } from '../fields/seo'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -82,5 +83,6 @@ export const News: CollectionConfig = {
       label: 'Стара адреса на WordPress',
       admin: { position: 'sidebar', readOnly: true, description: 'Для переадресації старих посилань.' },
     },
+    seoFields(),
   ],
 }

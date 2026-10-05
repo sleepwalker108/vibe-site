@@ -8,6 +8,10 @@ export const A11Y_KEY = 'a11y'
 const uk = {
   // шапка
   home: 'На головну',
+  skipToContent: 'Перейти до основного вмісту',
+  flagPause: 'Зупинити анімацію прапора',
+  flagPlay: 'Увімкнути анімацію прапора',
+  newTab: '(відкривається в новій вкладці)',
   logoAlt: 'Логотип Національної агенції розвитку територій України',
   kicker: 'Державне некомерційне товариство',
   orgShort: 'Національна агенція\nрозвитку територій України',
@@ -25,6 +29,11 @@ const uk = {
   previewBar: 'Попередній перегляд — показано чернетку',
   // головна
   scrollHint: '↓ гортайте',
+  quickLinks: 'Швидкі дії',
+  quickHotline: 'Гаряча лінія 1548',
+  quickEvac: 'Евакуація',
+  quickStats: 'Статистика звернень',
+  quickMap: 'Мапа територій',
   asOf: 'станом на',
   yearShort: 'р.',
   accepted: 'Прийнято',
@@ -82,6 +91,10 @@ const uk = {
 
 const en: typeof uk = {
   home: 'Home',
+  skipToContent: 'Skip to main content',
+  flagPause: 'Pause flag animation',
+  flagPlay: 'Play flag animation',
+  newTab: '(opens in a new tab)',
   logoAlt: 'Logo of the National Agency for Territorial Development of Ukraine',
   kicker: 'State non-profit company',
   orgShort: 'National Agency for\nTerritorial Development of Ukraine',
@@ -97,6 +110,11 @@ const en: typeof uk = {
   toTop: 'Back to top ↑',
   previewBar: 'Preview — showing a draft',
   scrollHint: '↓ scroll',
+  quickLinks: 'Quick actions',
+  quickHotline: 'Hotline 1548',
+  quickEvac: 'Evacuation',
+  quickStats: 'Hotline statistics',
+  quickMap: 'Territories map',
   asOf: 'as of',
   yearShort: '',
   accepted: 'Received',

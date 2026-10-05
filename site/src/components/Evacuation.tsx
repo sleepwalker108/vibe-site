@@ -2,7 +2,7 @@ import type { Home } from '@/payload-types'
 
 // «Подзвоніть зараз та дізнайтеся все, що вас хвилює про виїзд» — кроки евакуації (редагується в адмінці)
 export const Evacuation = ({ e }: { e: NonNullable<Home['evacuation']> }) => (
-  <div className="card evac">
+  <div className="card evac" id="evacuation">
     {(e.highlight || e.title) && (
       <h3>
         {e.highlight && <span className="hl">{e.highlight}</span>}

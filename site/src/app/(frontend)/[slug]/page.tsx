@@ -3,8 +3,9 @@ import { notFound, redirect } from 'next/navigation'
 import { PageSidebar } from '@/components/PageSidebar'
 import { Prose } from '@/components/Prose'
 import { SiteShell } from '@/components/SiteShell'
-import { getClient, isDraftMode, publishedOnly } from '@/lib/payload'
-import { getDict, localeQuery } from '@/lib/i18n'
+import { getClient, isDraftMode, mediaUrl, publishedOnly } from '@/lib/payload'
+import { getDict, getLocale, localeQuery } from '@/lib/i18n'
+import { pageMetadata, plainText } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +20,29 @@ const decode = (s: string) => {
   } catch {
     return s
   }
+}
+
+export async function generateMetadata({ params }: Props) {
+  const locale = await getLocale()
+  const slug = decode((await params).slug)
+  const payload = await getClient()
+  const page = (
+    await payload.find({
+      collection: 'pages',
+      where: { and: [{ slug: { equals: slug } }, publishedOnly(false)!] },
+      limit: 1,
+      depth: 1,
+      ...localeQuery(locale),
+    })
+  ).docs[0]
+  if (!page) return { robots: { index: false } }
+  return pageMetadata({
+    title: page.meta?.title || page.title,
+    description: page.meta?.description || plainText(page.content),
+    path: `/${page.slug}`,
+    image: mediaUrl(page.meta?.image, 'wide'),
+    noindex: page.meta?.noindex,
+  })
 }
 
 export default async function Page({ params, searchParams }: Props) {
@@ -54,7 +78,7 @@ export default async function Page({ params, searchParams }: Props) {
       <div className="article wrap page-layout">
         <article className="page-main">
           {!translated && <p className="not-translated">{t.notTranslated}</p>}
-          {page.content && <Prose data={page.content} />}
+          {page.content && <Prose data={page.content} newTabLabel={t.newTab} />}
         </article>
         <PageSidebar path={`/${slug}`} locale={locale} t={t} draft={draft} />
       </div>

@@ -3,12 +3,13 @@ import { SiteShell } from '@/components/SiteShell'
 import { VideoGallery, type GalleryVideo } from '@/components/VideoGallery'
 import { getDict, localeQuery } from '@/lib/i18n'
 import { formatDate, getClient, isDraftMode, mediaUrl } from '@/lib/payload'
+import { pageMetadata } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
   const { t } = await getDict()
-  return { title: `${t.videos} — ${t.orgShort.replace(/\s+/g, ' ')}` }
+  return pageMetadata({ title: t.videos, path: '/video' })
 }
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }

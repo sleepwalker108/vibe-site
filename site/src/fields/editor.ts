@@ -1,9 +1,12 @@
 import {
   EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
+  HeadingFeature,
   LinkFeature,
   type FeatureProviderServer,
 } from '@payloadcms/richtext-lexical'
+import { HistoryFeature } from '../features/history/server'
+import { BlockToolbarFeature } from '../features/blockToolbar/server'
 
 const safeDecode = (s: string) => {
   try {
@@ -46,16 +49,35 @@ const Link = LinkFeature({
     ),
 })
 
+// Зайве для редакторів новин: «Стосунки», чекбокси, верхній/нижній індекс, код
+const HIDDEN = new Set(['toolbarInline', 'link', 'heading', 'relationship', 'checklist', 'subscript', 'superscript', 'inlineCode'])
+
 /**
  * Можливості редактора тексту для сторінок, новин і відповідей:
- * + панель інструментів зверху (як у Word), + таблиці, + виправлені посилання.
+ * як у WordPress — над абзацом із курсором з’являється панель блоку (features/blockToolbar):
+ * тип блоку, переміщення, вирівнювання, жирний/курсив/посилання, дії з блоком.
+ * Угорі редактора лишається вузька панель: скасувати/повторити, «Вставити», «Блоки»
+ * (решту груп ховає components/admin/EditorHints, бо вони дублюють панель блоку).
  */
 export const editorFeatures =
   (extra: FeatureProviderServer<any, any, any>[] = []) =>
   ({ defaultFeatures }: { defaultFeatures: FeatureProviderServer<any, any, any>[] }) => [
-    ...defaultFeatures.filter((f) => f.key !== 'link'),
+    ...defaultFeatures.filter((f) => !HIDDEN.has(f.key)),
+    HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
     Link,
-    FixedToolbarFeature(),
+    HistoryFeature(),
+    BlockToolbarFeature(),
+    FixedToolbarFeature({
+      customGroups: {
+        text: { type: 'buttons', order: 5 },
+        format: { order: 8 },
+        features: { order: 9 },
+        align: { type: 'buttons', order: 12 },
+        indent: { order: 14 },
+        add: { order: 20 },
+        blocks: { order: 22 },
+      },
+    }),
     EXPERIMENTAL_TableFeature(),
     ...extra,
   ]

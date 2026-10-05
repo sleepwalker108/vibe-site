@@ -73,11 +73,12 @@ export const SiteMap = async ({ payload }: { payload: Payload }) => {
         <div className="sm-card sm-main">
           <h3>Головне</h3>
           <ul>
-            <RowView r={{ label: 'Головна сторінка (перший екран, картки, евакуація, ресурси)', url: '/', edit: '/admin/globals/home' }} />
+            <RowView r={{ label: 'Головна сторінка (перший екран, картки, евакуація)', url: '/', edit: '/admin/globals/home' }} />
             <RowView r={{ label: 'Меню сайту', edit: '/admin/globals/navigation' }} />
             <RowView r={{ label: 'Статистика гарячих ліній', url: '/#stats', edit: '/admin/globals/stats' }} />
             <RowView r={{ label: 'Річний звіт гарячих ліній', url: '/#report', edit: '/admin/globals/annual-report' }} />
             <RowView r={{ label: 'Мапа: статуси територій', url: '/#territories', edit: '/admin/globals/territories' }} />
+            <RowView r={{ label: 'Корисні ресурси', url: '/#resources', edit: '/admin/globals/resources' }} />
             <RowView r={{ label: 'Контакти й підвал, логотип', edit: '/admin/globals/contacts' }} />
             <RowView r={{ label: 'Новини', url: '/news', edit: '/admin/collections/news' }} />
             <RowView r={{ label: 'Відеоматеріали', url: '/video', edit: '/admin/collections/videos' }} />

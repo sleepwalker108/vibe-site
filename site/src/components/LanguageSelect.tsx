@@ -58,7 +58,12 @@ export const LanguageSelect = ({ locale, label }: { locale: Locale; label: strin
     setOpen(false)
     if (code === locale) return
     document.cookie = `${LOCALE_COOKIE}=${code}; path=/; max-age=31536000; samesite=lax`
-    router.refresh() // сторінка перезавантажує дані вже вибраною мовою
+    // відкрито за посиланням з ?lang=… (напр. з Google) — прибираємо його, щоб не перемикало мову назад
+    const url = new URL(location.href)
+    if (url.searchParams.has('lang')) {
+      url.searchParams.delete('lang')
+      router.replace(url.pathname + url.search + url.hash)
+    } else router.refresh() // сторінка перезавантажує дані вже вибраною мовою
   }
 
   return (
@@ -71,6 +76,13 @@ export const LanguageSelect = ({ locale, label }: { locale: Locale; label: strin
         aria-label={`${label}: ${current.name}`}
         onClick={() => setOpen((v) => (canHover() && v ? true : !v))}
       >
+        <svg className="ti ti-globe" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <g className="ti-meridians">
+            <ellipse cx="12" cy="12" rx="4" ry="9" />
+          </g>
+          <path d="M3.5 9h17M3.5 15h17" />
+        </svg>
         {current.short}
         <span className="lang-caret" aria-hidden="true">
           ▾
