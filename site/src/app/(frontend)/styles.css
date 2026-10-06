@@ -1047,7 +1047,7 @@ html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.cont
   .card .big { font-size: 2.1rem !important; }
 }
 html.contrast .quick-tile { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
-html.contrast .quick-ico { background: #ff0 !important; color: #000 !important; }
+html.contrast .quick-ico { background: #000 !important; color: #ff0 !important; border: 2px solid #ff0 !important; }
 
 /* ---------- статистика гарячих ліній: рейтинг на телефоні ---------- */
 .bar-rank, .bar-pct, .bars-toggle { display: none; }
@@ -1327,3 +1327,6 @@ html.contrast .rcard-sum { background: #ff0 !important; color: #000 !important; 
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 }
 html[lang="en"] .bento .evac::after { content: "← swipe →"; }
+/* режим контрасту: прозорий шар мобільного меню лишається прозорим (інакше закривав увесь сайт чорним) */
+html.contrast .mm { background: transparent !important; }
+html.contrast .mm-overlay { background: rgba(0, 0, 0, .7) !important; }
