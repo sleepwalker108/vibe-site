@@ -39,8 +39,10 @@ if [ "$BEFORE" = "$AFTER" ] && [ "${FORCE:-0}" != "1" ]; then
   exit 0
 fi
 sudo -u "$APP_USER" git -C "$APP_DIR" log --oneline "$BEFORE..$AFTER" | sed 's/^/   • /' || true
-# скрипти оновлення могли змінитися — далі працює вже нова версія цього файлу
+# службові команди могли змінитися — ставимо свіжі версії
 install -m 755 "$APP_DIR/deploy/update.sh" /usr/local/bin/nartu-update
+install -m 755 "$APP_DIR/deploy/backup.sh" /usr/local/bin/nartu-backup
+[ -f "$APP_DIR/deploy/task.sh" ] && install -m 755 "$APP_DIR/deploy/task.sh" /usr/local/bin/nartu-task
 
 say "3/6 Бібліотеки"
 if [ "$BEFORE" = "$AFTER" ] || ! git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then

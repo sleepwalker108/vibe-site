@@ -109,6 +109,7 @@ systemctl enable --now nartu-site >/dev/null 2>&1
 systemctl restart nartu-site
 install -m 755 "$APP_DIR/deploy/update.sh" /usr/local/bin/nartu-update
 install -m 755 "$APP_DIR/deploy/backup.sh" /usr/local/bin/nartu-backup
+install -m 755 "$APP_DIR/deploy/task.sh" /usr/local/bin/nartu-task
 echo "15 3 * * * root /usr/local/bin/nartu-backup >/var/log/nartu-backup.log 2>&1" > /etc/cron.d/nartu-backup
 ok "Служба nartu-site увімкнена; команди nartu-update і nartu-backup встановлено; копії щодня о 03:15"
 

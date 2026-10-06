@@ -49,3 +49,6 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# кеш імпорту зі старого сайту
+.wp-import-cache.json
