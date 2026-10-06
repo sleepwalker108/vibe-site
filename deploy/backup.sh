@@ -20,7 +20,7 @@ if [ "${1:-}" != "--db-only" ] && [ -d "$SITE_DIR/media" ]; then
   echo "Файли: $DEST/media-$STAMP.tar.gz"
 fi
 
-# старі копії прибираємо
-ls -1t "$DEST"/site-*.db.gz 2>/dev/null | tail -n +31 | xargs -r rm -f
-ls -1t "$DEST"/media-*.tar.gz 2>/dev/null | tail -n +15 | xargs -r rm -f
+# старі копії прибираємо (|| true — якщо копій ще немає, це не помилка)
+ls -1t "$DEST"/site-*.db.gz 2>/dev/null | tail -n +31 | xargs -r rm -f || true
+ls -1t "$DEST"/media-*.tar.gz 2>/dev/null | tail -n +15 | xargs -r rm -f || true
 chown -R "${APP_USER:-nartu}:${APP_USER:-nartu}" "$DEST" 2>/dev/null || true
