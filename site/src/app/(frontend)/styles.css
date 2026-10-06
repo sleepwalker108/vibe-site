@@ -1330,3 +1330,28 @@ html[lang="en"] .bento .evac::after { content: "← swipe →"; }
 /* режим контрасту: прозорий шар мобільного меню лишається прозорим (інакше закривав увесь сайт чорним) */
 html.contrast .mm { background: transparent !important; }
 html.contrast .mm-overlay { background: rgba(0, 0, 0, .7) !important; }
+
+/* ---------- пошук по сайту ---------- */
+.tool-search { display: inline-grid; place-items: center; text-decoration: none; }
+.ti-search { transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+.tool-search:hover .ti-search { transform: rotate(-12deg) scale(1.12); }
+.search-form { display: flex; gap: 8px; margin-top: 18px; max-width: 640px; }
+.search-form input { flex: 1; min-width: 0; height: 50px; padding: 0 18px; border-radius: 14px; border: 2px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.95); color: var(--navy-ink); font: inherit; font-size: 1rem; }
+.search-form input:focus { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.search-form button { flex: none; height: 50px; padding: 0 22px; border: 0; border-radius: 14px; background: var(--yellow); color: var(--navy-ink); font: inherit; font-weight: 800; cursor: pointer; }
+.search-results { padding: 36px 0 64px; }
+.search-note { color: var(--muted); margin: 0 0 18px; }
+.search-pages { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 8px; }
+.search-pages a { display: block; padding: 14px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line); color: var(--navy); font-weight: 700; text-decoration: none; }
+.search-pages a::before { content: "📄 "; }
+.search-pages a:hover { border-color: var(--navy); }
+.mm-search { display: flex; gap: 6px; margin: 16px 0 0; }
+.mm-search input { flex: 1; min-width: 0; height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--sky); color: var(--ink); font: inherit; font-size: .95rem; }
+.mm-search button { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border: 0; border-radius: 12px; background: var(--navy); color: #fff; cursor: pointer; }
+html.contrast .search-form input, html.contrast .mm-search input { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+html.contrast .search-form button, html.contrast .mm-search button { background: #ff0 !important; color: #000 !important; }
+@media (max-width: 640px) {
+  .search-form input, .search-form button { height: 46px; }
+  .search-form button { padding: 0 16px; }
+}

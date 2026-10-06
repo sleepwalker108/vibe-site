@@ -292,6 +292,12 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
           {nav}
         </nav>
         <div className="tools">
+          <Link className="tool tool-search" href="/search" aria-label={t.search} title={t.search}>
+            <svg className="ti ti-search" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4.5 4.5" />
+            </svg>
+          </Link>
           <button className="tool hide-sm" aria-label={t.fontSmaller} onClick={() => setFs((v) => Math.max(14, (v || 16) - 2))}>
             <IconFont dir="down" />
           </button>
