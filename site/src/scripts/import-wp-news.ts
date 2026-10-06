@@ -222,7 +222,10 @@ for (const [i, p] of uk.entries()) {
     const existing = (
       await payload.find({ collection: 'news', where: { legacyUrl: { equals: p.link } }, limit: 1, depth: 0, trash: true, overrideAccess: true })
     ).docs[0]
-    if (existing && ONLY_NEW) {
+    // Новини, перенесені раніше без картинок у тексті (лише з обкладинкою), — оновлюємо, якщо на старому сайті картинки є
+    const hasImages = (c: any) => JSON.stringify(c || {}).includes('"type":"upload"')
+    const needsImages = existing && /<img\s/i.test(p.content.rendered) && !hasImages((existing as any).content)
+    if (existing && ONLY_NEW && !needsImages) {
       skipped++
       continue
     }
@@ -241,7 +244,7 @@ for (const [i, p] of uk.entries()) {
       content: toLexical(prepUk, true),
       legacyUrl: p.link,
       _status: 'published',
-      ...(cover ? { cover } : {}),
+      ...(cover && !(existing as any)?.cover ? { cover } : {}), // наявну обкладинку не чіпаємо
     }
     const doc = existing
       ? await payload.update({ collection: 'news', id: existing.id, locale: 'uk', data, overrideAccess: true })
