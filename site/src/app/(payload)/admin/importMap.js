@@ -25,6 +25,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { FaqRowLabel as FaqRowLabel_c7da98d435c621318b089da57fb11fb9 } from '../../../components/admin/FaqRowLabel'
 import { CardRowLabel as CardRowLabel_11482334b157f876a26f43b1dff0ff5d } from '../../../components/admin/CardRowLabel'
 import { SeoPreview as SeoPreview_752ed51552c58b98feed87d2595b772d } from '../../../components/admin/SeoPreview'
+import { CancelButton as CancelButton_58ecd380c666df0ee516070d5bd30407 } from '../../../components/admin/CancelButton'
 import { MediaLinks as MediaLinks_a0f5ff356e417ae5c213fc0e217bee73 } from '../../../components/admin/MediaLinks'
 import { MediaCopyCell as MediaCopyCell_6d76666deabf00faf1496015be4b4c07 } from '../../../components/admin/MediaCopyCell'
 import { NavRowLabel as NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0 } from '../../../components/admin/NavRowLabel'
@@ -68,6 +69,7 @@ export const importMap = {
   "/components/admin/FaqRowLabel#FaqRowLabel": FaqRowLabel_c7da98d435c621318b089da57fb11fb9,
   "/components/admin/CardRowLabel#CardRowLabel": CardRowLabel_11482334b157f876a26f43b1dff0ff5d,
   "/components/admin/SeoPreview#SeoPreview": SeoPreview_752ed51552c58b98feed87d2595b772d,
+  "/components/admin/CancelButton#CancelButton": CancelButton_58ecd380c666df0ee516070d5bd30407,
   "/components/admin/MediaLinks#MediaLinks": MediaLinks_a0f5ff356e417ae5c213fc0e217bee73,
   "/components/admin/MediaCopyCell#MediaCopyCell": MediaCopyCell_6d76666deabf00faf1496015be4b4c07,
   "/components/admin/NavRowLabel#NavRowLabel": NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0,

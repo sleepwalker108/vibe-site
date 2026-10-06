@@ -10,6 +10,8 @@ export const News: CollectionConfig = {
   defaultSort: '-publishedAt',
   trash: true,
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     useAsTitle: 'title',
     defaultColumns: ['title', 'publishedAt', '_status', 'hasEnglish'],
     listSearchableFields: ['title', 'slug'],

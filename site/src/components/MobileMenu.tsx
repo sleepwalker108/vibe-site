@@ -147,21 +147,24 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
           <Link href="/" className="mm-brand" onClick={close} aria-label={t.home}>
             <img src={logoUrl || '/img/emblem.png'} alt="" />
             <span>
-              <strong>{(shortName || t.orgShort).replace(/\s*\n\s*/g, ' ')}</strong>
               <small>{kicker || t.kicker}</small>
+              <strong>{(shortName || t.orgShort).replace(/\s*\n\s*/g, ' ')}</strong>
             </span>
           </Link>
-          <button type="button" className="mm-icon-btn" aria-label={t.contrast} aria-pressed={contrast} onClick={onContrast}>
-            <svg className="ti ti-contrast" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="2" />
-              <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
-            </svg>
-          </button>
-          <button ref={closeBtn} type="button" className="mm-icon-btn" aria-label={t.close} onClick={close}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-              <path d="M6 6l12 12M18 6 6 18" />
-            </svg>
-          </button>
+          {/* кнопки стовпчиком: зверху «закрити», під нею — контраст */}
+          <div className="mm-head-btns">
+            <button ref={closeBtn} type="button" className="mm-icon-btn" aria-label={t.close} onClick={close}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
+            </button>
+            <button type="button" className="mm-icon-btn" aria-label={t.contrast} aria-pressed={contrast} onClick={onContrast}>
+              <svg className="ti ti-contrast" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <nav className="mm-nav" aria-label={t.mainMenu}>

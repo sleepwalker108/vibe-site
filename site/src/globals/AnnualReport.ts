@@ -22,6 +22,8 @@ export const AnnualReport: GlobalConfig = {
   slug: 'annual-report',
   label: 'Річний звіт гарячих ліній',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     description:
       'Загальну кількість, вхідні та вихідні дзвінки рахувати не треба — сайт сам додає відповідні рядки.',

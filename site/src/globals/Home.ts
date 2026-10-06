@@ -35,6 +35,8 @@ export const Home: GlobalConfig = {
   slug: 'home',
   label: 'Головна сторінка',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     livePreview: { url: '/?preview=1' },
   },

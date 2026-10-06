@@ -6,6 +6,8 @@ export const Seo: GlobalConfig = {
   slug: 'seo',
   label: 'Пошук Google і соцмережі (SEO)',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     description:
       'Як сайт виглядає в Google та при поширенні посилань. Для окремих новин і сторінок — блок «Пошук Google і соцмережі» внизу їхньої сторінки.',

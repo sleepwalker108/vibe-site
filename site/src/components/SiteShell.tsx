@@ -16,7 +16,8 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
   const logo = mediaUrl(c.logo, 'card') || '/img/emblem.png'
 
   return (
-    <>
+    // Один спільний блок: Next.js після переходу прокручує саме його початок (а не кожен блок по черзі — тоді сторінку кидало донизу)
+    <div className="site">
       <a className="skip-link" href="#main">
         {t.skipToContent}
       </a>
@@ -82,6 +83,6 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
           <div className="preview-bar">{t.previewBar}</div>
         </>
       )}
-    </>
+    </div>
   )
 }

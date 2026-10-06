@@ -6,6 +6,7 @@ import { ResourceIcon } from '@/components/ResourceIcon'
 import { NewsCard } from '@/components/NewsCard'
 import { SiteShell } from '@/components/SiteShell'
 import { StatsAnimator } from '@/components/StatsAnimator'
+import { BarsToggle } from '@/components/BarsToggle'
 import { TerritoriesSection } from '@/components/TerritoriesSection'
 import { formatDate, getClient, isDraftMode, mediaUrl, publishedOnly } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
@@ -15,6 +16,9 @@ import { getSeo, pageMetadata, SITE_URL } from '@/lib/seo'
 export const dynamic = 'force-dynamic'
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
+
+// Телефон: скільки категорій статистики показувати до «Показати всі»
+const TOP_BARS = 5
 
 const sizeClass = { big: 'c-2x2', wide: 'c-2', normal: '' } as const
 const colorClass = { navy: 'navy', yellow: 'yellow', sky: 'sky', white: '' } as const
@@ -106,16 +110,18 @@ export default async function HomePage({ searchParams }: Props) {
       {/* Телефон: плитки швидких дій під першим екраном */}
       <nav className="quick-tiles wrap" aria-label={t.quickLinks}>
         {[
-          { href: hero?.primary?.url || 'tel:1548', label: t.quickHotline, icon: 'phone' },
-          { href: '#evacuation', label: t.quickEvac, icon: 'home' },
-          { href: '#stats', label: t.quickStats, icon: 'info' },
-          { href: '#territories', label: t.quickMap, icon: 'map' },
+          { href: '#evacuation', label: t.quickEvac, icon: 'home', tone: 'sun' },
+          { href: '#stats', label: t.quickStats, icon: 'info', tone: 'sky' },
+          { href: '#territories', label: t.quickMap, icon: 'map', tone: 'rose' },
         ].map((q) => (
-          <a key={q.href} href={q.href} className="quick-tile">
+          <a key={q.href} href={q.href} className={`quick-tile tone-${q.tone}`}>
             <span className="quick-ico">
               <ResourceIcon name={q.icon} />
             </span>
-            <span>{q.label}</span>
+            <span className="quick-label">{q.label}</span>
+            <span className="quick-arrow" aria-hidden="true">
+              ↓
+            </span>
           </a>
         ))}
       </nav>
@@ -184,16 +190,25 @@ export default async function HomePage({ searchParams }: Props) {
               {stats.asOf && <div className="asof">{t.asOf} {formatDate(stats.asOf)} {t.yearShort}</div>}
             </div>
             <div className="stats-grid">
-              <div className="bars">
-                {cats.map((c) => (
-                  <div className="bar" key={c.id}>
-                    <div className="name">{c.name}</div>
-                    <div className="track">
-                      <div className="fill" data-w={(((c.value || 0) / max) * 82).toFixed(2)} />
-                      <span className="val">{fmt(c.value)}</span>
+              <div className="bars-col">
+                <div className="bars">
+                  {cats.map((c, i) => (
+                    <div className={`bar${i >= TOP_BARS ? ' bar-extra' : ''}`} key={c.id}>
+                      <span className="bar-rank" aria-hidden="true">
+                        {i + 1}
+                      </span>
+                      <div className="name">{c.name}</div>
+                      <div className="track">
+                        <div className="fill" data-w={(((c.value || 0) / max) * 82).toFixed(2)} />
+                        <span className="val">
+                          {fmt(c.value)}
+                          <small className="bar-pct"> {total ? Math.max(1, Math.round(((c.value || 0) / total) * 100)) : 0}%</small>
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                {cats.length > TOP_BARS && <BarsToggle count={cats.length} more={t.showAllCats} less={t.showLess} />}
               </div>
               <div className="kpis">
                 <div className="kpi main">

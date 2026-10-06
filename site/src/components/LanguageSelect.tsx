@@ -13,6 +13,7 @@ const LANGS: { code: Locale; short: string; name: string }[] = [
 export const LanguageSelect = ({ locale, label }: { locale: Locale; label: string }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [spin, setSpin] = useState(false) // глобус робить один оберт, коли мову змінено
   const box = useRef<HTMLDivElement>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -57,6 +58,8 @@ export const LanguageSelect = ({ locale, label }: { locale: Locale; label: strin
   const choose = (code: Locale) => {
     setOpen(false)
     if (code === locale) return
+    setSpin(true)
+    setTimeout(() => setSpin(false), 1200) // рівно один оберт
     document.cookie = `${LOCALE_COOKIE}=${code}; path=/; max-age=31536000; samesite=lax`
     // відкрито за посиланням з ?lang=… (напр. з Google) — прибираємо його, щоб не перемикало мову назад
     const url = new URL(location.href)
@@ -76,12 +79,18 @@ export const LanguageSelect = ({ locale, label }: { locale: Locale; label: strin
         aria-label={`${label}: ${current.name}`}
         onClick={() => setOpen((v) => (canHover() && v ? true : !v))}
       >
-        <svg className="ti ti-globe" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" />
-          <g className="ti-meridians">
-            <ellipse cx="12" cy="12" rx="4" ry="9" />
+        {/* Глобус як Земля: меридіани «пропливають» зліва направо, поки куля обертається */}
+        <svg className={`ti ti-globe${spin ? ' spin' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+          <g>
+            <circle cx="12" cy="12" r="9" />
+            <path d="M3.6 9.2h16.8M3.6 14.8h16.8" />
+            {/* у спокої — один меридіан по центру */}
+            <ellipse className="globe-still" cx="12" cy="12" rx="4" ry="9" />
+            {/* під час обертання — чотири меридіани через кожні 90° */}
+            {[0, 1, 2, 3].map((i) => (
+              <path key={i} className="globe-mer" style={{ animationDelay: `${-i * 0.3}s` }} d="M12 3a9 9 0 0 1 0 18" />
+            ))}
           </g>
-          <path d="M3.5 9h17M3.5 15h17" />
         </svg>
         {current.short}
         <span className="lang-caret" aria-hidden="true">

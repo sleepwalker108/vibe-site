@@ -15,6 +15,8 @@ export const Navigation: GlobalConfig = {
   slug: 'navigation',
   label: 'Меню сайту',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     description: 'Верхнє меню. Порядок змінюється перетягуванням.',
     livePreview: { url: '/?preview=1' },

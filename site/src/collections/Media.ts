@@ -5,6 +5,8 @@ export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: 'Файл', plural: 'Медіатека' },
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Контент',
     useAsTitle: 'filename',
     defaultColumns: ['filename', 'alt', 'mimeType', 'copyLink', 'updatedAt'],
@@ -40,9 +42,12 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     mimeTypes: ['image/*', 'application/pdf', 'video/mp4', 'video/webm'],
+    // Картинки (JPG, PNG…) під час завантаження автоматично перетворюються на WebP — у 2–5 разів легші,
+    // сторінки вантажаться швидше. PDF, відео й SVG не змінюються.
+    formatOptions: { format: 'webp', options: { quality: 82 } },
     imageSizes: [
-      { name: 'card', width: 800 },
-      { name: 'wide', width: 1600 },
+      { name: 'card', width: 800, formatOptions: { format: 'webp', options: { quality: 80 } } },
+      { name: 'wide', width: 1600, formatOptions: { format: 'webp', options: { quality: 82 } } },
     ],
   },
 }

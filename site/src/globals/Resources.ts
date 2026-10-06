@@ -7,6 +7,8 @@ export const Resources: GlobalConfig = {
   slug: 'resources',
   label: 'Корисні ресурси',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     description: 'Картки з посиланнями на інші сайти внизу головної сторінки. Порядок змінюється перетягуванням.',
     livePreview: { url: '/?preview=1#resources' },

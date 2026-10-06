@@ -1,0 +1,24 @@
+# Сайт НАРТУ як системна служба: запускається разом із сервером і перезапускається, якщо впаде.
+# Керування:  sudo systemctl status|restart|stop nartu-site      Журнал:  journalctl -u nartu-site -f
+[Unit]
+Description=Сайт НАРТУ (Next.js + Payload CMS)
+After=network.target
+
+[Service]
+Type=simple
+User=nartu
+Group=nartu
+WorkingDirectory=/opt/nartu/site
+Environment=NODE_ENV=production
+Environment=NODE_OPTIONS=--no-deprecation
+Environment=PORT=3000
+ExecStart=/opt/nartu/site/node_modules/.bin/next start -p 3000 -H 127.0.0.1
+Restart=always
+RestartSec=5
+# безпека: служба не може змінювати систему поза своєю папкою
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

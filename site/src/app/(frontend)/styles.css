@@ -472,8 +472,9 @@
 
   /* ---------- підвал завжди внизу, навіть на коротких сторінках ---------- */
   body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
-  body > main { flex: 1 0 auto; }
-  body > .flag-strip, body > footer { flex-shrink: 0; }
+  body > main, .site > main { flex: 1 0 auto; }
+  body > .flag-strip, body > footer, .site > .flag-strip, .site > footer { flex-shrink: 0; }
+  .site { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; flex: 1 0 auto; }
 
   /* ---------- шапка внутрішніх сторінок: фото Києва з синім затемненням, як на старому сайті ---------- */
   .page-head {
@@ -879,8 +880,23 @@ button[aria-pressed="true"] .ti-contrast { transform: rotate(180deg); }
 button[aria-pressed="true"]:hover .ti-contrast { transform: rotate(360deg); }
 /* мова: глобус крутиться */
 .ti-globe { margin-right: 4px; opacity: .85; }
-.ti-meridians { transform-origin: 12px 12px; transform-box: view-box; }
-.lang:hover .ti-meridians, .lang-btn:focus-visible .ti-meridians, .lang-btn[aria-expanded="true"] .ti-meridians { animation: ti-spin 1.6s linear infinite; }
+/* глобус обертається лише раз — коли мову змінено */
+/* Меридіан на поверхні кулі: від лівого краю через центр до правого (scaleX = sin довготи), далі — на зворотному боці (не видно).
+   Чотири меридіани зі зсувом на чверть оберту створюють враження, що Земля обертається навколо своєї осі. */
+.globe-mer { opacity: 0; transform-origin: 12px 12px; transform-box: view-box; }
+.ti-globe.spin .globe-still { opacity: 0; }
+.ti-globe.spin .globe-mer { animation: globe-mer 1.2s linear infinite; }
+@keyframes globe-mer {
+  0%     { opacity: 1; transform: scaleX(-1); }
+  8.33%  { opacity: 1; transform: scaleX(-.866); }
+  16.67% { opacity: 1; transform: scaleX(-.5); }
+  25%    { opacity: 1; transform: scaleX(0); }
+  33.33% { opacity: 1; transform: scaleX(.5); }
+  41.67% { opacity: 1; transform: scaleX(.866); }
+  49.9%  { opacity: 1; transform: scaleX(1); }
+  50%, 100% { opacity: 0; transform: scaleX(1); }
+}
+.ti-globe .globe-still { transition: opacity .2s; }
 @keyframes ti-spin { 0% { transform: scaleX(1); } 25% { transform: scaleX(.15); } 50% { transform: scaleX(-1); } 75% { transform: scaleX(-.15); } 100% { transform: scaleX(1); } }
 /* меню на телефоні: три смужки перетворюються на хрестик */
 .ti-burger { position: relative; width: 20px; height: 14px; display: inline-block; }
@@ -1032,3 +1048,282 @@ html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.cont
 }
 html.contrast .quick-tile { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
 html.contrast .quick-ico { background: #ff0 !important; color: #000 !important; }
+
+/* ---------- статистика гарячих ліній: рейтинг на телефоні ---------- */
+.bar-rank, .bar-pct, .bars-toggle { display: none; }
+@media (max-width: 640px) {
+  .stats-grid { display: flex !important; flex-direction: column; gap: 14px; }
+  .stats-grid .kpis { order: -1; }
+  .stats-head { gap: 10px; }
+  .stats-head p { font-size: .92rem; }
+  .bars-col { display: grid; gap: 10px; }
+  /* список як картка-рейтинг */
+  .bars { gap: 0; padding: 4px 14px; border-radius: 20px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); }
+  .bar { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; grid-template-areas: "rank name val" "rank fill fill";
+    column-gap: 10px; row-gap: 7px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .bar:last-child, .bars:not(.expanded) .bar:nth-child(5) { border-bottom: 0; }
+  .bars.expanded .bar:nth-child(5) { border-bottom: 1px solid rgba(255,255,255,.1); }
+  .bar .track { display: contents; }
+  .bar-rank { display: grid; grid-area: rank; place-items: center; align-self: start; width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(255,255,255,.12); font-size: .75rem; font-weight: 800; color: #fff; }
+  .bar:nth-child(-n+3) .bar-rank { background: var(--yellow); color: var(--navy-ink); }
+  .bar .name { grid-area: name; font-size: calc(.86rem * var(--fs-scale)); line-height: 1.3; margin: 0; color: rgba(255,255,255,.92);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .bar .val { grid-area: val; align-self: start; text-align: right; font-weight: 800; font-size: calc(.95rem * var(--fs-scale)); white-space: nowrap; line-height: 1.3; }
+  .bar-pct { display: block; font-size: .72rem; font-weight: 700; opacity: .65; }
+  .bar .fill { grid-area: fill; height: 6px !important; min-width: 4px; border-radius: 6px; max-width: none !important; }
+  /* топ-5, решта — за кнопкою */
+  .bars:not(.expanded) .bar-extra { display: none; }
+  .bars.expanded .bar-extra { animation: bar-in .3s ease both; }
+  @keyframes bar-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .bars-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px 16px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #fff; font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; }
+  .bars-toggle svg { transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+  .bars-toggle.is-open svg { transform: rotate(180deg); }
+  .bars-toggle:active { transform: scale(.98); }
+  /* підсумки: велика жовта + дві поруч */
+  .kpi { padding: 14px 16px !important; border-radius: 18px; }
+  .kpi .k-label { font-size: .66rem; }
+  .kpi .msgr span { font-size: .68rem; padding: 3px 8px; }
+}
+html.contrast .bar-rank, html.contrast .bars-toggle { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+
+/* ---------- телефон: «Річний звіт» і «Градація статусів» компактніше ---------- */
+@media (max-width: 640px) {
+  /* річний звіт: загальна кількість на всю ширину, три показники — в один ряд */
+  .report-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 8px !important; }
+  .report-kpis .rk-main { grid-column: 1 / -1; padding: 18px 20px; }
+  .report-kpis .rk-main .rk-num { font-size: calc(2.2rem * var(--fs-scale)); }
+  .report-kpis .rk:not(.rk-main) { display: flex !important; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 10px 14px !important; border-radius: 16px; }
+  .report-kpis .rk:not(.rk-main) .rk-ico { width: 30px; height: 30px; border-radius: 9px; margin: 0 0 4px; }
+  .report-kpis .rk:not(.rk-main) .rk-ico svg { width: 16px; height: 16px; }
+  .report-kpis .rk:not(.rk-main) .rk-num { font-size: calc(1.08rem * var(--fs-scale)) !important; }
+  .report-kpis .rk:not(.rk-main) .rk-label { font-size: calc(.7rem * var(--fs-scale)); line-height: 1.25; }
+  .rcard { padding: 18px 16px; border-radius: 20px; }
+  .rcard h3 { margin-bottom: 14px; font-size: 1rem; }
+  /* кільцева діаграма: менша, легенда щільніша */
+  .donut-wrap { width: min(170px, 60%); margin-bottom: 14px; }
+  .donut-center .dc-num { font-size: calc(1.2rem * var(--fs-scale)) !important; }
+  .donut-center .dc-label { font-size: .72rem; }
+  .legend li { font-size: .86rem; padding: 6px 0; }
+  .report-grid { gap: 10px !important; }
+
+  /* градація: області — одна картка-список, від найбільш постраждалих */
+  .terr-mobile { gap: 0 !important; padding: 4px 16px !important; background: #fff; border-radius: 20px; border: 1px solid var(--line); }
+  .terr-sec .terr-mobile li { background: transparent; border-radius: 0; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .terr-mobile li:last-child, .terr-mobile:not(.expanded) li:nth-child(6) { border-bottom: 0; }
+  .terr-mobile.expanded li:nth-child(6) { border-bottom: 1px solid var(--line); }
+  .tm-head { font-size: .9rem; margin-bottom: 7px; }
+  .tm-bar { height: 8px; border-radius: 6px; }
+  .tm-vals { font-size: .78rem; margin-top: 7px; gap: 4px 12px; }
+  .terr-mobile:not(.expanded) .tm-extra { display: none; }
+  .terr-mobile.expanded .tm-extra { animation: bar-in .3s ease both; }
+  .terr-sec .bars-toggle { margin-top: 10px; }
+  .terr-table { margin-top: 10px; }
+}
+.bars-toggle.light { background: #fff; color: var(--navy); border-color: var(--line); }
+
+/* ---------- телефон: інтерактивна мапа градації (TerrPicker) ---------- */
+.terr-pick { display: none; }
+@media (max-width: 640px) {
+  .terr-pick { display: block; margin-top: 12px; }
+  .terr-map svg [data-geo] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .terr-map svg .ua-donut { transition: opacity .25s, transform .25s; transform-box: fill-box; transform-origin: center; }
+  .terr-map svg.has-pick .ua-donut:not(.is-picked) { opacity: .45; }
+  .terr-map svg .ua-donut.is-picked { transform: scale(1.25); }
+  .terr-map svg path.is-picked { fill: #c9dcf2 !important; stroke: var(--navy) !important; stroke-width: 2.5; }
+  .tpk-hint { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); margin-bottom: 8px; }
+  .tpk-hint::before { content: "☝"; font-size: .95rem; }
+  .tpk-card { background: var(--sky); border-radius: 18px; padding: 12px 12px 14px; }
+  .tpk-head { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .tpk-nav { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: #fff; color: var(--navy); cursor: pointer; }
+  .tpk-nav:active { transform: scale(.94); }
+  .tpk-title { text-align: center; min-width: 0; }
+  .tpk-title strong { display: block; color: var(--navy-ink); font-size: calc(1.02rem * var(--fs-scale)); line-height: 1.25; }
+  .tpk-title span { display: block; color: var(--muted); font-size: .78rem; font-weight: 600; margin-top: 2px; }
+  .tpk-bar { display: flex; gap: 2px; height: 10px; border-radius: 6px; overflow: hidden; background: #fff; margin-bottom: 10px; }
+  .tpk-bar span { min-width: 3px; transition: flex-grow .4s ease; }
+  .tpk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .tpk-list li { display: grid; grid-template-columns: 12px 1fr auto 38px; align-items: center; gap: 8px; padding: 7px 8px; background: #fff; border-radius: 10px; font-size: calc(.8rem * var(--fs-scale)); line-height: 1.3; }
+  .tpk-list li.is-zero { opacity: .5; }
+  .tpk-list i { width: 12px; height: 12px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .tpk-label { color: var(--ink); }
+  .tpk-list b { color: var(--navy-ink); font-variant-numeric: tabular-nums; }
+  .tpk-list small { color: var(--muted); font-weight: 700; text-align: right; }
+}
+html.contrast .tpk-card, html.contrast .tpk-list li, html.contrast .tpk-nav { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+
+/* ================= телефон: фірмовий дизайн (головна + меню) ================= */
+@media (max-width: 640px) {
+
+  /* швидкі дії: три кольорові плитки в ряд */
+  .quick-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .quick-tile { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 14px; min-height: 104px; padding: 12px; border-radius: 18px;
+    position: relative; font-size: calc(.82rem * var(--fs-scale)); }
+  .quick-tile .quick-ico { width: 40px; height: 40px; border-radius: 13px; }
+  .tone-sun .quick-ico { background: #fff4bf !important; color: #7a5b00 !important; }
+  .tone-sky .quick-ico { background: var(--sky) !important; color: var(--navy) !important; }
+  .tone-rose .quick-ico { background: #fde4dd !important; color: #9a3412 !important; }
+  .quick-arrow { position: absolute; top: 12px; right: 12px; font-size: .85rem; color: var(--muted); }
+  .quick-label { line-height: 1.2; }
+
+  /* ---------- меню-панель ---------- */
+  .mm-panel { padding: 0 18px 28px; }
+  .mm-head { margin: 0 -18px; padding: 16px 18px 18px; border-bottom: 0; background: linear-gradient(135deg, var(--navy-deep), var(--navy)); position: relative; }
+  .mm-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 5px; background: linear-gradient(90deg, #0057b8 0 50%, #ffd500 50% 100%); }
+  .mm-brand img { width: 44px; height: 44px; padding: 4px; border-radius: 14px; background: #fff; }
+  .mm-brand strong { color: #fff; }
+  .mm-brand small { color: rgba(255,255,255,.7); }
+  .mm-icon-btn { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.22); color: #fff; }
+  .mm-icon-btn:hover { background: rgba(255,255,255,.22); }
+  .mm-icon-btn[aria-pressed="true"] { background: var(--yellow); color: var(--navy-ink); border-color: var(--yellow); }
+  .mm-nav { margin-top: 16px; }
+  /* розділи пронумеровано: 01, 02… (Головна — значок будиночка) */
+  .mm-nav > ul { counter-reset: mm; }
+  .mm-nav > ul > .mm-item { counter-increment: mm; border-bottom: 1px dashed var(--line); }
+  .mm-nav > ul > .mm-item:first-child { counter-increment: none; }
+  .mm-row { display: flex; align-items: center; gap: 12px; margin: 2px 0; padding: 14px 10px; border-radius: 12px; position: relative; }
+  .mm-nav > ul > .mm-item > .mm-row::before, .mm-nav > ul > .mm-item > .mm-row-wrap > .mm-row::before {
+    content: counter(mm, decimal-leading-zero); flex: none; width: 26px; font-size: .74rem; font-weight: 800; color: #b7c4d3; font-variant-numeric: tabular-nums; }
+  .mm-nav > ul > .mm-item:first-child > .mm-row::before { content: "⌂"; font-size: 1rem; color: var(--navy); }
+  /* поточний розділ — жовта смужка зліва замість заливки */
+  .mm-row.is-active, .mm-row-wrap.is-active > .mm-row { background: transparent !important; color: var(--navy) !important; }
+  .mm-row.is-active::after, .mm-row-wrap.is-active > .mm-row::after { content: ""; position: absolute; left: -8px; top: 12px; bottom: 12px; width: 4px; border-radius: 4px; background: var(--yellow); }
+  .mm-row.is-active::before, .mm-row-wrap.is-active > .mm-row::before { color: var(--navy) !important; }
+  .mm-toggle { width: 34px; height: 34px; border-radius: 50%; background: var(--sky); margin-right: 4px; }
+  .mm-item.is-open .mm-toggle { background: var(--navy); color: #fff; }
+  .mm-row-wrap > button.mm-row + .mm-toggle { margin-left: -38px; }
+  /* підменю — «гілка» з лінією */
+  .mm-sub ul { position: relative; margin-left: 22px; padding-left: 16px; border-left: 2px solid var(--sky-2); }
+  .mm-sub li:first-child { padding-top: 2px; }
+  .mm-sub-link { padding: 10px 10px; }
+  .mm-sub-link::before { left: -21px; width: 8px; height: 8px; margin-top: -4px; background: #fff; border: 2px solid var(--sky-2); }
+  .mm-sub-link.is-active::before { background: var(--yellow); border-color: var(--yellow); }
+  .mm-sub-link.is-active { background: var(--sky); }
+
+  /* контакти: гаряча лінія — великий жовтий «квиток» */
+  .mm-contacts { background: transparent; border: 0; padding: 0; }
+  .mm-hot { background: var(--yellow) !important; border-color: var(--yellow) !important; padding: 16px; }
+  .mm-hot .mm-c-ico { background: var(--navy-ink); color: var(--yellow); width: 40px; height: 40px; border-radius: 12px; }
+  .mm-hot .mm-c-text strong { font-size: 1.6em; color: var(--navy-ink); line-height: 1.05; }
+  .mm-hot .mm-c-text small { color: #4a4100; font-weight: 600; }
+  .mm-socials { background: transparent; border: 0; padding: 0; }
+}
+html.contrast .mm-head { background: #000 !important; }
+
+/* ================= телефон: естетика стартової сторінки ================= */
+@media (max-width: 640px) {
+  /* «Гарячі лінії 1548 та 1648…» — як вступ до розділу: бейдж, ліве вирівнювання, жовтий акцент */
+  .statement { text-align: left; padding: 30px 0 6px !important; }
+  .statement::before { content: "1548 · 1648"; display: inline-block; margin-bottom: 12px; padding: 5px 11px; border-radius: 999px;
+    background: var(--sky); color: var(--navy); font-size: .74rem; font-weight: 800; letter-spacing: .06em; }
+  .statement h2 { margin: 0; max-width: none; font-size: calc(1.32rem * var(--fs-scale)) !important; line-height: 1.25; padding-left: 14px; border-left: 4px solid var(--yellow); }
+  .statement p { margin: 12px 0 0; max-width: none; font-size: calc(.94rem * var(--fs-scale)); line-height: 1.55; }
+}
+/* мобільне меню: кнопки «закрити» і «контраст» стовпчиком */
+.mm-head-btns { flex: none; display: flex; flex-direction: column; gap: 8px; }
+.mm-head-btns .mm-icon-btn { width: 42px; height: 42px; }
+/* мобільне меню: «Державне некомерційне товариство» — над назвою, як у шапці сайту */
+.mm-brand small { margin: 0 0 3px; text-transform: uppercase; letter-spacing: .06em; font-size: .62em; font-weight: 700; }
+/* мобільне меню: логотип на всю висоту назви */
+@media (max-width: 640px) { .mm-brand img { width: 78px; height: 78px; padding: 6px; border-radius: 18px; } .mm-brand { gap: 12px; } }
+
+/* ---------- градація: компактний підсумок на телефоні ---------- */
+.tp-compact { display: none; }
+@media (max-width: 640px) {
+  .terr-panel { padding: 18px 16px; gap: 14px; }
+  .tp-total { padding-bottom: 14px; }
+  .terr-panel .tp-group, .terr-panel .tp-source { display: none; }
+  .tp-compact { display: grid; gap: 12px; }
+  .tpc-bar { display: flex; gap: 2px; height: 12px; border-radius: 6px; overflow: hidden; background: var(--sky); }
+  .tpc-bar span { min-width: 3px; }
+  .tpc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .tpc-list li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; grid-template-areas: "sw name np" "sw name tg"; column-gap: 10px; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--line); font-size: calc(.84rem * var(--fs-scale)); line-height: 1.25; }
+  .tpc-list li:last-child { border-bottom: 0; }
+  .tpc-list i { grid-area: sw; width: 12px; height: 12px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .tpc-name { grid-area: name; color: var(--ink); }
+  .tpc-list b { grid-area: np; text-align: right; color: var(--navy-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tpc-list small { grid-area: tg; text-align: right; color: var(--muted); font-weight: 600; font-size: .78em; white-space: nowrap; }
+  .tpc-source summary { cursor: pointer; font-size: .8rem; font-weight: 700; color: var(--navy); list-style: none; }
+  .tpc-source summary::before { content: "▸ "; }
+  .tpc-source[open] summary::before { content: "▾ "; }
+  .tpc-source p { margin: 8px 0 0; font-size: .76rem; color: var(--muted); line-height: 1.45; }
+}
+
+/* ---------- річний звіт: картки згортаються на телефоні (RCard) ---------- */
+.rcard-head { all: unset; display: flex; align-items: baseline; gap: 10px; width: 100%; box-sizing: border-box; }
+.rcard-head h3 { flex: 1; }
+.rcard-sum, .rcard-chev { display: none; }
+.rcard-head:focus-visible { outline: 3px solid var(--navy); outline-offset: 4px; border-radius: 8px; }
+@media (max-width: 640px) {
+  .rcard-fold { padding: 0 !important; overflow: hidden; }
+  .rcard-head { align-items: center; padding: 16px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .rcard-head h3 { margin: 0 !important; font-size: calc(.95rem * var(--fs-scale)) !important; line-height: 1.3; }
+  .rcard-sum { display: inline-block; flex: none; padding: 4px 10px; border-radius: 999px; background: var(--sky); color: var(--navy); font-weight: 800; font-size: .8rem; font-variant-numeric: tabular-nums; }
+  .rcard-chev { display: block; flex: none; color: var(--navy); transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+  .rcard-fold.is-open .rcard-chev { transform: rotate(180deg); }
+  .rcard-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+  .rcard-fold.is-open .rcard-body { grid-template-rows: 1fr; }
+  .rcard-inner { overflow: hidden; min-height: 0; }
+  .rcard-inner > :first-child { margin-top: 0; }
+  .rcard-fold.is-open .rcard-inner { padding: 0 16px 16px; }
+  .rcard-fold:not(.is-open) .rcard-inner { padding: 0 16px; }
+}
+html.contrast .rcard-sum { background: #ff0 !important; color: #000 !important; }
+
+/* ---------- телефон: «Корисні ресурси» квадратиками по 2 в ряд ---------- */
+@media (max-width: 640px) {
+  .res-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .res-card { position: relative; display: flex !important; flex-direction: column; align-items: flex-start; gap: 10px; aspect-ratio: 1 / 1;
+    padding: 14px !important; border-radius: 18px; min-width: 0; }
+  .res-card .res-ico { width: 42px; height: 42px; flex: none; }
+  .res-card .res-body { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; min-width: 0; width: 100%; }
+  .res-card .res-name { font-size: calc(.9rem * var(--fs-scale)); line-height: 1.25; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .res-card .res-desc { font-size: calc(.72rem * var(--fs-scale)); line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .res-card .res-arrow { position: absolute; top: 14px; right: 14px; }
+}
+
+/* ================= телефон: картки гарячих ліній компактно (bento) ================= */
+@media (max-width: 640px) {
+  .bento-sec { padding: 18px 0 36px !important; }
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: auto !important; gap: 10px !important; }
+  .bento .card { padding: 14px !important; gap: 10px; border-radius: 18px; min-width: 0; }
+  /* велика синя картка 1548 — на всю ширину */
+  .bento .card.c-2x2 { grid-column: 1 / -1; padding: 18px !important; }
+  .bento .card.c-2x2 .big { font-size: calc(2.6rem * var(--fs-scale)) !important; }
+  .bento .card.c-2x2 h3 { font-size: calc(1.08rem * var(--fs-scale)); margin-top: 4px !important; }
+  .bento .card.c-2x2 p { font-size: calc(.84rem * var(--fs-scale)); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  /* плашки — в один рядок, гортаються пальцем */
+  .bento .card .phone-row { display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; margin: 0 -18px; padding: 2px 18px; scrollbar-width: none; scroll-snap-type: x proximity; }
+  .bento .card .phone-row::-webkit-scrollbar { display: none; }
+  .bento .card .chip { flex: none; white-space: nowrap; padding: 7px 12px; font-size: calc(.76rem * var(--fs-scale)); scroll-snap-align: start; }
+  .bento .card .more { font-size: .8rem; }
+  .bento .card .label { font-size: .62rem; }
+
+  /* евакуація — кроки каруселлю */
+  .bento .card.evac { grid-column: 1 / -1; padding: 16px 0 16px 16px !important; gap: 12px; }
+  .bento .evac h3 { font-size: calc(.98rem * var(--fs-scale)); padding-right: 16px; }
+  .bento .evac .steps { display: flex !important; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 16px 4px 0; scrollbar-width: none; }
+  .bento .evac .steps::-webkit-scrollbar { display: none; }
+  .bento .evac .steps li { flex: 0 0 78%; scroll-snap-align: start; display: block !important; background: #fff; border: 1px solid #ecebe6 !important;
+    border-radius: 16px; padding: 14px !important; }
+  .bento .evac .steps .n { width: 30px !important; height: 30px !important; font-size: .9rem !important; margin: 0 0 8px !important; }
+  .bento .evac .steps h4 { font-size: .8rem; }
+  .bento .evac .steps p { font-size: calc(.8rem * var(--fs-scale)); line-height: 1.4; }
+  .bento .evac .evac-foot { font-size: .74rem; padding-right: 16px; }
+  .bento .evac::after { content: "← гортайте →"; display: block; text-align: center; font-size: .68rem; color: #9a9a93; padding-right: 16px; order: 3; }
+
+  /* решта карток — квадратами по дві */
+  .bento .card:not(.c-2x2):not(.evac) { aspect-ratio: 1 / 1; justify-content: space-between; }
+  .bento .card:not(.c-2x2):not(.evac) .card-ico { width: 32px; height: 32px; border-radius: 10px; }
+  .bento .card:not(.c-2x2):not(.evac) .card-ico svg { width: 18px; height: 18px; }
+  .bento .card:not(.c-2x2):not(.evac) .big { font-size: calc(1.9rem * var(--fs-scale)) !important; }
+  .bento .card:not(.c-2x2):not(.evac) h3 { font-size: calc(.86rem * var(--fs-scale)); line-height: 1.25; margin-top: 4px !important;
+    display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .bento .card:not(.c-2x2):not(.evac) p { font-size: calc(.74rem * var(--fs-scale)); line-height: 1.3; margin-top: 4px !important;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+html[lang="en"] .bento .evac::after { content: "← swipe →"; }

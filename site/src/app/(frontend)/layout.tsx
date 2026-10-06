@@ -3,6 +3,7 @@ import Script from 'next/script'
 import './styles.css'
 import { getLocale } from '@/lib/i18n'
 import { VisitTracker } from '@/components/VisitTracker'
+import { ScrollReset } from '@/components/ScrollReset'
 import { getSeo, SITE_URL } from '@/lib/seo'
 
 // Загальні дані для пошуковиків; кожна сторінка доповнює їх своїми (див. src/lib/seo.ts)
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Script>
         {children}
         <VisitTracker />
+        <ScrollReset />
       </body>
     </html>
   )

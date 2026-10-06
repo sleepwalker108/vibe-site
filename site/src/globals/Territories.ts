@@ -8,6 +8,8 @@ export const Territories: GlobalConfig = {
   slug: 'territories',
   label: 'Мапа: статуси територій',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     description:
       'Кількість населених пунктів (НП) у підсумках сайт рахує сам — додаючи числа всіх областей. Вручну вводяться лише кількості громад (ТГ).',

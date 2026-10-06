@@ -2,6 +2,7 @@ import type { Territory } from '@/payload-types'
 import { UA_MAP_VIEWBOX, UA_REGIONS } from '@/data/ukraineMap'
 import { StatsAnimator } from './StatsAnimator'
 import { REGION_NAMES_EN, type Dict, type Locale } from '@/lib/dictionary'
+import { TerrPicker } from './TerrPicker'
 
 // Від «можливих бойових дій» до «окуповано» — одна шкала від світлого до темного
 // (перевірено: сусідні кольори розрізняються і при нормальному зорі, і при дальтонізмі)
@@ -12,6 +13,8 @@ const STATUSES = [
   { key: 'occupied', color: '#861a08', dictKey: 'statusOccupied' },
 ] as const
 type StatusKey = (typeof STATUSES)[number]['key']
+// короткі назви статусів (ті самі, що в заголовках таблиці)
+const COL_KEY = { possible: 'colPossible', eres: 'colEres', active: 'colActive', occupied: 'colOccupied' } as const
 
 // Розкладка кружечків на мапі (одиниці — пікселі мапи шириною 1000):
 //   at   — зсув кружечка від центру області, щоб сусідні не налазили;
@@ -133,13 +136,45 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
             </div>
 
             {t.source && <p className="tp-source">{t.source}</p>}
+
+            {/* Телефон: коротко — смужка часток і чотири рядки замість довгого тексту */}
+            <div className="tp-compact">
+              <div className="tpc-bar" aria-hidden="true">
+                {STATUSES.map((s) => (totals[s.key] ? <span key={s.key} style={{ flexGrow: totals[s.key], background: s.color }} /> : null))}
+              </div>
+              <ul className="tpc-list">
+                {STATUSES.map((s) => (
+                  <li key={s.key}>
+                    <i style={{ background: s.color }} />
+                    <span className="tpc-name">{d[COL_KEY[s.key]]}</span>
+                    <b>
+                      {fmt(totals[s.key])} {d.np}
+                    </b>
+                    <small>
+                      {fmt(tg[s.key])} {d.tg}
+                    </small>
+                  </li>
+                ))}
+              </ul>
+              {t.source && (
+                <details className="tpc-source">
+                  <summary>{d.dataSource}</summary>
+                  <p>{t.source}</p>
+                </details>
+              )}
+            </div>
           </aside>
 
           <figure className="terr-map">
             <svg viewBox={UA_MAP_VIEWBOX} role="img" aria-label={d.mapAria}>
               <g className="ua-regions">
                 {UA_REGIONS.map((g) => (
-                  <path key={g.id} d={g.d} className={withData.has(g.id) ? 'has-data' : undefined}>
+                  <path
+                    key={g.id}
+                    d={g.d}
+                    className={withData.has(g.id) ? 'has-data' : undefined}
+                    data-geo={g.id === 'UA-40' ? 'UA-43' : g.id === 'UA-30' ? 'UA-32' : g.id}
+                  >
                     <title>{g.name}</title>
                   </path>
                 ))}
@@ -150,7 +185,7 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
                 const nonZero = r.values.filter((v) => v.value > 0)
                 const gap = nonZero.length > 1 ? 2.5 : 0
                 return (
-                  <g key={r.id} className="ua-donut">
+                  <g key={r.id} className="ua-donut" data-geo={r.geo.id}>
                     <title>
                       {`${r.title}: ${fmt(r.total)} ${d.np}\n` +
                         r.values
@@ -216,35 +251,16 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
               })}
             </svg>
             <figcaption>{d.mapCredit}</figcaption>
+            <TerrPicker
+              regions={[...regions]
+                .sort((a, b) => b.total - a.total)
+                .map((r) => ({ geo: r.geo.id, title: r.title, total: r.total, values: r.values.map(({ key, label, color, value }) => ({ key, label, color, value })) }))}
+              labels={{ np: d.np, hint: d.mapHint, prev: d.prevRegion, next: d.nextRegion, of: d.ofTotal }}
+            />
           </figure>
         </div>
 
         {/* На телефоні підписи на мапі задрібні — показуємо області списком */}
-        <ul className="terr-mobile">
-          {regions.map((r) => (
-            <li key={r.id}>
-              <div className="tm-head">
-                <span>{r.title}</span>
-                <b>{fmt(r.total)} {d.np}</b>
-              </div>
-              <div className="tm-bar" aria-hidden="true">
-                {r.values.map((v) =>
-                  v.value ? <span key={v.key} style={{ flexGrow: v.value, background: v.color }} /> : null,
-                )}
-              </div>
-              <div className="tm-vals">
-                {r.values.map((v) =>
-                  v.value ? (
-                    <span key={v.key}>
-                      <i style={{ background: v.color }} />
-                      {fmt(v.value)}
-                    </span>
-                  ) : null,
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
 
         <details className="terr-table">
           <summary>{d.showTable}</summary>

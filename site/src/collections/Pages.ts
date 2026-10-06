@@ -9,6 +9,8 @@ export const Pages: CollectionConfig = {
   labels: { singular: 'Сторінка', plural: 'Сторінки' },
   trash: true, // видалені сторінки потрапляють у кошик, їх можна відновити
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt', '_status', 'hasEnglish'],
     listSearchableFields: ['title', 'slug'],

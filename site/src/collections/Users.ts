@@ -5,6 +5,8 @@ export const Users: CollectionConfig = {
   slug: 'users',
   labels: { singular: 'Користувач', plural: 'Користувачі' },
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     useAsTitle: 'email',
     defaultColumns: ['name', 'email', 'role'],
     group: 'Налаштування',

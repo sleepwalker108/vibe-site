@@ -88,6 +88,7 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
   }
   useEffect(() => {
     setSub(null)
+    setOpen(false) // мобільне меню закривається при переході на іншу сторінку (і кнопкою «Назад»)
   }, [pathname])
   useEffect(() => {
     if (sub === null) return

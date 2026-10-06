@@ -12,6 +12,8 @@ export const Contacts: GlobalConfig = {
   slug: 'contacts',
   label: 'Контакти й підвал сайту',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     livePreview: { url: '/?preview=1#footer' },
   },

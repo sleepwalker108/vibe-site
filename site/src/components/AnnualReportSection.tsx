@@ -2,6 +2,7 @@ import type { AnnualReport } from '@/payload-types'
 import { formatDate } from '@/lib/payload'
 import type { Dict } from '@/lib/dictionary'
 import { StatsAnimator } from './StatsAnimator'
+import { RCard } from './RCard'
 
 // Кольори каналів ідуть строго по черзі (перевірено на розрізнення при дальтонізмі)
 const CHANNEL_COLORS = ['#0057b8', '#5aa9e6', '#e0a400', '#7a8ca3']
@@ -124,8 +125,7 @@ export const AnnualReportSection = ({ r, t }: { r: AnnualReport; t: Dict }) => {
           )}
 
           {!!r.topQuestions?.length && (
-            <div className="rcard">
-              <h3>{t.topQuestions.replace('{n}', String(r.topQuestions.length))}</h3>
+            <RCard title={t.topQuestions.replace('{n}', String(r.topQuestions.length))} summary={fmt(sum(r.topQuestions))}>
               <ol className="rank">
                 {r.topQuestions.map((q, i) => (
                   <li key={q.id} className="rank-item">
@@ -140,13 +140,12 @@ export const AnnualReportSection = ({ r, t }: { r: AnnualReport; t: Dict }) => {
                   </li>
                 ))}
               </ol>
-            </div>
+            </RCard>
           )}
 
           <div className="rcol">
             {!!r.outgoing?.length && (
-              <div className="rcard">
-                <h3>{t.outgoing}</h3>
+              <RCard title={t.outgoing} summary={fmt(outgoing)}>
                 <ul className="rank">
                   {r.outgoing.map((q) => (
                     <li key={q.id} className="rank-item">
@@ -160,7 +159,7 @@ export const AnnualReportSection = ({ r, t }: { r: AnnualReport; t: Dict }) => {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </RCard>
             )}
             {r.sms != null && (
               <div className="rcard rcard-sms">

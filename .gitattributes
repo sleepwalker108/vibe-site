@@ -1,0 +1,4 @@
+# скрипти для Linux-сервера — завжди з LF-закінченнями рядків
+*.sh text eol=lf
+*.service text eol=lf
+deploy/nginx.conf text eol=lf

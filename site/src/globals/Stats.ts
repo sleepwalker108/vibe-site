@@ -5,6 +5,8 @@ export const Stats: GlobalConfig = {
   slug: 'stats',
   label: 'Статистика гарячих ліній',
   admin: {
+    // кнопка «Скасувати» біля збереження/публікації
+    components: { elements: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     group: 'Сайт',
     description: 'Загальну кількість дзвінків рахувати не треба — сайт сам додає всі категорії.',
     livePreview: { url: '/?preview=1#stats' },
