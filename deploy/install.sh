@@ -78,12 +78,16 @@ fi
 
 say "6/9 Налаштування (.env)"
 if [ ! -f "$SITE_DIR/.env" ]; then
-  SCHEME=http
+  # Адресу сайту вписуємо лише для домену. Без домену лишаємо порожньою: адмінка тоді приймає вхід
+  # з будь-якої адреси сервера (у сервера може бути кілька IP — інакше вхід «не приймав би» пароль).
+  SERVER_URL=""
+  [ -n "$DOMAIN" ] && SERVER_URL="http://$DOMAIN"
   cat > "$SITE_DIR/.env" <<EOF
 # Налаштування сайту на сервері. НЕ заливати на GitHub.
+# NEXT_PUBLIC_SERVER_URL: порожньо — сайт за IP; з доменом — https://домен (після зміни: sudo FORCE=1 nartu-update)
 DATABASE_URL=file:./site.db
 PAYLOAD_SECRET=$(openssl rand -hex 32)
-NEXT_PUBLIC_SERVER_URL=$SCHEME://$HOST
+NEXT_PUBLIC_SERVER_URL=$SERVER_URL
 EOF
   chown "$APP_USER:$APP_USER" "$SITE_DIR/.env"
   chmod 600 "$SITE_DIR/.env"
