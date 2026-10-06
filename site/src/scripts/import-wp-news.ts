@@ -32,7 +32,28 @@ const saveCache = () => fs.writeFileSync(CACHE_FILE, JSON.stringify(cache))
 
 const MIME: Record<string, string> = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf' }
 
+// Розпакований архів wp-content/uploads старого сайту (поруч із папкою site). Якщо файл там є — беремо звідти,
+// інакше завантажуємо зі старого сайту.
+const UPLOADS_DIR = path.resolve(process.env.WP_UPLOADS || '../wp-uploads')
+const hasLocal = fs.existsSync(UPLOADS_DIR)
+let fromDisk = 0
+let fromWeb = 0
+
 const download = async (url: string) => {
+  const m = hasLocal ? new URL(url).pathname.match(/^\/wp-content\/uploads\/(.+)$/) : null
+  if (m) {
+    let rel = m[1]
+    try {
+      rel = decodeURIComponent(rel)
+    } catch {}
+    const file = path.join(UPLOADS_DIR, rel)
+    if (file.startsWith(UPLOADS_DIR + path.sep) && fs.existsSync(file)) {
+      fromDisk++
+      return fs.readFileSync(file)
+    }
+  }
+  fromWeb++
+  if (hasLocal) log(`    ↓ з інтернету: ${decodeURI(url).slice(0, 120)}`)
   const r = await fetch(url, { signal: AbortSignal.timeout(60000) })
   if (!r.ok) throw new Error(`HTTP ${r.status}`)
   return Buffer.from(await r.arrayBuffer())
@@ -173,6 +194,7 @@ const excerptOf = (p: any) =>
     .slice(0, 300) || textOf(p.content.rendered).slice(0, 250)
 
 // ---------- завантаження списку новин зі старого сайту ----------
+log(hasLocal ? `Файли беру з ${UPLOADS_DIR}` : `Папки ${UPLOADS_DIR} немає — файли завантажую зі старого сайту`)
 log('Завантажую список новин зі старого сайту…')
 const all: any[] = []
 for (let page = 1; ; page++) {
@@ -246,4 +268,5 @@ for (const [i, p] of uk.entries()) {
 }
 
 log(`Готово. Нових: ${created}, оновлено: ${updated}, вже були: ${skipped}, з помилками: ${failed}`)
+log(`Файли: з архіву ${fromDisk}, з інтернету ${fromWeb}`)
 process.exit(0)

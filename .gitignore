@@ -5,3 +5,7 @@ site/site.db
 site/*.db
 site/*.db-*
 site/.env
+
+# Файли зі старого сайту (wp-content/uploads) — лише локально
+wp-uploads/
+*.sql

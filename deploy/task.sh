@@ -20,6 +20,17 @@ if [ -z "$NAME" ] || [ ! -f "$SITE_DIR/src/scripts/$NAME.ts" ]; then
   exit 1
 fi
 
+# Архів файлів старого сайту (wp-content/uploads), скопійований у /tmp, — розпаковуємо в $APP_DIR/wp-uploads:
+# тоді картинки й PDF беруться з нього, а не завантажуються зі старого сайту.
+UPLOADS_ARCHIVE="${UPLOADS_ARCHIVE:-/tmp/nartu-uploads.tar}"
+if [ -f "$UPLOADS_ARCHIVE" ]; then
+  echo "Розпаковую $UPLOADS_ARCHIVE → $APP_DIR/wp-uploads"
+  mkdir -p "$APP_DIR/wp-uploads"
+  tar -xf "$UPLOADS_ARCHIVE" -C "$APP_DIR/wp-uploads"
+  chown -R "$APP_USER:$APP_USER" "$APP_DIR/wp-uploads"
+  rm -f "$UPLOADS_ARCHIVE"
+fi
+
 "$APP_DIR/deploy/backup.sh" --db-only
 sudo -u "$APP_USER" -H env LIMIT="${LIMIT:-}" ONLY_NEW="${ONLY_NEW:-}" bash -c \
   "cd '$SITE_DIR' && NODE_OPTIONS=--no-deprecation npx payload run 'src/scripts/$NAME.ts'"
