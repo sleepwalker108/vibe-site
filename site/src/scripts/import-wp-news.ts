@@ -222,9 +222,13 @@ for (const [i, p] of uk.entries()) {
     const existing = (
       await payload.find({ collection: 'news', where: { legacyUrl: { equals: p.link } }, limit: 1, depth: 0, trash: true, overrideAccess: true })
     ).docs[0]
-    // Новини, перенесені раніше без картинок у тексті (лише з обкладинкою), — оновлюємо, якщо на старому сайті картинки є
+    // Новини, перенесені раніше без картинок у тексті (лише з обкладинкою), — дописуємо картинки.
+    //  • лише якщо на старому сайті картинок більше однієї (єдина картинка стає обкладинкою, у текст не йде);
+    //  • лише один раз (позначка в кеші) — щоб наступні запуски не перезаписували правки редакторів
+    //    і новини, з яких картинки прибрали навмисно.
     const hasImages = (c: any) => JSON.stringify(c || {}).includes('"type":"upload"')
-    const needsImages = existing && /<img\s/i.test(p.content.rendered) && !hasImages((existing as any).content)
+    const imgCount = (p.content.rendered.match(/<img\s/gi) || []).length
+    const needsImages = existing && !cache[`done:${p.link}`] && imgCount > 1 && !hasImages((existing as any).content)
     if (existing && ONLY_NEW && !needsImages) {
       skipped++
       continue
@@ -250,6 +254,8 @@ for (const [i, p] of uk.entries()) {
       ? await payload.update({ collection: 'news', id: existing.id, locale: 'uk', data, overrideAccess: true })
       : await payload.create({ collection: 'news', locale: 'uk', data, overrideAccess: true })
     existing ? updated++ : created++
+    cache[`done:${p.link}`] = 1 // новину перенесено — повторно картинки не дописуємо
+    saveCache()
 
     const en = enByDate.get(p.date)
     if (en) {

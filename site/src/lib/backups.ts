@@ -2,6 +2,7 @@
 //   • копія бази: site-РРРРММДД-ГГХХСС.db.gz  (знімок через VACUUM INTO — коректний, навіть коли сайт працює);
 //   • копія файлів медіатеки: media-РРРРММДД-ГГХХСС.tar.gz.
 // Назви такі самі, як у щоденної автоматичної копії на сервері (deploy/backup.sh), тож усі копії в одному списку.
+import { createClient } from '@libsql/client'
 import { spawn } from 'child_process'
 import fs from 'fs'
 import path from 'path'
@@ -131,9 +132,13 @@ export const mediaExists = () => fs.existsSync(MEDIA_DIR)
 export const restoreDatabase = async (payload: Payload, name: string): Promise<{ safety: string }> => {
   if (!name.startsWith('site-')) throw new Error('Відновити можна лише копію бази')
   const tmp = filePath(`restore-${Date.now()}.db.tmp`)
-  const db = client(payload)
+  // Окреме з'єднання лише для відновлення: спільне з'єднання сайту може «забрати» будь-яка паралельна
+  // транзакція (наприклад, запис відвідування), і тоді приєднана копія (ATTACH) опинилася б не там.
+  // Налаштування цього з'єднання (foreign_keys, busy_timeout) не впливають на роботу сайту.
+  const db = createClient({ url: `file:${DB_FILE}` })
   let safety = ''
   try {
+    await db.execute('PRAGMA busy_timeout = 30000') // сайт теж пише в базу — чекаємо, а не падаємо
     // 1) розпакувати
     const src = fs.createReadStream(filePath(name))
     await pipeline(name.endsWith('.gz') ? src.pipe(zlib.createGunzip()) : src, fs.createWriteStream(tmp))
@@ -171,14 +176,13 @@ export const restoreDatabase = async (payload: Payload, name: string): Promise<{
       } catch (e) {
         await db.executeMultiple('ROLLBACK;').catch(() => {})
         throw e
-      } finally {
-        await db.executeMultiple('PRAGMA foreign_keys=ON;').catch(() => {})
       }
     } finally {
       await db.execute('DETACH DATABASE r').catch(() => {})
     }
     return { safety }
   } finally {
+    db.close()
     fs.rmSync(tmp, { force: true })
   }
 }

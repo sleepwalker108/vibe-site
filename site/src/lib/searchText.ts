@@ -58,7 +58,8 @@ export const queryWords = (q: string) =>
 // стоять найближче одне до одного; усі знайдені слова в уривку підсвічуються
 export type SnipPart = { text: string; mark?: boolean }
 export const snippet = (text: string, words: string[], radius = 90): SnipPart[] | null => {
-  const low = text.toLocaleLowerCase('uk')
+  // так само, як normalize() (апострофи, ё), але без зміни довжини — щоб позиції збігалися з оригіналом
+  const low = text.toLocaleLowerCase('uk').replace(/[’ʼ‘`´]/g, "'").replace(/ё/g, 'е')
   const stems = [...new Set(words.map(stem))]
   const hits: { at: number; s: string }[] = []
   for (const s of stems) {

@@ -22,6 +22,13 @@ say() { printf '\n\033[1;34m▶ %s\033[0m\n' "$*"; }
 ok() { printf '\033[1;32m✔ %s\033[0m\n' "$*"; }
 fail() { printf '\n\033[1;31m✖ %s\033[0m\n' "$*" >&2; exit 1; }
 as_app() { sudo -u "$APP_USER" -H bash -c "cd '$SITE_DIR' && $*"; }
+# Якщо оновлення зупинилося на півдорозі — повертаємо код до попередньої версії, щоб наступний
+# запуск nartu-update знову побачив нові зміни й спробував ще раз (інакше він скаже «змін немає»)
+rollback_code() {
+  sudo -u "$APP_USER" git -C "$APP_DIR" reset --hard --quiet "$BEFORE"
+  # бібліотеки могли встигнути змінитися — повертаємо ті, що були (сайт має стартувати після перезапуску)
+  if [ "${1:-}" = "deps" ]; then as_app "npm ci --no-audit --no-fund --loglevel=error" || true; fi
+}
 
 [ "$(id -u)" = "0" ] || fail "Запустіть так:  sudo nartu-update"
 [ -d "$SITE_DIR/.git" ] || [ -d "$APP_DIR/.git" ] || fail "Не знайдено сайт у $APP_DIR (спершу встановіть: deploy/install.sh)"
@@ -46,13 +53,20 @@ install -m 755 "$APP_DIR/deploy/backup.sh" /usr/local/bin/nartu-backup
 
 say "3/6 Бібліотеки"
 if [ "$BEFORE" = "$AFTER" ] || ! git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then
-  as_app "npm ci --no-audit --no-fund" || fail "Не вдалося встановити бібліотеки. Сайт працює на старій версії."
+  as_app "npm ci --no-audit --no-fund" || {
+    rollback_code deps
+    fail "Не вдалося встановити бібліотеки. Код повернуто до попередньої версії, сайт працює як і раніше. Спробуйте ще раз: sudo nartu-update"
+  }
 else
   ok "Без змін"
 fi
 
 say "4/6 Структура бази (міграції)"
-as_app "NODE_OPTIONS=--no-deprecation npx payload migrate" || fail "Помилка міграції бази. Сайт працює на старій версії; копія бази — у $APP_DIR/backups"
+if ! as_app "NODE_OPTIONS=--no-deprecation npx payload migrate"; then
+  # бібліотеки повертаємо лише якщо вони змінювалися в цьому оновленні
+  git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json && rollback_code || rollback_code deps
+  fail "Помилка міграції бази (текст помилки — вище). Код повернуто до попередньої версії, сайт працює як і раніше; копія бази — у $APP_DIR/backups. Спробуйте ще раз: sudo nartu-update"
+fi
 
 say "5/6 Збираю нову версію (сайт тим часом працює)"
 rm -rf "$SITE_DIR/.next-build"
