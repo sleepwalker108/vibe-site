@@ -73,8 +73,8 @@ export default async function SearchPage({ searchParams }: Props) {
   const topics = await getTopics(payload, locale)
   const filter = parseNewsFilter(sp, topics)
   const askedType = TYPES.includes(sp.type as ResultType) ? (sp.type as ResultType) : 'all'
-  // фільтри за категорією чи датою стосуються лише новин — тоді й показуємо лише новини
-  const type: ResultType = askedType === 'all' && hasNewsFilter(filter) ? 'news' : askedType
+  // фільтри за категорією чи датою стосуються лише новин — тоді й показуємо лише новини (без слів пошуку — теж)
+  const type: ResultType = !words.length || (askedType === 'all' && hasNewsFilter(filter)) ? 'news' : askedType
 
   let pages: any[] = []
   let news: { docs: any[]; totalDocs: number; totalPages: number } | null = null
@@ -84,56 +84,49 @@ export default async function SearchPage({ searchParams }: Props) {
   let counts: Awaited<ReturnType<typeof topicCounts>> | null = null
   let years: number[] = []
 
-  if (words.length) {
-    const published = publishedOnly(false)!
-    const newsBase: Where[] = [published, searchWhere(words), ...periodWhere(filter)]
-    const [pagesRes, newsRes, videosRes, contacts, res, topicCountsRes, yearsRes] =
-      await Promise.all([
-        payload.find({
-          collection: 'pages',
-          where: { and: [published, searchWhere(words)] },
-          limit: 30,
-          depth: 0,
-          select: { title: true, slug: true, content: true },
-          ...localeQuery(locale),
-        }),
-        payload.find({
+  const published = publishedOnly(false)!
+  const wordsWhere: Where[] = words.length ? [searchWhere(words)] : []
+  const newsBase: Where[] = [published, ...wordsWhere, ...periodWhere(filter)]
+  // без слів пошуку новини теж можна знайти — за категорією, роком чи місяцем
+  const listNews = words.length > 0 || hasNewsFilter(filter)
+  const [topicCountsRes, yearsRes, newsRes] = await Promise.all([
+    topicCounts(payload, newsBase, topics),
+    newsYears(payload, [published, ...wordsWhere]),
+    listNews
+      ? payload.find({
           collection: 'news',
           where: { and: [...newsBase, ...topicWhere(filter.topic)] },
           sort: newsSort(filter),
           limit: PER_PAGE,
           page,
           depth: 0,
-          select: {
-            title: true,
-            slug: true,
-            excerpt: true,
-            content: true,
-            publishedAt: true,
-            topics: true,
-          },
+          // повний текст потрібен лише для уривка зі знайденими словами
+          select: { title: true, slug: true, excerpt: true, publishedAt: true, topics: true, ...(words.length ? { content: true } : {}) },
           ...localeQuery(locale),
-        }),
-        payload.find({
-          collection: 'videos',
-          limit: 200,
-          depth: 0,
-          select: { title: true, description: true },
-          ...localeQuery(locale),
-        }),
-        payload.findGlobal({ slug: 'contacts', depth: 0, ...localeQuery(locale) }),
-        payload.findGlobal({ slug: 'resources', depth: 0, ...localeQuery(locale) }),
-        topicCounts(payload, newsBase, topics),
-        newsYears(payload, [published, searchWhere(words)]),
-      ])
+        })
+      : null,
+  ])
+  counts = topicCountsRes
+  years = yearsRes
+  news = newsRes
+
+  if (words.length) {
+    const [pagesRes, videosRes, contacts, res] = await Promise.all([
+      payload.find({
+        collection: 'pages',
+        where: { and: [published, searchWhere(words)] },
+        limit: 30,
+        depth: 0,
+        select: { title: true, slug: true, content: true },
+        ...localeQuery(locale),
+      }),
+      payload.find({ collection: 'videos', limit: 200, depth: 0, select: { title: true, description: true }, ...localeQuery(locale) }),
+      payload.findGlobal({ slug: 'contacts', depth: 0, ...localeQuery(locale) }),
+      payload.findGlobal({ slug: 'resources', depth: 0, ...localeQuery(locale) }),
+    ])
     // сторінки: спершу ті, де слова є в назві
-    pages = pagesRes.docs.sort(
-      (a: any, b: any) => Number(hasAll(b.title, words)) - Number(hasAll(a.title, words)),
-    )
-    news = newsRes
+    pages = pagesRes.docs.sort((a: any, b: any) => Number(hasAll(b.title, words)) - Number(hasAll(a.title, words)))
     videos = videosRes.docs.filter((v: any) => hasAll(`${v.title} ${v.description || ''}`, words))
-    counts = topicCountsRes
-    years = yearsRes
     const c = contacts as any
     const lines = [
       c.orgName,
@@ -145,11 +138,8 @@ export default async function SearchPage({ searchParams }: Props) {
       ...(c.hotline?.lines || []).map((l: any) => l.text),
     ].filter(Boolean) as string[]
     // показуємо контакти, якщо запит про них (усі слова знайдено серед рядків контактів)
-    if (hasAll(lines.join(' '), words))
-      contactLines = lines.filter((l) => words.some((w) => normalize(l).includes(stem(w))))
-    resources = (((res as any)?.items || []) as typeof resources).filter((r) =>
-      hasAll(`${r.label} ${r.description || ''} ${r.url || ''}`, words),
-    )
+    if (hasAll(lines.join(' '), words)) contactLines = lines.filter((l) => words.some((w) => normalize(l).includes(stem(w))))
+    resources = (((res as any)?.items || []) as typeof resources).filter((r) => hasAll(`${r.label} ${r.description || ''} ${r.url || ''}`, words))
   }
 
   const extras = (contactLines.length ? 1 : 0) + resources.length
@@ -198,6 +188,11 @@ export default async function SearchPage({ searchParams }: Props) {
             />
             {/* під час нового пошуку вибраний тип результатів зберігається */}
             {askedType !== 'all' && <input type="hidden" name="type" value={askedType} />}
+            {/* і вибрані фільтри новин (категорія, період, порядок) теж */}
+            {filter.topic && <input type="hidden" name="topic" value={filter.topic.slug} />}
+            {filter.year && <input type="hidden" name="year" value={filter.year} />}
+            {filter.month && <input type="hidden" name="month" value={filter.month} />}
+            {filter.sort === 'old' && <input type="hidden" name="sort" value="old" />}
             <button type="submit">{t.searchButton}</button>
           </form>
         </div>
@@ -205,29 +200,32 @@ export default async function SearchPage({ searchParams }: Props) {
 
       <section className="search-results">
         <div className="wrap">
-          {!q ? (
-            <p className="search-note">{t.searchHint}</p>
-          ) : !words.length ? (
+          {q && !words.length ? (
             <p className="search-note">{t.searchTooShort}</p>
-          ) : nothingAtAll ? (
+          ) : words.length > 0 && nothingAtAll ? (
             <p className="search-note">
               {t.searchNothing} «{q}».
             </p>
           ) : (
+            // фільтри новин є завжди — навіть до введення запиту (новини можна знайти за категорією чи датою)
             <ListNav className="with-filters">
               <aside className="filters-side" aria-label={t.filters}>
-                <p className="filters-title">{t.resultType}</p>
-                <nav className="type-tabs" aria-label={t.resultType}>
-                  {TYPES.filter((k) => k === 'all' || byType[k] || k === type).map((k) => (
-                    <NavLink
-                      key={k}
-                      href={withParams('/search', { q }, { type: k === 'all' ? undefined : k })}
-                      aria-current={k === type ? 'page' : undefined}
-                    >
-                      {typeLabel[k]} <span>{byType[k]}</span>
-                    </NavLink>
-                  ))}
-                </nav>
+                {words.length > 0 && (
+                  <>
+                    <p className="filters-title">{t.resultType}</p>
+                    <nav className="type-tabs" aria-label={t.resultType}>
+                      {TYPES.filter((k) => k === 'all' || byType[k] || k === type).map((k) => (
+                        <NavLink
+                          key={k}
+                          href={withParams('/search', { q }, { type: k === 'all' ? undefined : k })}
+                          aria-current={k === type ? 'page' : undefined}
+                        >
+                          {typeLabel[k]} <span>{byType[k]}</span>
+                        </NavLink>
+                      ))}
+                    </nav>
+                  </>
+                )}
 
                 {(type === 'news' || type === 'all') && counts && (
                   <NewsFilters
@@ -238,11 +236,17 @@ export default async function SearchPage({ searchParams }: Props) {
                     years={years}
                     t={t}
                     topics={topics}
-                    hidden={{ q, ...(askedType !== 'all' ? { type: askedType } : {}) }}
+                    hidden={{ ...(q ? { q } : {}), ...(askedType !== 'all' ? { type: askedType } : {}) }}
                   />
                 )}
               </aside>
               <div className="filters-main">
+                {!listNews && <p className="search-note">{t.searchHint}</p>}
+                {!words.length && news && (
+                  <p className="filter-total" role="status">
+                    {t.newsCount}: <b>{news.totalDocs}</b>
+                  </p>
+                )}
                 {type === 'all' && page === 1 && extras > 0 && (
                   <div className="hit-extras">
                     {!!contactLines.length && (

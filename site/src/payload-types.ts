@@ -167,10 +167,6 @@ export interface News {
   title: string;
   publishedAt: string;
   /**
-   * Напр.: «Житло для ВПО»
-   */
-  tag?: string | null;
-  /**
    * За категоріями відвідувачі фільтрують новини на сайті й у пошуку. Можна вибрати кілька або створити нову (кнопка «+»). Список категорій — у розділі «Категорії новин».
    */
   topics?: (number | Topic)[] | null;
@@ -606,7 +602,6 @@ export interface NewsSelect<T extends boolean = true> {
   hasEnglish?: T;
   title?: T;
   publishedAt?: T;
-  tag?: T;
   topics?: T;
   cover?: T;
   excerpt?: T;

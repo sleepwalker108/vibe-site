@@ -68,7 +68,6 @@ export default async function NewsPage({ searchParams }: Props) {
         slug: true,
         cover: true,
         publishedAt: true,
-        tag: true,
         topics: true,
         excerpt: true,
       },

@@ -42,24 +42,12 @@ export const News: CollectionConfig = {
   ...translationFields('news'),
     { name: 'title', type: 'text', label: 'Заголовок', required: true, localized: true },
     {
-      type: 'row',
-      fields: [
-        {
-          name: 'publishedAt',
-          type: 'date',
-          label: 'Дата публікації',
-          required: true,
-          defaultValue: () => new Date().toISOString(),
-          admin: { date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' } },
-        },
-        {
-          name: 'tag',
-          type: 'text',
-          label: 'Мітка (необов’язково)',
-          localized: true,
-          admin: { description: 'Напр.: «Житло для ВПО»' },
-        },
-      ],
+      name: 'publishedAt',
+      type: 'date',
+      label: 'Дата публікації',
+      required: true,
+      defaultValue: () => new Date().toISOString(),
+      admin: { width: '50%', date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' } },
     },
     {
       name: 'topics',

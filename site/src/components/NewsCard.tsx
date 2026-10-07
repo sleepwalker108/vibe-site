@@ -15,8 +15,8 @@ export const NewsCard = ({
 }) => {
   const H = level === 2 ? 'h2' : 'h3'
   const img = mediaUrl(item.cover, featured ? 'wide' : 'card')
-  // мітка: власна (якщо вписана в адмінці) або перша категорія новини
-  const tag = item.tag || topicName(item.topics?.[0])
+  // мітка на картці — перша категорія новини
+  const tag = topicName(item.topics?.[0])
   return (
     <Link className={`news-card${featured ? ' featured' : ''}`} href={`/news/${encodeURIComponent(item.slug || '')}`}>
       <div className="img">{img ? <img src={img} alt="" loading="lazy" /> : <div className="ph">1548</div>}</div>
