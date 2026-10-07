@@ -31,7 +31,7 @@ import { MediaCopyCell as MediaCopyCell_6d76666deabf00faf1496015be4b4c07 } from 
 import { NavRowLabel as NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0 } from '../../../components/admin/NavRowLabel'
 import { RegionRowLabel as RegionRowLabel_c05ae2a17043c4c44c8bed5650e19e94 } from '../../../components/admin/RegionRowLabel'
 import { StatsNavLink as StatsNavLink_3c443f0c28ffcebbd081f1f092e5f5c9 } from '../../../components/admin/StatsNavLink'
-import { BackupsNavLink as BackupsNavLink_e0c0474c051b159005e571cf85546f2a } from '../../../components/admin/BackupsNavLink'
+import { AdminNavLinks as AdminNavLinks_6e8db327abb4c1711d058b611f9e01a3 } from '../../../components/admin/AdminNavLinks'
 import { ThemeToggle as ThemeToggle_fc85bd5ac375c29cf24795ab8778bf43 } from '../../../components/admin/ThemeToggle'
 import { StatsSummary as StatsSummary_3c245d03c66b4b5f1bdc424760b12041 } from '../../../components/admin/StatsSummary'
 import { SiteMap as SiteMap_e46f24e33f1b114ddb8ca8bfbddc12c0 } from '../../../components/admin/SiteMap'
@@ -39,6 +39,7 @@ import { ViewSiteLink as ViewSiteLink_33f037dcb8950e7b5e6f0480c9cc4430 } from '.
 import { DashboardLink as DashboardLink_ce3821a7b35a5f1e86b97db3fb5d284d } from '../../../components/admin/DashboardLink'
 import { EditorHints as EditorHints_90b87dff240221382d5dbd62843cd442 } from '../../../components/admin/EditorHints'
 import { StatsView as StatsView_0b84f090b9d2570a8fedbffad015a4f7 } from '../../../components/admin/StatsView'
+import { StatusView as StatusView_07ed7e709040574f55761962f068859b } from '../../../components/admin/StatusView'
 import { BackupsView as BackupsView_d5c99d4ea27693ffc534b8cdb61a44e3 } from '../../../components/admin/BackupsView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -77,7 +78,7 @@ export const importMap = {
   "/components/admin/NavRowLabel#NavRowLabel": NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0,
   "/components/admin/RegionRowLabel#RegionRowLabel": RegionRowLabel_c05ae2a17043c4c44c8bed5650e19e94,
   "/components/admin/StatsNavLink#StatsNavLink": StatsNavLink_3c443f0c28ffcebbd081f1f092e5f5c9,
-  "/components/admin/BackupsNavLink#BackupsNavLink": BackupsNavLink_e0c0474c051b159005e571cf85546f2a,
+  "/components/admin/AdminNavLinks#AdminNavLinks": AdminNavLinks_6e8db327abb4c1711d058b611f9e01a3,
   "/components/admin/ThemeToggle#ThemeToggle": ThemeToggle_fc85bd5ac375c29cf24795ab8778bf43,
   "/components/admin/StatsSummary#StatsSummary": StatsSummary_3c245d03c66b4b5f1bdc424760b12041,
   "/components/admin/SiteMap#SiteMap": SiteMap_e46f24e33f1b114ddb8ca8bfbddc12c0,
@@ -85,6 +86,7 @@ export const importMap = {
   "/components/admin/DashboardLink#DashboardLink": DashboardLink_ce3821a7b35a5f1e86b97db3fb5d284d,
   "/components/admin/EditorHints#EditorHints": EditorHints_90b87dff240221382d5dbd62843cd442,
   "/components/admin/StatsView#StatsView": StatsView_0b84f090b9d2570a8fedbffad015a4f7,
+  "/components/admin/StatusView#StatusView": StatusView_07ed7e709040574f55761962f068859b,
   "/components/admin/BackupsView#BackupsView": BackupsView_d5c99d4ea27693ffc534b8cdb61a44e3,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

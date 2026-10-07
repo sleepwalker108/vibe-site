@@ -1,13 +1,12 @@
 'use client'
 import { toast } from '@payloadcms/ui'
 import { useCallback, useEffect, useState } from 'react'
+import { size } from '@/lib/adminFormat'
 import type { BackupFile } from '@/lib/backups'
 
 const MONTHS = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня']
 // «7 жовтня 2026, 09:15» — з рядка дати копії, без перетворень часових поясів
 const when = (d: string) => `${Number(d.slice(8, 10))} ${MONTHS[Number(d.slice(5, 7)) - 1]} ${d.slice(0, 4)}, ${d.slice(11, 16)}`
-const size = (b: number) =>
-  b >= 1e9 ? `${(b / 1e9).toFixed(1)} ГБ` : b >= 1e6 ? `${(b / 1e6).toFixed(1)} МБ` : `${Math.max(1, Math.round(b / 1e3))} КБ`
 
 const api = async (url: string, init?: RequestInit) => {
   const r = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...init })
