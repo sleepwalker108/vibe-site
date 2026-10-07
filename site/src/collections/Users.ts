@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isAdminField } from '../access'
+import { authAfterError, authBeforeOperation } from '../lib/authSecurity'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -15,6 +16,11 @@ export const Users: CollectionConfig = {
     maxLoginAttempts: 5, // після 5 невдалих спроб обліковий запис блокується
     lockTime: 15 * 60 * 1000, // на 15 хвилин
     tokenExpiration: 8 * 60 * 60, // сесія — 8 годин
+    cookies: {
+      sameSite: 'Lax',
+      // з HTTPS (адреса сайту в .env починається з https://) cookie входу передається лише зашифрованим каналом
+      secure: (process.env.NEXT_PUBLIC_SERVER_URL || '').startsWith('https://'),
+    },
   },
   access: {
     // адміністратор бачить усіх; редактор — лише себе (email-и адміністраторів редакторам не показуємо)
@@ -24,6 +30,9 @@ export const Users: CollectionConfig = {
     delete: isAdmin,
   },
   hooks: {
+    // надійний пароль + однаковий час відповіді при вході (див. src/lib/authSecurity.ts)
+    beforeOperation: [authBeforeOperation],
+    afterError: [authAfterError],
     beforeChange: [
       // Перший зареєстрований користувач автоматично стає адміністратором
       async ({ data, operation, req }) => {
