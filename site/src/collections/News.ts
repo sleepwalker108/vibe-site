@@ -3,6 +3,7 @@ import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
+import { fillSearchText, searchTextField } from '../fields/searchText'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -35,7 +36,8 @@ export const News: CollectionConfig = {
     update: isLoggedIn,
     delete: isAdmin,
   },
-  hooks: { beforeChange: [markEnglish] },
+  // текст для пошуку по сайту оновлюється під час кожного збереження
+  hooks: { beforeChange: [markEnglish, fillSearchText(['title', 'excerpt', 'content'])] },
   fields: [
   ...translationFields('news'),
     { name: 'title', type: 'text', label: 'Заголовок', required: true, localized: true },
@@ -86,5 +88,6 @@ export const News: CollectionConfig = {
       admin: { position: 'sidebar', readOnly: true, description: 'Для переадресації старих посилань.' },
     },
     seoFields(),
+    searchTextField,
   ],
 }

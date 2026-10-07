@@ -12,6 +12,7 @@ import * as migration_20261005_110019_seo from './20261005_110019_seo';
 import * as migration_20261005_111047_resources from './20261005_111047_resources';
 import * as migration_20261005_111134_home_resources_moved from './20261005_111134_home_resources_moved';
 import * as migration_20261005_124910_contacts_socials from './20261005_124910_contacts_socials';
+import * as migration_20261007_085753_search_text from './20261007_085753_search_text';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20261005_124910_contacts_socials.up,
     down: migration_20261005_124910_contacts_socials.down,
-    name: '20261005_124910_contacts_socials'
+    name: '20261005_124910_contacts_socials',
+  },
+  {
+    up: migration_20261007_085753_search_text.up,
+    down: migration_20261007_085753_search_text.down,
+    name: '20261007_085753_search_text'
   },
 ];

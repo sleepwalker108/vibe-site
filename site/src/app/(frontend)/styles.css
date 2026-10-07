@@ -1342,10 +1342,6 @@ html.contrast .mm-overlay { background: rgba(0, 0, 0, .7) !important; }
 .search-form button { flex: none; height: 50px; padding: 0 22px; border: 0; border-radius: 14px; background: var(--yellow); color: var(--navy-ink); font: inherit; font-weight: 800; cursor: pointer; }
 .search-results { padding: 36px 0 64px; }
 .search-note { color: var(--muted); margin: 0 0 18px; }
-.search-pages { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 8px; }
-.search-pages a { display: block; padding: 14px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line); color: var(--navy); font-weight: 700; text-decoration: none; }
-.search-pages a::before { content: "📄 "; }
-.search-pages a:hover { border-color: var(--navy); }
 .mm-search { display: flex; gap: 6px; margin: 16px 0 0; }
 .mm-search input { flex: 1; min-width: 0; height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--sky); color: var(--ink); font: inherit; font-size: .95rem; }
 .mm-search button { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border: 0; border-radius: 12px; background: var(--navy); color: #fff; cursor: pointer; }
@@ -1355,3 +1351,24 @@ html.contrast .search-form button, html.contrast .mm-search button { background:
   .search-form input, .search-form button { height: 46px; }
   .search-form button { padding: 0 16px; }
 }
+
+/* результати пошуку: тип, назва, уривок тексту з підсвіченим словом */
+.hits { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: 900px; }
+.hit { padding: 16px 20px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
+.hit:hover { border-color: var(--navy); }
+.hit-kind { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.hit h2 { margin: 0; font-size: 1.12rem; line-height: 1.35; }
+.hit h2 a { color: var(--navy); text-decoration: none; }
+.hit h2 a:hover { text-decoration: underline; }
+.hit-snip { margin: 6px 0 0; color: var(--ink, #1c2733); font-size: .95rem; line-height: 1.55; }
+.hit-snip mark, .hit-card mark { background: #ffe680; color: inherit; border-radius: 3px; padding: 0 2px; }
+.hit-extras { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; max-width: 900px; margin-bottom: 12px; }
+.hit-card { padding: 16px 20px; border-radius: 16px; background: var(--sky); border: 1px solid var(--line); }
+.hit-card ul { margin: 4px 0 0; padding-left: 18px; }
+.hit-card li { margin: 2px 0; }
+.hit-card a { color: var(--navy); font-weight: 600; }
+.hit-card small { color: var(--muted); }
+.hit-more { display: inline-block; margin-top: 8px; font-size: .9rem; }
+html.contrast .hit, html.contrast .hit-card { background: #000 !important; border: 2px solid #fff !important; }
+html.contrast .hit-snip mark, html.contrast .hit-card mark { background: #ff0 !important; color: #000 !important; }
+@media (max-width: 640px) { .hit, .hit-card { padding: 14px 16px; } .hit h2 { font-size: 1.02rem; } }

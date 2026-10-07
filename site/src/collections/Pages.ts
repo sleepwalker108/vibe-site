@@ -3,6 +3,7 @@ import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
+import { fillSearchText, searchTextField } from '../fields/searchText'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -29,7 +30,8 @@ export const Pages: CollectionConfig = {
     update: isLoggedIn,
     delete: isAdmin,
   },
-  hooks: { beforeChange: [markEnglish] },
+  // текст для пошуку по сайту оновлюється під час кожного збереження
+  hooks: { beforeChange: [markEnglish, fillSearchText(['title', 'content'])] },
   fields: [
   ...translationFields('pages'),
     { name: 'title', type: 'text', label: 'Назва', required: true, localized: true },
@@ -49,5 +51,6 @@ export const Pages: CollectionConfig = {
       },
     },
     seoFields(),
+    searchTextField,
   ],
 }

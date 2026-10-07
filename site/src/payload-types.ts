@@ -207,6 +207,7 @@ export interface News {
     image?: (number | null) | Media;
     noindex?: boolean | null;
   };
+  searchText?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -296,6 +297,7 @@ export interface Page {
     image?: (number | null) | Media;
     noindex?: boolean | null;
   };
+  searchText?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -575,6 +577,7 @@ export interface NewsSelect<T extends boolean = true> {
         image?: T;
         noindex?: T;
       };
+  searchText?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -597,6 +600,7 @@ export interface PagesSelect<T extends boolean = true> {
         image?: T;
         noindex?: T;
       };
+  searchText?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
