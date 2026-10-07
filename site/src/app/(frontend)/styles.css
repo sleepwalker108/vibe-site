@@ -1425,7 +1425,10 @@ html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria
   transform-origin: left; animation: list-progress 1.2s ease-out forwards; }
 @keyframes list-progress { from { transform: scaleX(0); } to { transform: scaleX(.85); } }
 @media (min-width: 1000px) {
-  .with-filters { display: grid; grid-template-columns: 272px minmax(0, 1fr); gap: 28px; align-items: start; }
+  /* фільтри — праворуч (у розмітці вони перші, тож на телефоні стоять над списком) */
+  .with-filters { display: grid; grid-template-columns: minmax(0, 1fr) 272px; gap: 28px; align-items: start; }
+  .with-filters > .filters-side { grid-column: 2; grid-row: 1; }
+  .with-filters > .filters-main { grid-column: 1; grid-row: 1; }
   .filters-side { position: sticky; top: 96px; max-height: calc(100vh - 112px); overflow-y: auto; overscroll-behavior: contain;
     background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 18px 16px; }
   .filters-title { display: block; }
