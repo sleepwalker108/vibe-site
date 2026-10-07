@@ -1178,28 +1178,23 @@ html.contrast .tpk-card, html.contrast .tpk-list li, html.contrast .tpk-nav { ba
   .mm-icon-btn:hover { background: rgba(255,255,255,.22); }
   .mm-icon-btn[aria-pressed="true"] { background: var(--yellow); color: var(--navy-ink); border-color: var(--yellow); }
   .mm-nav { margin-top: 16px; }
-  /* розділи пронумеровано: 01, 02… (Головна — значок будиночка) */
-  .mm-nav > ul { counter-reset: mm; }
-  .mm-nav > ul > .mm-item { counter-increment: mm; border-bottom: 1px dashed var(--line); }
-  .mm-nav > ul > .mm-item:first-child { counter-increment: none; }
-  .mm-row { display: flex; align-items: center; gap: 12px; margin: 2px 0; padding: 14px 10px; border-radius: 12px; position: relative; }
-  .mm-nav > ul > .mm-item > .mm-row::before, .mm-nav > ul > .mm-item > .mm-row-wrap > .mm-row::before {
-    content: counter(mm, decimal-leading-zero); flex: none; width: 26px; font-size: .74rem; font-weight: 800; color: #b7c4d3; font-variant-numeric: tabular-nums; }
-  .mm-nav > ul > .mm-item:first-child > .mm-row::before { content: "⌂"; font-size: 1rem; color: var(--navy); }
-  /* поточний розділ — жовта смужка зліва замість заливки */
-  .mm-row.is-active, .mm-row-wrap.is-active > .mm-row { background: transparent !important; color: var(--navy) !important; }
-  .mm-row.is-active::after, .mm-row-wrap.is-active > .mm-row::after { content: ""; position: absolute; left: -8px; top: 12px; bottom: 12px; width: 4px; border-radius: 4px; background: var(--yellow); }
-  .mm-row.is-active::before, .mm-row-wrap.is-active > .mm-row::before { color: var(--navy) !important; }
-  .mm-toggle { width: 34px; height: 34px; border-radius: 50%; background: var(--sky); margin-right: 4px; }
+  /* розділи — простий список із тонкими роздільниками (без номерів і бічних смужок) */
+  .mm-nav > ul > .mm-item { border-bottom: 1px solid var(--line); }
+  .mm-nav > ul > .mm-item:last-child { border-bottom: 0; }
+  .mm-row { display: flex; align-items: center; gap: 12px; margin: 2px 0; padding: 14px 12px; border-radius: 12px; position: relative; }
+  /* поточний розділ — м'який фон і синій текст */
+  .mm-row.is-active, .mm-row-wrap.is-active > .mm-row { background: var(--sky) !important; color: var(--navy) !important; }
+  /* кнопка-стрілка — поверх фону активного розділу */
+  .mm-toggle { width: 34px; height: 34px; border-radius: 50%; background: var(--sky); margin-right: 4px; position: relative; z-index: 1; }
+  .mm-row-wrap.is-active .mm-toggle { background: #fff; }
   .mm-item.is-open .mm-toggle { background: var(--navy); color: #fff; }
   .mm-row-wrap > button.mm-row + .mm-toggle { margin-left: -38px; }
-  /* підменю — «гілка» з лінією */
-  .mm-sub ul { position: relative; margin-left: 22px; padding-left: 16px; border-left: 2px solid var(--sky-2); }
+  /* підменю — з відступом, без ліній і кружечків */
+  .mm-sub ul { margin-left: 12px; }
   .mm-sub li:first-child { padding-top: 2px; }
-  .mm-sub-link { padding: 10px 10px; }
-  .mm-sub-link::before { left: -21px; width: 8px; height: 8px; margin-top: -4px; background: #fff; border: 2px solid var(--sky-2); }
-  .mm-sub-link.is-active::before { background: var(--yellow); border-color: var(--yellow); }
-  .mm-sub-link.is-active { background: var(--sky); }
+  .mm-sub-link { padding: 10px 12px; color: var(--muted); }
+  .mm-sub-link::before { content: none; }
+  .mm-sub-link.is-active { background: var(--sky); color: var(--navy); }
 
   /* контакти: гаряча лінія — великий жовтий «квиток» */
   .mm-contacts { background: transparent; border: 0; padding: 0; }
