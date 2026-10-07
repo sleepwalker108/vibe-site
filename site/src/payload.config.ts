@@ -12,6 +12,7 @@ import { Media } from './collections/Media'
 import { News } from './collections/News'
 import { Pages } from './collections/Pages'
 import { Videos } from './collections/Videos'
+import { Topics } from './collections/Topics'
 import { Visits } from './collections/Visits'
 import { Home } from './globals/Home'
 import { Stats } from './globals/Stats'
@@ -76,7 +77,7 @@ export default buildConfig({
     defaultLocale: 'uk',
     fallback: true,
   },
-  collections: [News, Pages, Videos, Media, Users, Visits],
+  collections: [News, Topics, Pages, Videos, Media, Users, Visits],
   globals: [Home, Navigation, Stats, AnnualReport, Territories, Resources, Contacts, Seo],
   editor: lexicalEditor({
     // панель інструментів, таблиці, виправлені посилання + блок «Запитання — відповіді»

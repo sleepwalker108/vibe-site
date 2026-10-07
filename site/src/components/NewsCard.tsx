@@ -1,23 +1,22 @@
 import Link from 'next/link'
 import type { News } from '@/payload-types'
 import { formatDate, mediaUrl } from '@/lib/payload'
-import { topicLabel } from '@/lib/topics'
+import { topicName } from '@/lib/topics'
 
 export const NewsCard = ({
   item,
   featured = false,
   level = 3,
-  locale = 'uk',
 }: {
   item: News
   featured?: boolean
   level?: 2 | 3
-  locale?: 'uk' | 'en'
+  locale?: 'uk' | 'en' // назву категорії вже повертає база потрібною мовою
 }) => {
   const H = level === 2 ? 'h2' : 'h3'
   const img = mediaUrl(item.cover, featured ? 'wide' : 'card')
-  // мітка: власна (якщо вписана в адмінці) або перша тема новини
-  const tag = item.tag || (item.topics?.[0] ? topicLabel(item.topics[0], locale) : null)
+  // мітка: власна (якщо вписана в адмінці) або перша категорія новини
+  const tag = item.tag || topicName(item.topics?.[0])
   return (
     <Link className={`news-card${featured ? ' featured' : ''}`} href={`/news/${encodeURIComponent(item.slug || '')}`}>
       <div className="img">{img ? <img src={img} alt="" loading="lazy" /> : <div className="ph">1548</div>}</div>

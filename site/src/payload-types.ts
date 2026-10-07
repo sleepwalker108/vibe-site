@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     news: News;
+    topics: Topic;
     pages: Page;
     videos: Video;
     media: Media;
@@ -79,9 +80,14 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    topics: {
+      news: 'news';
+    };
+  };
   collectionsSelect: {
     news: NewsSelect<false> | NewsSelect<true>;
+    topics: TopicsSelect<false> | TopicsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     videos: VideosSelect<false> | VideosSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -165,9 +171,9 @@ export interface News {
    */
   tag?: string | null;
   /**
-   * За темами відвідувачі фільтрують новини на сайті. Можна вибрати кілька.
+   * За категоріями відвідувачі фільтрують новини на сайті й у пошуку. Можна вибрати кілька або створити нову (кнопка «+»). Список категорій — у розділі «Категорії новин».
    */
-  topics?: ('evacuation' | 'idp-support' | 'shelter' | 'recovery' | 'weekly')[] | null;
+  topics?: (number | Topic)[] | null;
   cover?: (number | null) | Media;
   /**
    * Показується в списку новин. 1–2 речення.
@@ -216,6 +222,35 @@ export interface News {
   createdAt: string;
   deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Категорії, за якими відвідувачі фільтрують новини (сторінка «Новини» і пошук по сайту). Категорія без жодної новини на сайті не показується.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  /**
+   * Менше число — вище у фільтрі.
+   */
+  order?: number | null;
+  /**
+   * Латиницею, напр. evacuation → /news?topic=evacuation. Заповнюється автоматично з назви.
+   */
+  slug?: string | null;
+  /**
+   * Через кому — назви рубрик старого сайту, з яких імпорт новин проставляє цю категорію.
+   */
+  wpNames?: string | null;
+  news?: {
+    docs?: (number | News)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -498,6 +533,10 @@ export interface PayloadLockedDocument {
         value: number | News;
       } | null)
     | ({
+        relationTo: 'topics';
+        value: number | Topic;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null)
@@ -587,6 +626,19 @@ export interface NewsSelect<T extends boolean = true> {
   createdAt?: T;
   deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics_select".
+ */
+export interface TopicsSelect<T extends boolean = true> {
+  name?: T;
+  order?: T;
+  slug?: T;
+  wpNames?: T;
+  news?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

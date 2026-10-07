@@ -17,6 +17,7 @@ import {
 } from '@/lib/newsFilters'
 import type { News } from '@/payload-types'
 import { queryWords, searchWhere } from '@/lib/searchText'
+import { getTopics } from '@/lib/topics'
 import { pageMetadata } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
@@ -38,12 +39,13 @@ export default async function NewsPage({ searchParams }: Props) {
   const draft = await isDraftMode(sp)
   const { locale, t } = await getDict()
   const page = Math.max(1, Number(sp.page) || 1)
-  const filter = parseNewsFilter(sp)
   const q = String(sp.q || '')
     .trim()
     .slice(0, 100)
   const words = queryWords(q)
   const payload = await getClient()
+  const topics = await getTopics(payload, locale)
+  const filter = parseNewsFilter(sp, topics)
 
   // усі умови, крім теми (тему додаємо окремо — щоб порахувати новини в кожній темі)
   const base: Where[] = [
@@ -72,7 +74,7 @@ export default async function NewsPage({ searchParams }: Props) {
       },
       ...localeQuery(locale),
     }),
-    topicCounts(payload, base),
+    topicCounts(payload, base, topics),
     newsYears(payload, [publishedOnly(draft) || {}]),
   ])
 
@@ -96,7 +98,7 @@ export default async function NewsPage({ searchParams }: Props) {
               counts={counts}
               years={years}
               t={t}
-              locale={locale}
+              topics={topics}
               query={q}
             />
           </aside>

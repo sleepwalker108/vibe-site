@@ -3,7 +3,6 @@ import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
-import { TOPICS } from '../lib/topics'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 
 export const News: CollectionConfig = {
@@ -64,11 +63,13 @@ export const News: CollectionConfig = {
     },
     {
       name: 'topics',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'topics',
       hasMany: true,
-      label: 'Теми',
-      options: TOPICS.map((t) => ({ label: t.uk, value: t.value })),
-      admin: { description: 'За темами відвідувачі фільтрують новини на сайті. Можна вибрати кілька.' },
+      label: 'Категорії',
+      admin: {
+        description: 'За категоріями відвідувачі фільтрують новини на сайті й у пошуку. Можна вибрати кілька або створити нову (кнопка «+»). Список категорій — у розділі «Категорії новин».',
+      },
     },
     { name: 'cover', type: 'upload', relationTo: 'media', label: 'Обкладинка' },
     {

@@ -1,20 +1,21 @@
-// Фільтри новин (тема, рік, місяць, порядок) — спільні для сторінки «Новини» і пошуку по сайту.
+// Фільтри новин (категорія, рік, місяць, порядок) — спільні для сторінки «Новини» і пошуку по сайту.
 // Усі фільтри — у звичайних параметрах адреси (?topic=…&year=…), тож посиланням можна поділитися.
 import type { Payload, Where } from 'payload'
-import { isTopic, TOPICS, type Topic } from './topics'
+import type { TopicItem } from './topics'
 
-export type NewsFilter = { topic?: Topic; year?: number; month?: number; sort: 'new' | 'old' }
+export type NewsFilter = { topic?: TopicItem; year?: number; month?: number; sort: 'new' | 'old' }
 type SP = Record<string, string | string[] | undefined>
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)
 
-export const parseNewsFilter = (sp: SP): NewsFilter => {
+// topics — категорії з адмінки: невідома категорія в адресі просто ігнорується
+export const parseNewsFilter = (sp: SP, topics: TopicItem[]): NewsFilter => {
   const topic = one(sp.topic)
   const year = Number(one(sp.year))
   const month = Number(one(sp.month))
   const validYear = Number.isInteger(year) && year >= 2000 && year <= 2100
   return {
-    topic: isTopic(topic) ? topic : undefined,
+    topic: topics.find((t) => t.slug === topic),
     year: validYear ? year : undefined,
     month: validYear && Number.isInteger(month) && month >= 1 && month <= 12 ? month : undefined,
     sort: one(sp.sort) === 'old' ? 'old' : 'new',
@@ -32,7 +33,7 @@ export const periodWhere = (f: NewsFilter): Where[] => {
   const to = !f.month || f.month === 12 ? start(f.year + 1, 1) : start(f.year, f.month + 1)
   return [{ publishedAt: { greater_than_equal: from } }, { publishedAt: { less_than: to } }]
 }
-export const topicWhere = (topic?: Topic): Where[] => (topic ? [{ topics: { in: [topic] } }] : [])
+export const topicWhere = (topic?: TopicItem): Where[] => (topic ? [{ topics: { in: [topic.id] } }] : [])
 
 export const newsSort = (f: NewsFilter) => (f.sort === 'old' ? 'publishedAt' : '-publishedAt')
 
@@ -48,10 +49,10 @@ export const newsYears = async (payload: Payload, base: Where[]): Promise<number
 }
 
 // Скільки новин у кожній темі (з урахуванням інших фільтрів) — для підписів на кнопках тем
-export const topicCounts = async (payload: Payload, base: Where[]) => {
+export const topicCounts = async (payload: Payload, base: Where[], topics: TopicItem[]) => {
   const count = (extra: Where[]) => payload.count({ collection: 'news', where: { and: [...base, ...extra] } }).then((r) => r.totalDocs)
-  const [all, ...each] = await Promise.all([count([]), ...TOPICS.map((t) => count(topicWhere(t.value)))])
-  return { all, byTopic: Object.fromEntries(TOPICS.map((t, i) => [t.value, each[i]])) as Record<Topic, number> }
+  const [all, ...each] = await Promise.all([count([]), ...topics.map((t) => count(topicWhere(t)))])
+  return { all, byTopic: Object.fromEntries(topics.map((t, i) => [t.slug, each[i]])) as Record<string, number> }
 }
 
 // Адреса з тими самими параметрами, але зі зміною одного-двох (undefined — прибрати параметр)

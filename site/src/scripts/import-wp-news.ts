@@ -15,7 +15,6 @@ import fs from 'fs'
 import { JSDOM } from 'jsdom'
 import path from 'path'
 import { getPayload } from 'payload'
-import { topicFromWp, type Topic } from '../lib/topics'
 import config from '../payload.config'
 
 const OLD = 'https://dp-reintegration.gov.ua'
@@ -212,8 +211,18 @@ try {
   const r = await fetch(`${OLD}/wp-json/wp/v2/categories?per_page=100&_fields=id,name`)
   if (r.ok) for (const c of await r.json()) catNames.set(c.id, textOf(c.name))
 } catch {}
-const topicsOf = (p: any): Topic[] => [
-  ...new Set(((p.categories || []) as number[]).map((id) => topicFromWp(catNames.get(id) || '')).filter((t): t is Topic => !!t)),
+// рубрика старого сайту → категорія (за полем «Рубрики старого сайту» або за назвою категорії)
+const norm = (s: string) => s.toLocaleLowerCase('uk').replace(/\s+/g, ' ').trim()
+const topicByWp = new Map<string, number>()
+for (const locale of ['uk', 'en'] as const) {
+  const { docs } = await payload.find({ collection: 'topics', limit: 200, depth: 0, locale, fallbackLocale: false })
+  for (const t of docs as any[]) {
+    if (t.name) topicByWp.set(norm(t.name), t.id)
+    for (const w of String(t.wpNames || '').split(',')) if (w.trim()) topicByWp.set(norm(w), t.id)
+  }
+}
+const topicsOf = (p: any): number[] => [
+  ...new Set(((p.categories || []) as number[]).map((id) => topicByWp.get(norm(catNames.get(id) || ''))).filter((t): t is number => !!t)),
 ]
 
 const isEn = (p: any) =>/\/en\//.test(p.link)

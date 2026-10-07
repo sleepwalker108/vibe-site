@@ -1,16 +1,25 @@
-// Теми новин (як рубрики на старому сайті) — для фільтрів у списку новин і в пошуку
-export const TOPICS = [
-  { value: 'evacuation', uk: 'Евакуація', en: 'Evacuation', wp: ['Евакуація', 'Evacuation'] },
-  { value: 'idp-support', uk: 'Підтримка ВПО', en: 'Support for IDPs', wp: ['Підтримка ВПО', 'Support for IDPs'] },
-  { value: 'shelter', uk: 'Прихисток', en: 'Shelter', wp: ['Прихисток', 'Shelter'] },
-  { value: 'recovery', uk: 'Відновлення', en: 'Recovery', wp: ['Відновлення', 'Recovery'] },
-  { value: 'weekly', uk: 'Головне за тиждень', en: 'Highlights of the week', wp: ['Головне за тиждень', 'Highlights of the week'] },
-] as const
+// Категорії новин (розділ адмінки «Категорії новин») — для фільтрів у списку новин і в пошуку
+import type { Payload } from 'payload'
 
-export type Topic = (typeof TOPICS)[number]['value']
+export type TopicItem = { id: number; slug: string; name: string }
 
-export const isTopic = (v: unknown): v is Topic => TOPICS.some((t) => t.value === v)
-export const topicLabel = (v: string, locale: 'uk' | 'en') => TOPICS.find((t) => t.value === v)?.[locale] || v
+// Усі категорії в порядку, заданому в адмінці
+export const getTopics = async (payload: Payload, locale: 'uk' | 'en'): Promise<TopicItem[]> => {
+  const { docs } = await payload.find({
+    collection: 'topics',
+    limit: 200,
+    depth: 0,
+    sort: 'order',
+    locale,
+    fallbackLocale: 'uk',
+    select: { name: true, slug: true },
+  })
+  return docs.filter((d) => d.slug).map((d) => ({ id: d.id as number, slug: d.slug as string, name: d.name as string }))
+}
 
-// Рубрика старого сайту (назва) → тема
-export const topicFromWp = (name: string): Topic | null => TOPICS.find((t) => (t.wp as readonly string[]).includes(name.trim()))?.value || null
+// Назва категорії новини: поле може містити саму категорію (з depth ≥ 1) або лише її номер
+export const topicName = (value: unknown, topics?: TopicItem[]): string | null => {
+  if (value && typeof value === 'object' && 'name' in value) return String((value as { name: unknown }).name || '') || null
+  if (typeof value === 'number' && topics) return topics.find((t) => t.id === value)?.name || null
+  return null
+}

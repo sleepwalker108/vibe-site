@@ -18,7 +18,7 @@ import {
 } from '@/lib/newsFilters'
 import { pageMetadata } from '@/lib/seo'
 import { normalize, plainText, queryWords, searchWhere, snippet, stem } from '@/lib/searchText'
-import { topicLabel } from '@/lib/topics'
+import { getTopics, topicName } from '@/lib/topics'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,11 +69,12 @@ export default async function SearchPage({ searchParams }: Props) {
   const { locale, t } = await getDict()
   const en = locale === 'en'
   const words = queryWords(q)
-  const filter = parseNewsFilter(sp)
-  const askedType = TYPES.includes(sp.type as ResultType) ? (sp.type as ResultType) : 'all'
-  // фільтри за темою чи датою стосуються лише новин — тоді й показуємо лише новини
-  const type: ResultType = askedType === 'all' && hasNewsFilter(filter) ? 'news' : askedType
   const payload = await getClient()
+  const topics = await getTopics(payload, locale)
+  const filter = parseNewsFilter(sp, topics)
+  const askedType = TYPES.includes(sp.type as ResultType) ? (sp.type as ResultType) : 'all'
+  // фільтри за категорією чи датою стосуються лише новин — тоді й показуємо лише новини
+  const type: ResultType = askedType === 'all' && hasNewsFilter(filter) ? 'news' : askedType
 
   let pages: any[] = []
   let news: { docs: any[]; totalDocs: number; totalPages: number } | null = null
@@ -122,7 +123,7 @@ export default async function SearchPage({ searchParams }: Props) {
         }),
         payload.findGlobal({ slug: 'contacts', depth: 0, ...localeQuery(locale) }),
         payload.findGlobal({ slug: 'resources', depth: 0, ...localeQuery(locale) }),
-        topicCounts(payload, newsBase),
+        topicCounts(payload, newsBase, topics),
         newsYears(payload, [published, searchWhere(words)]),
       ])
     // сторінки: спершу ті, де слова є в назві
@@ -236,7 +237,7 @@ export default async function SearchPage({ searchParams }: Props) {
                     counts={counts}
                     years={years}
                     t={t}
-                    locale={locale}
+                    topics={topics}
                     hidden={{ q, ...(askedType !== 'all' ? { type: askedType } : {}) }}
                   />
                 )}
@@ -310,7 +311,7 @@ export default async function SearchPage({ searchParams }: Props) {
                         <span className="hit-kind">
                           {L.news} ·{' '}
                           <time dateTime={n.publishedAt}>{formatDate(n.publishedAt)}</time>
-                          {n.topics?.[0] && <> · {topicLabel(n.topics[0], locale)}</>}
+                          {topicName(n.topics?.[0], topics) && <> · {topicName(n.topics?.[0], topics)}</>}
                         </span>
                         <h2>
                           <Link href={`/news/${encodeURIComponent(n.slug || '')}`}>{n.title}</Link>
