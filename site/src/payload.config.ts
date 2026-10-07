@@ -24,6 +24,7 @@ import { editorFeatures } from './fields/editor'
 import { Contacts } from './globals/Contacts'
 import { Seo } from './globals/Seo'
 import { Resources } from './globals/Resources'
+import { backupEndpoints } from './endpoints/backups'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -42,12 +43,14 @@ export default buildConfig({
       beforeNavLinks: ['/components/admin/ViewSiteLink#ViewSiteLink', '/components/admin/DashboardLink#DashboardLink'],
       // «Структура сайту» на головній сторінці адмінки
       beforeDashboard: ['/components/admin/StatsSummary#StatsSummary', '/components/admin/SiteMap#SiteMap'],
-      afterNavLinks: ['/components/admin/StatsNavLink#StatsNavLink', '/components/admin/ThemeToggle#ThemeToggle'],
+      afterNavLinks: ['/components/admin/StatsNavLink#StatsNavLink', '/components/admin/BackupsNavLink#BackupsNavLink', '/components/admin/ThemeToggle#ThemeToggle'],
       // підказки й українські назви кнопок у панелі редактора тексту
       providers: ['/components/admin/EditorHints#EditorHints'],
       views: {
         // Розділ «Статистика відвідувань»: /admin/stats
         stats: { Component: '/components/admin/StatsView#StatsView', path: '/stats', meta: { title: 'Статистика відвідувань' } },
+        // Розділ «Резервні копії»: /admin/backups
+        backups: { Component: '/components/admin/BackupsView#BackupsView', path: '/backups', meta: { title: 'Резервні копії' } },
       },
     },
     livePreview: {
@@ -95,6 +98,8 @@ export default buildConfig({
     // потрібно для публікації новин за розкладом
     autoRun: [{ cron: '* * * * *', queue: 'default' }],
   },
+  // API розділу «Резервні копії»
+  endpoints: [...backupEndpoints],
   sharp,
   plugins: [],
 })
