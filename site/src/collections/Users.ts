@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isAdminField, isLoggedIn } from '../access'
+import { isAdmin, isAdminField } from '../access'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -17,7 +17,8 @@ export const Users: CollectionConfig = {
     tokenExpiration: 8 * 60 * 60, // сесія — 8 годин
   },
   access: {
-    read: isLoggedIn,
+    // адміністратор бачить усіх; редактор — лише себе (email-и адміністраторів редакторам не показуємо)
+    read: ({ req: { user } }) => (user?.role === 'admin' ? true : user ? { id: { equals: user.id } } : false),
     create: isAdmin,
     update: ({ req: { user }, id }) => user?.role === 'admin' || user?.id === id,
     delete: isAdmin,

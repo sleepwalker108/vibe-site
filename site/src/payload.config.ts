@@ -102,6 +102,8 @@ export default buildConfig({
     // потрібно для публікації новин за розкладом
     autoRun: [{ cron: '* * * * *', queue: 'default' }],
   },
+  // GraphQL не використовується ні сайтом, ні адмінкою — вимкнено (менше точок доступу до даних)
+  graphQL: { disable: true },
   // API розділів «Резервні копії» і «Стан сервера»
   endpoints: [...backupEndpoints, ...statusEndpoints],
   sharp,

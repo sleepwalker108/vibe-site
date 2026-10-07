@@ -63,12 +63,20 @@ const prune = () => {
   }
 }
 
+// У копіях бази — акаунти адміністраторів (email, зашифровані паролі): папка й файли доступні лише власнику
+const ensureDir = () => {
+  fs.mkdirSync(BACKUP_DIR, { recursive: true, mode: 0o700 })
+  try {
+    fs.chmodSync(BACKUP_DIR, 0o700)
+  } catch {}
+}
+
 const sqlString = (s: string) => `'${s.replace(/'/g, "''")}'`
 const client = (payload: Payload) => (payload.db as any).client as { execute: (sql: string) => Promise<any>; executeMultiple: (sql: string) => Promise<void> }
 
 // Копія бази: знімок → gzip. Повертає назву файлу.
 export const backupDatabase = async (payload: Payload): Promise<string> => {
-  fs.mkdirSync(BACKUP_DIR, { recursive: true })
+  ensureDir()
   // назва з точністю до секунди — якщо копія з такою назвою вже є, чекаємо наступну секунду (щоб не перезаписати)
   let base = `site-${stamp()}`
   while (fs.existsSync(filePath(`${base}.db.gz`))) {
@@ -79,7 +87,7 @@ export const backupDatabase = async (payload: Payload): Promise<string> => {
   const part = filePath(`${base}.db.gz.part`)
   try {
     await client(payload).execute(`VACUUM INTO ${sqlString(raw)}`)
-    await pipeline(fs.createReadStream(raw), zlib.createGzip({ level: 6 }), fs.createWriteStream(part))
+    await pipeline(fs.createReadStream(raw), zlib.createGzip({ level: 6 }), fs.createWriteStream(part, { mode: 0o600 }))
     fs.renameSync(part, filePath(`${base}.db.gz`))
   } finally {
     fs.rmSync(raw, { force: true })
@@ -93,7 +101,7 @@ let mediaRunning = false // щоб два натискання поспіль н
 
 // Копія медіатеки (може бути кілька ГБ) — запускається у фоні; поки триває, файл має закінчення .part
 export const startMediaBackup = (payload: Payload): string => {
-  fs.mkdirSync(BACKUP_DIR, { recursive: true })
+  ensureDir()
   if (mediaRunning || listBackups().some((b) => b.kind === 'media' && b.busy)) throw new Error('Копія файлів уже створюється — зачекайте')
   const name = `media-${stamp()}.tar.gz`
   const part = filePath(`${name}.part`)
@@ -111,6 +119,7 @@ export const startMediaBackup = (payload: Payload): string => {
     mediaRunning = false
     if (code === 0) {
       try {
+        fs.chmodSync(part, 0o600)
         fs.renameSync(part, filePath(name))
         prune()
         payload.logger.info(`Копія медіатеки готова: ${name}`)
@@ -141,7 +150,7 @@ export const restoreDatabase = async (payload: Payload, name: string): Promise<{
     await db.execute('PRAGMA busy_timeout = 30000') // сайт теж пише в базу — чекаємо, а не падаємо
     // 1) розпакувати
     const src = fs.createReadStream(filePath(name))
-    await pipeline(name.endsWith('.gz') ? src.pipe(zlib.createGunzip()) : src, fs.createWriteStream(tmp))
+    await pipeline(name.endsWith('.gz') ? src.pipe(zlib.createGunzip()) : src, fs.createWriteStream(tmp, { mode: 0o600 }))
     const head = Buffer.alloc(16)
     const fd = fs.openSync(tmp, 'r')
     fs.readSync(fd, head, 0, 16, 0)

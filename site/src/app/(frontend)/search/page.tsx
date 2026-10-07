@@ -17,6 +17,7 @@ import {
   withParams,
 } from '@/lib/newsFilters'
 import { pageMetadata } from '@/lib/seo'
+import { safeHref } from '@/lib/safeHref'
 import { normalize, plainText, queryWords, searchWhere, snippet, stem } from '@/lib/searchText'
 import { getTopics, topicName } from '@/lib/topics'
 
@@ -269,7 +270,7 @@ export default async function SearchPage({ searchParams }: Props) {
                           {resources.map((r) => (
                             <li key={r.label}>
                               {r.url ? (
-                                <a href={r.url} target="_blank" rel="noopener noreferrer">
+                                <a href={safeHref(r.url)} target="_blank" rel="noopener noreferrer">
                                   {r.label}
                                 </a>
                               ) : (

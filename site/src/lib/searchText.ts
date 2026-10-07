@@ -50,6 +50,8 @@ export const stem = (w: string) => (w.length >= 7 ? w.slice(0, -2) : w.length >=
 // Слова запиту: нормалізовані, від 2 літер, не більше 6
 export const queryWords = (q: string) =>
   normalize(q)
+    // % і _ — службові символи пошуку в базі («будь-що»); у словах вони не потрібні
+    .replace(/[%_\\]/g, ' ')
     .split(/[\s,.;:!?«»"()]+/)
     .filter((w) => w.length >= 2)
     .slice(0, 6)

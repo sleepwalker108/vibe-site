@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Dict, Locale } from '@/lib/dictionary'
 import { getClient } from '@/lib/payload'
 import { localeQuery } from '@/lib/i18n'
+import { safeHref } from '@/lib/safeHref'
 
 const decode = (s: string) => {
   try {
@@ -36,7 +37,7 @@ export const PageSidebar = async ({ path, locale, t, draft = false, children }: 
               const active = has(l.url, true) || has(l.url, false)
               return (
                 <li key={l.id || l.label}>
-                  <Link href={l.url || '#'} className={active ? 'active' : undefined} aria-current={active ? 'page' : undefined}>
+                  <Link href={safeHref(l.url)} className={active ? 'active' : undefined} aria-current={active ? 'page' : undefined}>
                     {l.label}
                   </Link>
                 </li>

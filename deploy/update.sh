@@ -50,6 +50,23 @@ sudo -u "$APP_USER" git -C "$APP_DIR" log --oneline "$BEFORE..$AFTER" | sed 's/^
 install -m 755 "$APP_DIR/deploy/update.sh" /usr/local/bin/nartu-update
 install -m 755 "$APP_DIR/deploy/backup.sh" /usr/local/bin/nartu-backup
 [ -f "$APP_DIR/deploy/task.sh" ] && install -m 755 "$APP_DIR/deploy/task.sh" /usr/local/bin/nartu-task
+# налаштування nginx (захист, обмеження частоти входу) — оновлюємо, якщо змінилися.
+# Якщо вже підключено HTTPS (certbot дописав сертифікат) — файл не чіпаємо, щоб не зламати HTTPS.
+NGX=/etc/nginx/sites-available/nartu
+if [ -f "$NGX" ] && ! grep -q ssl_certificate "$NGX"; then
+  DOM=$(awk '/^[[:space:]]*server_name/ {gsub(";", "", $2); print $2; exit}' "$NGX")
+  sed "s/__DOMAIN__/${DOM:-_}/" "$APP_DIR/deploy/nginx.conf" > /tmp/nartu-nginx.conf
+  if ! cmp -s /tmp/nartu-nginx.conf "$NGX"; then
+    cp "$NGX" "$NGX.bak"
+    cp /tmp/nartu-nginx.conf "$NGX"
+    if nginx -t >/dev/null 2>&1; then
+      systemctl reload nginx && ok "Налаштування nginx оновлено"
+    else
+      cp "$NGX.bak" "$NGX"
+      printf '\033[1;33m! Нові налаштування nginx не пройшли перевірку — лишено попередні\033[0m\n'
+    fi
+  fi
+fi
 
 say "3/6 Бібліотеки"
 if [ "$BEFORE" = "$AFTER" ] || ! git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then

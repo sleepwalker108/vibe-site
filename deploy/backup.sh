@@ -3,6 +3,8 @@
 # Щодня запускається автоматично (cron), а також перед кожним оновленням.
 # Зберігаються останні 30 копій бази й 14 копій файлів у /opt/nartu/backups.
 set -euo pipefail
+# копії містять акаунти адміністраторів — файли доступні лише власнику
+umask 077
 
 APP_DIR="${APP_DIR:-/opt/nartu}"
 SITE_DIR="$APP_DIR/site"
@@ -24,3 +26,4 @@ fi
 ls -1t "$DEST"/site-*.db.gz 2>/dev/null | tail -n +31 | xargs -r rm -f || true
 ls -1t "$DEST"/media-*.tar.gz 2>/dev/null | tail -n +15 | xargs -r rm -f || true
 chown -R "${APP_USER:-nartu}:${APP_USER:-nartu}" "$DEST" 2>/dev/null || true
+chmod 700 "$DEST"; chmod 600 "$DEST"/* 2>/dev/null || true

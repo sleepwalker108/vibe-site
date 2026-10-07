@@ -41,7 +41,9 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    mimeTypes: ['image/*', 'application/pdf', 'video/mp4', 'video/webm'],
+    // Лише перелічені формати. SVG навмисно не дозволено: SVG-файл може містити скрипт, який виконався б
+    // на домені сайту (тобто й адмінки) — так редактор міг би отримати права адміністратора.
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'application/pdf', 'video/mp4', 'video/webm'],
     // Картинки (JPG, PNG…) під час завантаження автоматично перетворюються на WebP — у 2–5 разів легші,
     // сторінки вантажаться швидше. PDF, відео й SVG не змінюються.
     formatOptions: { format: 'webp', options: { quality: 82 } },

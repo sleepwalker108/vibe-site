@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { A11Y_KEY, LOCALE_COOKIE, type Dict, type Locale } from '@/lib/dictionary'
 import { LanguageSelect } from './LanguageSelect'
 import { MobileMenu, type MenuContacts } from './MobileMenu'
+import { safeHref } from '@/lib/safeHref'
 
 export type MenuItem = {
   id?: string | null
@@ -18,12 +19,12 @@ const isExternal = (url: string) => /^https?:\/\//.test(url)
 // Посилання меню: зовнішні сайти відкриваються в новій вкладці
 const MenuLink = ({ url, label, onClick, newTabLabel }: { url: string; label: string; onClick?: () => void; newTabLabel: string }) =>
   isExternal(url) ? (
-    <a href={url} target="_blank" rel="noopener noreferrer" onClick={onClick}>
+    <a href={safeHref(url)} target="_blank" rel="noopener noreferrer" onClick={onClick}>
       {label}
       <span className="sr-only"> {newTabLabel}</span>
     </a>
   ) : (
-    <Link href={url} onClick={onClick}>
+    <Link href={safeHref(url)} onClick={onClick}>
       {label}
     </Link>
   )

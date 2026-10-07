@@ -1,6 +1,7 @@
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { type JSXConvertersFunction, RichText } from '@payloadcms/richtext-lexical/react'
 import type { CardsBlock, FaqBlock, StatBlock } from '@/payload-types'
+import { safeHref } from '@/lib/safeHref'
 import { ResourceIcon } from './ResourceIcon'
 
 const OLD_SITE = 'https://dp-reintegration.gov.ua'
@@ -17,7 +18,7 @@ export const resolveLink = (raw?: string | null) => {
   if (url.startsWith('/wp-content/')) url = OLD_SITE + url
   const own = url.match(/^https?:\/\/(?:www\.)?dp-reintegration\.gov\.ua(\/.*)?$/i)
   if (own && !/\/wp-content\//i.test(own[1] || '')) url = own[1] || '/'
-  return { url, auto: /^https?:\/\//i.test(url) || FILE.test(url) }
+  return { url: safeHref(url), auto: /^https?:\/\//i.test(url) || FILE.test(url) }
 }
 
 // Посилання: правильна адреса + нова вкладка для документів і інших сайтів,

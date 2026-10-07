@@ -12,6 +12,7 @@ import { formatDate, getClient, isDraftMode, mediaUrl, publishedOnly } from '@/l
 import { getDict, localeQuery } from '@/lib/i18n'
 import { JsonLd } from '@/components/JsonLd'
 import { getSeo, pageMetadata, SITE_URL } from '@/lib/seo'
+import { safeHref } from '@/lib/safeHref'
 
 export const dynamic = 'force-dynamic'
 
@@ -140,7 +141,7 @@ export default async function HomePage({ searchParams }: Props) {
               const cls = ['card', colorClass[c.color || 'white'], sizeClass[c.size || 'normal']].filter(Boolean).join(' ')
               const Tag = c.url ? 'a' : 'div'
               const card = (
-                <Tag key={c.id} className={cls} {...(c.url ? { href: c.url } : {})}>
+                <Tag key={c.id} className={cls} {...(c.url ? { href: safeHref(c.url) } : {})}>
                   {(c.label || c.icon) && (
                     <div className="card-head">
                       {c.label ? <div className={`label${c.live ? ' live' : ''}`}>{c.label}</div> : <span />}
@@ -276,7 +277,7 @@ export default async function HomePage({ searchParams }: Props) {
           </div>
           <div className="res-grid">
             {resources.items.map((r) => (
-              <a key={r.id} className="res-card" href={r.url || '#'} target="_blank" rel="noopener noreferrer">
+              <a key={r.id} className="res-card" href={safeHref(r.url)} target="_blank" rel="noopener noreferrer">
                 <span className="res-ico">
                   <ResourceIcon name={r.icon} />
                 </span>

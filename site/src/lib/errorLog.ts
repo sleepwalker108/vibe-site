@@ -11,8 +11,8 @@ export type ErrorEntry = { at: string; path: string; method: string; message: st
 
 export const logError = (e: ErrorEntry) => {
   try {
-    fs.mkdirSync(path.dirname(ERROR_LOG), { recursive: true })
-    fs.appendFileSync(ERROR_LOG, JSON.stringify(e) + '\n')
+    fs.mkdirSync(path.dirname(ERROR_LOG), { recursive: true, mode: 0o700 })
+    fs.appendFileSync(ERROR_LOG, JSON.stringify(e) + '\n', { mode: 0o600 })
     if (fs.statSync(ERROR_LOG).size > MAX_BYTES) {
       const lines = fs.readFileSync(ERROR_LOG, 'utf8').trim().split('\n')
       fs.writeFileSync(ERROR_LOG, lines.slice(-KEEP).join('\n') + '\n')

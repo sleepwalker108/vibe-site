@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Dict, Locale } from '@/lib/dictionary'
 import type { MenuItem } from './Header'
+import { safeHref } from '@/lib/safeHref'
 
 export type Social = { network?: string | null; label?: string | null; url?: string | null }
 export type MenuContacts = {
@@ -126,12 +127,12 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
 
   const link = (url: string, label: string, className?: string) =>
     isExternal(url) ? (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={className} onClick={close}>
+      <a href={safeHref(url)} target="_blank" rel="noopener noreferrer" className={className} onClick={close}>
         {label}
         <span className="sr-only"> {t.newTab}</span>
       </a>
     ) : (
-      <Link href={url} className={className} aria-current={isActive(url) ? 'page' : undefined} onClick={close}>
+      <Link href={safeHref(url)} className={className} aria-current={isActive(url) ? 'page' : undefined} onClick={close}>
         {label}
       </Link>
     )
@@ -243,7 +244,7 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
           <div className="mm-socials">
             {contacts.socials.map((s, i) =>
               s.url ? (
-                <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="mm-social">
+                <a key={i} href={safeHref(s.url)} target="_blank" rel="noopener noreferrer" className="mm-social">
                   <span className="mm-c-ico mm-s-ico">
                     <SocialIcon network={s.network} />
                   </span>
