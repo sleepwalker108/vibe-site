@@ -363,7 +363,7 @@
 
   /* ---------- мапа статусів територій ---------- */
   .terr-sec { padding: 80px 0; background: var(--sky); }
-  .terr-head p { margin: 6px 0 0; color: var(--muted); font-size: 1.05rem; max-width: 760px; }
+  .terr-head p { margin: 6px 0 0; color: var(--muted); font-size: 1.05rem; }
   .terr-grid { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
   .terr-panel { background: #fff; border-radius: var(--radius); padding: 24px; display: grid; gap: 20px; font-size: .92rem; line-height: 1.45; }
   .tp-total { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
