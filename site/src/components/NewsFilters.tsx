@@ -1,9 +1,9 @@
-import Link from 'next/link'
 import type { Dict, Locale } from '@/lib/dictionary'
 import { hasNewsFilter, withParams, type NewsFilter } from '@/lib/newsFilters'
 import { TOPICS, type Topic } from '@/lib/topics'
 import { FilterForm } from './FilterForm'
 import { FilterSelect } from './FilterSelect'
+import { NavLink } from './ListNav'
 
 type SP = Record<string, string | string[] | undefined>
 
@@ -33,23 +33,30 @@ export const NewsFilters = ({
   const resetHref = withParams(path, hidden, {})
   return (
     <div className="filters">
+      <p className="filters-title">{t.filterTopic}</p>
       <nav className="topic-chips" aria-label={t.filterTopic}>
-        <Link href={withParams(path, sp, { topic: undefined })} aria-current={!filter.topic ? 'true' : undefined} scroll={false}>
+        <NavLink
+          href={withParams(path, sp, { topic: undefined })}
+          aria-current={!filter.topic ? 'true' : undefined}
+        >
           {t.filterAll} <span>{counts.all}</span>
-        </Link>
+        </NavLink>
         {TOPICS.filter((tp) => counts.byTopic[tp.value] || filter.topic === tp.value).map((tp) => (
-          <Link
+          <NavLink
             key={tp.value}
             href={withParams(path, sp, { topic: tp.value })}
             aria-current={filter.topic === tp.value ? 'true' : undefined}
-            scroll={false}
           >
             {tp[locale]} <span>{counts.byTopic[tp.value]}</span>
-          </Link>
+          </NavLink>
         ))}
       </nav>
       {/* key: після переходу (напр. «Скинути фільтри») списки показують актуальні значення */}
-      <FilterForm key={`${filter.topic}-${filter.year}-${filter.month}-${filter.sort}-${query ?? ""}`} className="filter-form" action={path}>
+      <FilterForm
+        key={`${filter.topic}-${filter.year}-${filter.month}-${filter.sort}-${query ?? ''}`}
+        className="filter-form"
+        action={path}
+      >
         {Object.entries(hidden).map(([k, v]) => (
           <input key={k} type="hidden" name={k} value={v} />
         ))}
@@ -57,21 +64,32 @@ export const NewsFilters = ({
         {query !== undefined && (
           <label className="filter-field filter-q">
             <span>{t.search}</span>
-            <input type="search" name="q" defaultValue={query} placeholder={t.newsSearchPlaceholder} />
+            <input
+              type="search"
+              name="q"
+              defaultValue={query}
+              placeholder={t.newsSearchPlaceholder}
+            />
           </label>
         )}
         <FilterSelect
           name="year"
           label={t.filterYear}
           value={filter.year ? String(filter.year) : ''}
-          options={[{ value: '', label: t.anyYear }, ...years.map((y) => ({ value: String(y), label: String(y) }))]}
+          options={[
+            { value: '', label: t.anyYear },
+            ...years.map((y) => ({ value: String(y), label: String(y) })),
+          ]}
         />
         <FilterSelect
           name="month"
           label={t.filterMonth}
           value={filter.month ? String(filter.month) : ''}
           disabled={!filter.year}
-          options={[{ value: '', label: t.anyMonth }, ...t.months.map((m, i) => ({ value: String(i + 1), label: m }))]}
+          options={[
+            { value: '', label: t.anyMonth },
+            ...t.months.map((m, i) => ({ value: String(i + 1), label: m })),
+          ]}
         />
         <FilterSelect
           name="sort"
@@ -86,9 +104,9 @@ export const NewsFilters = ({
           {t.filterApply}
         </button>
         {active && (
-          <Link className="filter-reset" href={resetHref}>
+          <NavLink className="filter-reset" href={resetHref}>
             {t.filterReset}
-          </Link>
+          </NavLink>
         )}
       </FilterForm>
     </div>

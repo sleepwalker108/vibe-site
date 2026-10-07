@@ -1414,3 +1414,36 @@ html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria
 }
 .filter-form[aria-busy] { opacity: .6; transition: opacity .2s; }
 .filters:has(.filter-form[aria-busy]) + .filter-total, .filters:has(.filter-form[aria-busy]) ~ .news-grid { opacity: .5; transition: opacity .2s; }
+
+/* список із фільтрами збоку (новини, пошук): на комп'ютері фільтри — у бічній колонці, що «їде» разом зі сторінкою */
+.filters-title { display: none; margin: 0 0 8px; font-size: .78rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.with-filters { scroll-margin-top: 92px; } /* щоб після перемикання сторінки початок списку не ховався під шапкою */
+.pager-item { display: contents; }
+.pager-gap { align-self: end; color: var(--muted); padding: 0 2px; }
+.with-filters[aria-busy] .filters-main { opacity: .45; pointer-events: none; transition: opacity .15s .1s; }
+.list-progress { position: fixed; z-index: 200; top: 0; left: 0; height: 3px; width: 100%; background: linear-gradient(90deg, var(--yellow), var(--navy));
+  transform-origin: left; animation: list-progress 1.2s ease-out forwards; }
+@keyframes list-progress { from { transform: scaleX(0); } to { transform: scaleX(.85); } }
+@media (min-width: 1000px) {
+  .with-filters { display: grid; grid-template-columns: 272px minmax(0, 1fr); gap: 28px; align-items: start; }
+  .filters-side { position: sticky; top: 96px; max-height: calc(100vh - 112px); overflow-y: auto; overscroll-behavior: contain;
+    background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 18px 16px; }
+  .filters-title { display: block; }
+  .filters-side .filters { margin: 0; gap: 18px; }
+  .filters-side .topic-chips, .filters-side .type-tabs { flex-direction: column; flex-wrap: nowrap; gap: 2px; }
+  .filters-side .topic-chips a, .filters-side .type-tabs a { justify-content: space-between; border: 0; border-radius: 12px; padding: 9px 12px; background: transparent; font-size: .95rem; }
+  .filters-side .topic-chips a:hover, .filters-side .type-tabs a:hover { background: var(--sky); }
+  .filters-side .topic-chips a[aria-current], .filters-side .type-tabs a[aria-current] { background: var(--navy); color: #fff; }
+  .filters-side .type-tabs { margin: 0 0 18px; padding: 0 0 18px; border-bottom: 1px solid var(--line); }
+  .filters-side .filter-form { flex-direction: column; align-items: stretch; gap: 12px; }
+  .filters-side .filter-field select, .filters-side .filter-field input { min-width: 0; width: 100%; }
+  .filters-side .filter-q { flex: none; }
+  .filters-side .filter-apply { width: 100%; }
+  .filters-side .filter-reset { align-self: center; }
+  .with-filters .search-note, .with-filters .filter-total { margin-top: 0; }
+  .with-filters .hits, .with-filters .hit-extras { max-width: none; }
+}
+@media (min-width: 1000px) and (max-width: 1240px) { .with-filters .news-grid { grid-template-columns: 1fr 1fr; } }
+html.contrast .filters-side { background: #000 !important; border: 2px solid #fff !important; }
+html.contrast .list-progress { background: #ff0 !important; }
+@media (prefers-reduced-motion: reduce) { .list-progress { animation: none; transform: scaleX(.85); } }
