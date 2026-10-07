@@ -15,6 +15,7 @@ import fs from 'fs'
 import { JSDOM } from 'jsdom'
 import path from 'path'
 import { getPayload } from 'payload'
+import { topicFromWp, type Topic } from '../lib/topics'
 import config from '../payload.config'
 
 const OLD = 'https://dp-reintegration.gov.ua'
@@ -198,20 +199,31 @@ log(hasLocal ? `Файли беру з ${UPLOADS_DIR}` : `Папки ${UPLOADS_D
 log('Завантажую список новин зі старого сайту…')
 const all: any[] = []
 for (let page = 1; ; page++) {
-  const r = await fetch(`${OLD}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=id,date,date_gmt,slug,link,title,excerpt,content`)
+  const r = await fetch(`${OLD}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=id,date,date_gmt,slug,link,title,excerpt,content,categories`)
   if (!r.ok) break
   const batch = await r.json()
   if (!batch.length) break
   all.push(...batch)
   if (batch.length < 100) break
 }
-const isEn = (p: any) => /\/en\//.test(p.link)
+// рубрики старого сайту → теми новин (фільтр на сайті)
+const catNames = new Map<number, string>()
+try {
+  const r = await fetch(`${OLD}/wp-json/wp/v2/categories?per_page=100&_fields=id,name`)
+  if (r.ok) for (const c of await r.json()) catNames.set(c.id, textOf(c.name))
+} catch {}
+const topicsOf = (p: any): Topic[] => [
+  ...new Set(((p.categories || []) as number[]).map((id) => topicFromWp(catNames.get(id) || '')).filter((t): t is Topic => !!t)),
+]
+
+const isEn = (p: any) =>/\/en\//.test(p.link)
 const enByDate = new Map(all.filter(isEn).map((p) => [p.date, p]))
 let uk = all.filter((p) => !isEn(p)).sort((a, b) => a.date.localeCompare(b.date))
 if (LIMIT) uk = uk.slice(-LIMIT)
 log(`Знайдено ${uk.length} українських новин (${enByDate.size} англійських версій)`)
 
 let created = 0
+let topicsSet = 0
 let updated = 0
 let skipped = 0
 let failed = 0
@@ -229,7 +241,13 @@ for (const [i, p] of uk.entries()) {
     const hasImages = (c: any) => JSON.stringify(c || {}).includes('"type":"upload"')
     const imgCount = (p.content.rendered.match(/<img\s/gi) || []).length
     const needsImages = existing && !cache[`done:${p.link}`] && imgCount > 1 && !hasImages((existing as any).content)
+    const topics = topicsOf(p)
     if (existing && ONLY_NEW && !needsImages) {
+      // уже перенесена новина: лише дописуємо теми, якщо їх ще немає (текст не чіпаємо)
+      if (topics.length && !((existing as any).topics || []).length) {
+        await payload.update({ collection: 'news', id: existing.id, data: { topics } as any, overrideAccess: true })
+        topicsSet++
+      }
       skipped++
       continue
     }
@@ -247,6 +265,7 @@ for (const [i, p] of uk.entries()) {
       excerpt: excerptOf(p),
       content: toLexical(prepUk, true),
       legacyUrl: p.link,
+      ...(topics.length ? { topics } : {}),
       _status: 'published',
       ...(cover && !(existing as any)?.cover ? { cover } : {}), // наявну обкладинку не чіпаємо
     }
@@ -276,6 +295,6 @@ for (const [i, p] of uk.entries()) {
   }
 }
 
-log(`Готово. Нових: ${created}, оновлено: ${updated}, вже були: ${skipped}, з помилками: ${failed}`)
+log(`Готово. Нових: ${created}, оновлено: ${updated}, вже були: ${skipped}, з помилками: ${failed}${topicsSet ? `, дописано теми: ${topicsSet}` : ''}`)
 log(`Файли: з архіву ${fromDisk}, з інтернету ${fromWeb}`)
 process.exit(0)

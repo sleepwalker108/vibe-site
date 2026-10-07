@@ -13,6 +13,7 @@ import * as migration_20261005_111047_resources from './20261005_111047_resource
 import * as migration_20261005_111134_home_resources_moved from './20261005_111134_home_resources_moved';
 import * as migration_20261005_124910_contacts_socials from './20261005_124910_contacts_socials';
 import * as migration_20261007_085753_search_text from './20261007_085753_search_text';
+import * as migration_20261007_105115_news_topics from './20261007_105115_news_topics';
 
 export const migrations = [
   {
@@ -88,6 +89,11 @@ export const migrations = [
   {
     up: migration_20261007_085753_search_text.up,
     down: migration_20261007_085753_search_text.down,
-    name: '20261007_085753_search_text'
+    name: '20261007_085753_search_text',
+  },
+  {
+    up: migration_20261007_105115_news_topics.up,
+    down: migration_20261007_105115_news_topics.down,
+    name: '20261007_105115_news_topics'
   },
 ];

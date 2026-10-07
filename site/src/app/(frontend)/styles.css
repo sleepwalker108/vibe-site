@@ -1372,3 +1372,45 @@ html.contrast .search-form button, html.contrast .mm-search button { background:
 html.contrast .hit, html.contrast .hit-card { background: #000 !important; border: 2px solid #fff !important; }
 html.contrast .hit-snip mark, html.contrast .hit-card mark { background: #ff0 !important; color: #000 !important; }
 @media (max-width: 640px) { .hit, .hit-card { padding: 14px 16px; } .hit h2 { font-size: 1.02rem; } }
+
+/* фільтри новин і пошуку: теми-кнопки з кількістю, рік, місяць, порядок */
+.filters { margin: 0 0 20px; display: grid; gap: 12px; }
+.topic-chips, .type-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.topic-chips a, .type-tabs a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line);
+  background: #fff; color: var(--navy); font-weight: 700; font-size: .92rem; text-decoration: none; transition: background .15s, border-color .15s; }
+.topic-chips a span, .type-tabs a span { font-weight: 600; font-size: .8rem; color: var(--muted); background: var(--sky); border-radius: 999px; padding: 1px 8px; font-variant-numeric: tabular-nums; }
+.topic-chips a:hover, .type-tabs a:hover { border-color: var(--navy); }
+.topic-chips a[aria-current], .type-tabs a[aria-current] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.topic-chips a[aria-current] span, .type-tabs a[aria-current] span { background: rgba(255,255,255,.18); color: #fff; }
+.type-tabs { margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.type-tabs a { font-size: 1rem; padding: 9px 16px; }
+.filter-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
+.filter-field { display: grid; gap: 4px; font-size: .8rem; font-weight: 700; color: var(--muted); }
+.filter-field select, .filter-field input { height: 42px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; color: var(--ink, #1c2733);
+  font: inherit; font-size: .95rem; font-weight: 500; min-width: 150px; }
+.filter-field select:disabled { opacity: .5; }
+.filter-field select:focus-visible, .filter-field input:focus-visible, .topic-chips a:focus-visible, .type-tabs a:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.filter-q { flex: 1 1 240px; }
+.filter-q input { width: 100%; }
+.filter-apply { height: 42px; padding: 0 18px; border: 0; border-radius: 12px; background: var(--navy); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.filter-reset { align-self: center; font-weight: 600; color: var(--navy); }
+.filter-total { margin: 0 0 14px; color: var(--muted); }
+.card-topic { color: var(--navy); font-weight: 600; }
+/* зі скриптом списки застосовуються одразу; кнопка «Показати» потрібна лише для поля пошуку в новинах */
+.filter-form:not(:has(.filter-q)) .filter-apply { display: none; }
+@media (scripting: none) { .filter-form .filter-apply { display: inline-block !important; } }
+html.contrast .topic-chips a, html.contrast .type-tabs a, html.contrast .filter-field select, html.contrast .filter-field input { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+html.contrast .topic-chips a[aria-current], html.contrast .type-tabs a[aria-current], html.contrast .filter-apply { background: #ff0 !important; color: #000 !important; border-color: #ff0 !important; }
+html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria-current] span { color: #000 !important; }
+@media (max-width: 640px) {
+  /* на телефоні теми гортаються вбік одним рядком */
+  .topic-chips, .type-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
+  .topic-chips::-webkit-scrollbar, .type-tabs::-webkit-scrollbar { display: none; }
+  .topic-chips a, .type-tabs a { flex: none; }
+  .filter-form { display: grid; grid-template-columns: 1fr 1fr; }
+  .filter-q, .filter-form .filter-field:last-of-type { grid-column: 1 / -1; }
+  .filter-field select, .filter-field input { min-width: 0; width: 100%; }
+  .filter-apply { grid-column: 1 / -1; }
+}
+.filter-form[aria-busy] { opacity: .6; transition: opacity .2s; }
+.filters:has(.filter-form[aria-busy]) + .filter-total, .filters:has(.filter-form[aria-busy]) ~ .news-grid { opacity: .5; transition: opacity .2s; }

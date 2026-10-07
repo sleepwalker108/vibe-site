@@ -3,6 +3,7 @@ import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
+import { TOPICS } from '../lib/topics'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 
 export const News: CollectionConfig = {
@@ -14,7 +15,7 @@ export const News: CollectionConfig = {
     // кнопка «Скасувати» біля збереження/публікації
     components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     useAsTitle: 'title',
-    defaultColumns: ['title', 'publishedAt', '_status', 'hasEnglish'],
+    defaultColumns: ['title', 'publishedAt', 'topics', '_status', 'hasEnglish'],
     listSearchableFields: ['title', 'slug'],
     pagination: { defaultLimit: 50 },
     group: 'Контент',
@@ -60,6 +61,14 @@ export const News: CollectionConfig = {
           admin: { description: 'Напр.: «Житло для ВПО»' },
         },
       ],
+    },
+    {
+      name: 'topics',
+      type: 'select',
+      hasMany: true,
+      label: 'Теми',
+      options: TOPICS.map((t) => ({ label: t.uk, value: t.value })),
+      admin: { description: 'За темами відвідувачі фільтрують новини на сайті. Можна вибрати кілька.' },
     },
     { name: 'cover', type: 'upload', relationTo: 'media', label: 'Обкладинка' },
     {

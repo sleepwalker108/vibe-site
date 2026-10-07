@@ -92,3 +92,6 @@ export const snippet = (text: string, words: string[], radius = 90): SnipPart[] 
   if (end < text.length) parts[parts.length - 1].text += '…'
   return parts.map((p) => ({ ...p, text: p.text.replace(/\n/g, ' ') }))
 }
+
+// Умова для бази: кожне слово запиту (за основою) є в «тексті для пошуку»
+export const searchWhere = (words: string[]) => ({ and: words.map((w) => ({ searchText: { like: stem(w) } })) })

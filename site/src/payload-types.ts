@@ -164,6 +164,10 @@ export interface News {
    * Напр.: «Житло для ВПО»
    */
   tag?: string | null;
+  /**
+   * За темами відвідувачі фільтрують новини на сайті. Можна вибрати кілька.
+   */
+  topics?: ('evacuation' | 'idp-support' | 'shelter' | 'recovery' | 'weekly')[] | null;
   cover?: (number | null) | Media;
   /**
    * Показується в списку новин. 1–2 речення.
@@ -564,6 +568,7 @@ export interface NewsSelect<T extends boolean = true> {
   title?: T;
   publishedAt?: T;
   tag?: T;
+  topics?: T;
   cover?: T;
   excerpt?: T;
   content?: T;

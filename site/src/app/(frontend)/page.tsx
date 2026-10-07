@@ -257,10 +257,10 @@ export default async function HomePage({ searchParams }: Props) {
               </Link>
             </div>
             <div className="news">
-              <NewsCard item={first} featured />
+              <NewsCard item={first} featured locale={locale} />
               <div className="news-small">
                 {rest.map((n) => (
-                  <NewsCard key={n.id} item={n} />
+                  <NewsCard key={n.id} item={n} locale={locale} />
                 ))}
               </div>
             </div>
