@@ -4,6 +4,7 @@ import type { CardsBlock, FaqBlock, StatBlock } from '@/payload-types'
 import { Fragment } from 'react'
 import { hasPhone, splitPhones } from '@/lib/phones'
 import { safeHref } from '@/lib/safeHref'
+import { normalizeContent } from '@/fields/normalizeHeadings'
 import { DocCard, type DocLabels } from './DocCard'
 import { ResourceIcon } from './ResourceIcon'
 
@@ -162,6 +163,6 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
 // Текст сторінки чи новини, оформлений стилями .prose
 export const Prose = ({ data, labels }: { data: SerializedEditorState; labels: ProseLabels }) => (
   <div className="prose">
-    <RichText data={data} converters={makeConverters(labels)} />
+    <RichText data={normalizeContent(data)} converters={makeConverters(labels)} />
   </div>
 )

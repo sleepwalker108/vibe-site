@@ -1518,3 +1518,6 @@ a.foot-hot { display: inline-block; text-decoration: none; }
 a.foot-hot:hover { color: #fff; }
 footer a:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; border-radius: 4px; }
 html.contrast footer p a, html.contrast a.foot-hot { color: #ff0 !important; text-decoration-color: #ff0 !important; }
+/* номер телефону в синьому блоці «виділена цифра» — світлий, як і текст блоку */
+.prose-stat .tel-link { color: #fff; font-weight: 700; text-decoration-color: rgba(255, 255, 255, .45); }
+.prose-stat .tel-link:hover { color: var(--yellow); text-decoration-color: var(--yellow); }
