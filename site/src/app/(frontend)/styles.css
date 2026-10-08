@@ -1506,9 +1506,9 @@ html.contrast .doc-dl { color: #ff0 !important; border-color: #fff !important; }
 .btn-call2 { background: rgba(255, 213, 0, .14); border: 1.5px solid var(--yellow); color: #fff; backdrop-filter: blur(4px); }
 .btn-call2:hover { background: rgba(255, 213, 0, .28); }
 .side-hot + .side-hot { margin-top: 12px; }
-.side-hot-2 { background: #fff; color: var(--navy); border: 1.5px solid var(--line); }
-.side-hot-2 b { color: var(--navy); }
-.side-hot-2:hover { background: var(--sky); }
+.side-hot-2 { background: var(--yellow); color: var(--navy-ink); }
+.side-hot-2 b { color: var(--navy-ink); }
+.side-hot-2:hover { background: #f2c900; }
 html.contrast .btn-call2 { background: #000 !important; color: #ff0 !important; border: 2px solid #ff0 !important; }
 html.contrast .side-hot-2 { background: #000 !important; color: #fff !important; }
 html.contrast .side-hot-2 b { color: #ff0 !important; }
