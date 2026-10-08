@@ -104,7 +104,12 @@ export default async function HomePage({ searchParams }: Props) {
               </a>
             )}
             {hero?.secondary?.label && (
-              <a className="btn btn-ghost" href={hero.secondary.url || '#'}>
+              <a
+                className="btn btn-ghost"
+                href={safeHref(hero.secondary.url)}
+                // документ (PDF тощо) — у новій вкладці, щоб не губити головну
+                {...(/\.(pdf|docx?|xlsx?)([?#]|$)/i.test(hero.secondary.url || '') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
                 {hero.secondary.label}
               </a>
             )}
