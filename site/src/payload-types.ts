@@ -842,6 +842,13 @@ export interface Home {
        */
       url?: string | null;
     };
+    call2?: {
+      label?: string | null;
+      /**
+       * Напр.: tel:1548 або /news
+       */
+      url?: string | null;
+    };
     secondary?: {
       label?: string | null;
       /**
@@ -1249,6 +1256,12 @@ export interface HomeSelect<T extends boolean = true> {
         title?: T;
         text?: T;
         primary?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+            };
+        call2?:
           | T
           | {
               label?: T;

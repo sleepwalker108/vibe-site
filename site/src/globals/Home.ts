@@ -54,6 +54,7 @@ export const Home: GlobalConfig = {
             { name: 'title', type: 'text', label: 'Головний заголовок', localized: true },
             { name: 'text', type: 'textarea', label: 'Підзаголовок', localized: true },
             link('primary', 'Жовта кнопка'),
+            link('call2', 'Друга кнопка дзвінка (напр. гаряча лінія 1648)'),
             link('secondary', 'Прозора кнопка'),
             {
               name: 'flagMode',

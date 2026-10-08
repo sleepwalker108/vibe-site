@@ -52,6 +52,11 @@ export const PageSidebar = async ({ path, locale, t, draft = false, children }: 
         <b>1548</b>
         <span>{t.sideHotText}</span>
       </a>
+      <a className="side-hot side-hot-2" href="tel:1648">
+        <span className="side-hot-label">{t.hotline}</span>
+        <b>1648</b>
+        <span>{t.sideHot2Text}</span>
+      </a>
     </aside>
   )
 }

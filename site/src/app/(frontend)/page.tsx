@@ -98,6 +98,11 @@ export default async function HomePage({ searchParams }: Props) {
                 ☎ {hero.primary.label}
               </a>
             )}
+            {hero?.call2?.label && (
+              <a className="btn btn-call2" href={safeHref(hero.call2.url)}>
+                ☎ {hero.call2.label}
+              </a>
+            )}
             {hero?.secondary?.label && (
               <a className="btn btn-ghost" href={hero.secondary.url || '#'}>
                 {hero.secondary.label}
