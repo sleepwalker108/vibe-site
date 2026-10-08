@@ -151,7 +151,13 @@ export default async function HomePage({ searchParams }: Props) {
               const cls = ['card', colorClass[c.color || 'white'], sizeClass[c.size || 'normal']].filter(Boolean).join(' ')
               const Tag = c.url ? 'a' : 'div'
               const card = (
-                <Tag key={c.id} className={cls} {...(c.url ? { href: safeHref(c.url) } : {})}>
+                <Tag
+                  key={c.id}
+                  className={cls}
+                  {...(c.url ? { href: safeHref(c.url) } : {})}
+                  // документ (PDF тощо) — у новій вкладці, щоб не губити головну
+                  {...(/\.(pdf|docx?|xlsx?)([?#]|$)/i.test(c.url || '') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
                   {(c.label || c.icon) && (
                     <div className="card-head">
                       {c.label ? <div className={`label${c.live ? ' live' : ''}`}>{c.label}</div> : <span />}

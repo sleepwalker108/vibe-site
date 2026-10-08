@@ -20,6 +20,7 @@ import * as migration_20261007_121728_speed_indexes from './20261007_121728_spee
 import * as migration_20261008_121239_hotline_1648 from './20261008_121239_hotline_1648';
 import * as migration_20261008_124212_territories_list_button from './20261008_124212_territories_list_button';
 import * as migration_20261008_132515_fix_bot_name from './20261008_132515_fix_bot_name';
+import * as migration_20261008_132809_territories_card_link from './20261008_132809_territories_card_link';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20261008_132515_fix_bot_name.up,
     down: migration_20261008_132515_fix_bot_name.down,
-    name: '20261008_132515_fix_bot_name'
+    name: '20261008_132515_fix_bot_name',
+  },
+  {
+    up: migration_20261008_132809_territories_card_link.up,
+    down: migration_20261008_132809_territories_card_link.down,
+    name: '20261008_132809_territories_card_link'
   },
 ];
