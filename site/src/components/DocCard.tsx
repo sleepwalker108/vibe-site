@@ -63,6 +63,12 @@ export const DocCard = ({ url, title, labels }: { url: string; title: string; la
             </svg>
           </span>
         </button>
+        {/* відкрити в новій вкладці (на комп'ютері; на телефоні ця дія є в розгорнутій картці) */}
+        <a className="doc-dl doc-newtab" href={url} target="_blank" rel="noopener noreferrer" aria-label={`${labels.docOpen}: ${title}`} title={labels.docOpen}>
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+          </svg>
+        </a>
         <a className="doc-dl" href={url} download target="_blank" rel="noopener noreferrer" aria-label={`${labels.docDownload}: ${title}`} title={labels.docDownload}>
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14" />

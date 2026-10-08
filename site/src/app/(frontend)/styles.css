@@ -1499,3 +1499,5 @@ html.contrast .doc-dl { color: #ff0 !important; border-color: #fff !important; }
 .prose .doc-card .doc-btn[href] { display: inline-flex; padding: 10px 16px; border-radius: 12px; background: var(--navy); }
 .prose .doc-card .doc-btn.ghost[href] { background: #fff; border: 1px solid var(--line); }
 @media (max-width: 640px) { .prose .doc-card .doc-head[href] { padding: 12px; } }
+/* «Відкрити в новій вкладці» — лише на комп'ютері (на телефоні є в розгорнутій картці) */
+@media (max-width: 640px) { .doc-newtab, .prose .doc-card .doc-newtab[href] { display: none; } }
