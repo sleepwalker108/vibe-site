@@ -3,6 +3,7 @@ import { getClient, mediaUrl } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
 import { Header, type MenuItem } from './Header'
 import { RefreshRouteOnSave } from './RefreshRouteOnSave'
+import { Linkify } from './Linkify'
 import { ToTop } from './ToTop'
 
 // Шапка + підвал + (у режимі перегляду) автооновлення з адмінки
@@ -48,7 +49,14 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                 <img src={logo} alt="" />
                 <div>
                   <strong>{c.orgName}</strong>
-                  <p style={{ marginTop: 10 }}>{c.address}</p>
+                  {c.address && (
+                    <p style={{ marginTop: 10 }}>
+                      {/* адреса — відкривається на карті */}
+                      <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.address)}`} target="_blank" rel="noopener noreferrer">
+                        {c.address}
+                      </a>
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -63,12 +71,24 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                   <a href={`mailto:${c.email}`}>{c.email}</a>
                 </p>
               )}
-              {c.phones?.map((l) => <p key={l.id}>{l.text}</p>)}
+              {c.phones?.map((l) => (
+                <p key={l.id}>
+                  <Linkify text={l.text} />
+                </p>
+              ))}
             </div>
             <div>
               <h2 className="foot-h">{t.hotline}</h2>
-              <div className="foot-hot">{c.hotline?.number}</div>
-              {c.hotline?.lines?.map((l) => <p key={l.id}>{l.text}</p>)}
+              {c.hotline?.number && (
+                <a className="foot-hot" href={`tel:${c.hotline.number.replace(/[^\d+]/g, '')}`}>
+                  {c.hotline.number}
+                </a>
+              )}
+              {c.hotline?.lines?.map((l) => (
+                <p key={l.id}>
+                  <Linkify text={l.text} />
+                </p>
+              ))}
             </div>
           </div>
           <div className="foot-bottom">
