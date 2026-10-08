@@ -99,7 +99,7 @@ export default async function HomePage({ searchParams }: Props) {
               </a>
             )}
             {hero?.call2?.label && (
-              <a className="btn btn-call2" href={safeHref(hero.call2.url)}>
+              <a className="btn btn-yellow" href={safeHref(hero.call2.url)}>
                 ☎ {hero.call2.label}
               </a>
             )}
