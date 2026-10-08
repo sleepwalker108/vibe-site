@@ -46,10 +46,12 @@ const plain = (n: any): string => (n?.text || '') + (n?.children || []).map(plai
 // Абзац, що складається лише з посилання на документ (PDF, Word…), — показуємо карткою документа
 const docOf = (node: any): { url: string; title: string } | null => {
   const kids = (node.children || []).filter((k: any) => !(k.type === 'text' && !k.text.trim()) && k.type !== 'linebreak')
-  if (kids.length !== 1) return null
-  const k = kids[0]
-  if ((k.type !== 'link' && k.type !== 'autolink') || k.fields?.linkType === 'internal') return null
-  const { url } = resolveLink(k.fields?.url)
+  if (!kids.length) return null
+  // назва документа буває розбита на кілька посилань з однаковою адресою (частини з різним оформленням) — це один документ
+  const isExtLink = (k: any) => (k.type === 'link' || k.type === 'autolink') && k.fields?.linkType !== 'internal'
+  if (!kids.every(isExtLink) || new Set(kids.map((k: any) => (k.fields?.url || '').trim())).size !== 1) return null
+  const k = kids.length === 1 ? kids[0] : node
+  const { url } = resolveLink(kids[0].fields?.url)
   if (!DOC.test(url)) return null
   // старий сайт уже працює через https — щоб перегляд не блокувався як «небезпечний вміст»
   return { url: url.replace(/^http:\/\/(www\.)?dp-reintegration\.gov\.ua/i, 'https://dp-reintegration.gov.ua'), title: plain(k).trim() || url.split('/').pop() || url }
