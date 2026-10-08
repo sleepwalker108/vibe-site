@@ -269,6 +269,16 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
                 </span>
               </a>
             )}
+            {/* друга гаряча лінія — така сама жовта кнопка */}
+            <a className="mm-contact mm-hot" href="tel:1648">
+              <span className="mm-c-ico">
+                <PhoneIcon />
+              </span>
+              <span className="mm-c-text">
+                <strong>1648</strong>
+                <small>{t.mmHot2Note}</small>
+              </span>
+            </a>
             {contacts.phones.map((p, i) => {
               const ph = splitPhone(p)
               const body = (
