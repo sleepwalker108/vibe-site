@@ -124,7 +124,7 @@ export default async function NewsItemPage({ params, searchParams }: Props) {
               <img src={cover} alt={typeof item.cover === 'object' ? item.cover?.alt || '' : ''} />
             </div>
           )}
-          {item.content ? <Prose data={item.content} newTabLabel={t.newTab} /> : <p className="prose">{item.excerpt}</p>}
+          {item.content ? <Prose data={item.content} labels={t} /> : <p className="prose">{item.excerpt}</p>}
         </article>
         <PageSidebar path="/news" locale={locale} t={t} draft={draft}>
           {latest.length > 0 && (

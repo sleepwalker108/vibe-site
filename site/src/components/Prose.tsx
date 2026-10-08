@@ -2,6 +2,7 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 import { type JSXConvertersFunction, RichText } from '@payloadcms/richtext-lexical/react'
 import type { CardsBlock, FaqBlock, StatBlock } from '@/payload-types'
 import { safeHref } from '@/lib/safeHref'
+import { DocCard, type DocLabels } from './DocCard'
 import { ResourceIcon } from './ResourceIcon'
 
 const OLD_SITE = 'https://dp-reintegration.gov.ua'
@@ -37,11 +38,33 @@ const smartLink =
     )
   }
 
+export type ProseLabels = DocLabels & { newTab: string }
+
+const DOC = /\.(pdf|docx?|xlsx?|pptx?|odt|ods)([?#]|$)/i
+const plain = (n: any): string => (n?.text || '') + (n?.children || []).map(plain).join('')
+
+// Абзац, що складається лише з посилання на документ (PDF, Word…), — показуємо карткою документа
+const docOf = (node: any): { url: string; title: string } | null => {
+  const kids = (node.children || []).filter((k: any) => !(k.type === 'text' && !k.text.trim()) && k.type !== 'linebreak')
+  if (kids.length !== 1) return null
+  const k = kids[0]
+  if ((k.type !== 'link' && k.type !== 'autolink') || k.fields?.linkType === 'internal') return null
+  const { url } = resolveLink(k.fields?.url)
+  if (!DOC.test(url)) return null
+  // старий сайт уже працює через https — щоб перегляд не блокувався як «небезпечний вміст»
+  return { url: url.replace(/^http:\/\/(www\.)?dp-reintegration\.gov\.ua/i, 'https://dp-reintegration.gov.ua'), title: plain(k).trim() || url.split('/').pop() || url }
+}
+
 // Як показувати блоки з редактора на сайті
-const makeConverters = (newTabLabel: string): JSXConvertersFunction => ({ defaultConverters }) => ({
+const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaultConverters }) => ({
   ...defaultConverters,
-  link: smartLink(newTabLabel, defaultConverters.link),
-  autolink: smartLink(newTabLabel, defaultConverters.autolink),
+  paragraph: (args: any) => {
+    const doc = docOf(args.node)
+    if (doc) return <DocCard url={doc.url} title={doc.title} labels={labels} />
+    return (defaultConverters.paragraph as any)(args)
+  },
+  link: smartLink(labels.newTab, defaultConverters.link),
+  autolink: smartLink(labels.newTab, defaultConverters.autolink),
   blocks: {
     // «Запитання — відповіді»: розгортні пункти (<details>), працюють з клавіатури й без JavaScript
     faq: ({ node }: { node: { fields: FaqBlock } }) => (
@@ -80,8 +103,8 @@ const makeConverters = (newTabLabel: string): JSXConvertersFunction => ({ defaul
 })
 
 // Текст сторінки чи новини, оформлений стилями .prose
-export const Prose = ({ data, newTabLabel = '(відкривається в новій вкладці)' }: { data: SerializedEditorState; newTabLabel?: string }) => (
+export const Prose = ({ data, labels }: { data: SerializedEditorState; labels: ProseLabels }) => (
   <div className="prose">
-    <RichText data={data} converters={makeConverters(newTabLabel)} />
+    <RichText data={data} converters={makeConverters(labels)} />
   </div>
 )

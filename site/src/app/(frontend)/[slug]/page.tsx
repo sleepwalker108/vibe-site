@@ -78,7 +78,7 @@ export default async function Page({ params, searchParams }: Props) {
       <div className="article wrap page-layout">
         <article className="page-main">
           {!translated && <p className="not-translated">{t.notTranslated}</p>}
-          {page.content && <Prose data={page.content} newTabLabel={t.newTab} />}
+          {page.content && <Prose data={page.content} labels={t} />}
         </article>
         <PageSidebar path={`/${slug}`} locale={locale} t={t} draft={draft} />
       </div>

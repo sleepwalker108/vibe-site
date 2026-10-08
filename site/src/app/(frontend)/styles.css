@@ -1445,3 +1445,57 @@ html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria
 html.contrast .filters-side { background: #000 !important; border: 2px solid #fff !important; }
 html.contrast .list-progress { background: #ff0 !important; }
 @media (prefers-reduced-motion: reduce) { .list-progress { animation: none; transform: scaleX(.85); } }
+
+/* документи на сторінках: картка, що розгортається натисканням будь-де на заголовку й показує PDF */
+.doc-card { margin: 10px 0; border: 1px solid var(--line); border-radius: 16px; background: #fff; overflow: hidden; transition: box-shadow .2s, border-color .2s; }
+.doc-card:hover, .doc-card.is-open { border-color: #b9cde3; box-shadow: 0 6px 20px rgba(16, 77, 130, .08); }
+.doc-card a { text-decoration: none !important; }
+.doc-card a::after { content: none !important; }
+.doc-row { display: flex; align-items: stretch; }
+.doc-head { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin: 0; border: 0; background: none;
+  font: inherit; text-align: left; color: var(--ink, #1c2733); cursor: pointer; transition: background .15s; }
+.doc-head:hover { background: var(--sky); }
+.doc-head:focus-visible, .doc-dl:focus-visible { outline: 3px solid var(--yellow); outline-offset: -3px; }
+.doc-ico { flex: none; width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--sky); color: var(--navy); }
+.doc-head:hover .doc-ico { background: #fff; }
+.doc-title { flex: 1; min-width: 0; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.doc-type { flex: none; font-size: .7rem; font-weight: 800; letter-spacing: .03em; color: #b42318; background: #fde8e6; padding: 3px 7px; border-radius: 6px; }
+.doc-state { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 7px 12px 7px 14px; border-radius: 999px; background: var(--sky);
+  color: var(--navy); font-size: .86rem; font-weight: 700; white-space: nowrap; transition: background .2s, color .2s; }
+.doc-head:hover .doc-state { background: #fff; }
+.doc-card.is-open .doc-state { background: var(--navy); color: #fff; }
+.doc-caret { transition: transform .25s ease; }
+.doc-card.is-open .doc-caret { transform: rotate(180deg); }
+.doc-dl { flex: none; width: 58px; display: grid; place-items: center; border-left: 1px solid var(--line); color: var(--navy); transition: background .15s; }
+.doc-dl:hover { background: var(--sky); }
+.doc-body { border-top: 1px solid var(--line); background: #525659; }
+.doc-body[hidden] { display: none; }
+.doc-frame { display: block; width: 100%; height: min(80vh, 920px); border: 0; background: #525659; }
+.doc-noinline { padding: 16px 18px; background: var(--sky); color: var(--ink, #1c2733); }
+.doc-noinline p { margin: 0 0 12px; }
+.doc-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.doc-btn { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 12px; background: var(--navy); color: #fff !important; font-weight: 700; }
+.doc-btn.ghost { background: #fff; color: var(--navy) !important; border: 1px solid var(--line); }
+html.contrast .doc-card, html.contrast .doc-head, html.contrast .doc-ico, html.contrast .doc-state, html.contrast .doc-noinline { background: #000 !important; color: #fff !important; border-color: #fff !important; }
+html.contrast .doc-card.is-open .doc-state { background: #ff0 !important; color: #000 !important; }
+html.contrast .doc-dl { color: #ff0 !important; border-color: #fff !important; }
+@media (max-width: 640px) {
+  .doc-head { gap: 10px; padding: 12px; }
+  .doc-ico { width: 36px; height: 36px; }
+  .doc-title { font-size: .95rem; }
+  /* на телефоні замість напису — лише стрілка */
+  .doc-state { padding: 6px; font-size: 0; gap: 0; }
+  .doc-type { display: none; }
+  .doc-dl { width: 48px; }
+  .doc-frame { height: 70vh; }
+}
+@media (prefers-reduced-motion: reduce) { .doc-caret, .doc-card { transition: none; } }
+/* усередині картки документа — без оформлення «посилання на файл» з тексту */
+.prose .doc-card a[href] { margin: 0; border: 0; border-radius: 0; background: none; box-shadow: none; padding: 0; line-height: inherit; }
+.prose .doc-card a[href]::before { content: none; }
+.prose .doc-card .doc-dl[href] { display: grid; border-left: 1px solid var(--line); }
+.prose .doc-card .doc-dl[href]:hover { background: var(--sky); }
+.prose .doc-card .doc-head[href] { display: flex; padding: 14px 16px; }
+.prose .doc-card .doc-btn[href] { display: inline-flex; padding: 10px 16px; border-radius: 12px; background: var(--navy); }
+.prose .doc-card .doc-btn.ghost[href] { background: #fff; border: 1px solid var(--line); }
+@media (max-width: 640px) { .prose .doc-card .doc-head[href] { padding: 12px; } }
