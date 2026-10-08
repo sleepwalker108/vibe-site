@@ -1,6 +1,8 @@
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { type JSXConvertersFunction, RichText } from '@payloadcms/richtext-lexical/react'
 import type { CardsBlock, FaqBlock, StatBlock } from '@/payload-types'
+import { Fragment } from 'react'
+import { hasPhone, splitPhones } from '@/lib/phones'
 import { safeHref } from '@/lib/safeHref'
 import { DocCard, type DocLabels } from './DocCard'
 import { ResourceIcon } from './ResourceIcon'
@@ -38,6 +40,21 @@ const smartLink =
     )
   }
 
+// Простий текст (картки, підписи) — з клікабельними телефонами
+const PhoneText = ({ text }: { text: string }) => (
+  <>
+    {splitPhones(text).map((p, i) =>
+      p.tel ? (
+        <a key={i} className="tel-link" href={`tel:${p.tel}`}>
+          {p.text}
+        </a>
+      ) : (
+        <Fragment key={i}>{p.text}</Fragment>
+      ),
+    )}
+  </>
+)
+
 export type ProseLabels = DocLabels & { newTab: string }
 
 const DOC = /\.(pdf|docx?|xlsx?|pptx?|odt|ods)([?#]|$)/i
@@ -65,6 +82,27 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
     if (doc) return <DocCard url={doc.url} title={doc.title} labels={labels} />
     return (defaultConverters.paragraph as any)(args)
   },
+  // телефонні номери в тексті (зокрема в заголовках) — клікабельні (дзвінок). Текст, що вже є посиланням, не чіпаємо.
+  text: (args: any) => {
+    const t: string = args.node?.text || ''
+    let skip = !hasPhone(t)
+    for (let p = args.parent; p && !skip; p = p.parent) if (p.type === 'link' || p.type === 'autolink') skip = true
+    const plainText = (s: string) => (defaultConverters.text as any)({ ...args, node: { ...args.node, text: s } })
+    if (skip) return plainText(t)
+    return (
+      <>
+        {splitPhones(t).map((part, i) =>
+          part.tel ? (
+            <a key={i} className="tel-link" href={`tel:${part.tel}`}>
+              {plainText(part.text)}
+            </a>
+          ) : (
+            <Fragment key={i}>{plainText(part.text)}</Fragment>
+          ),
+        )}
+      </>
+    )
+  },
   // документ, вставлений кнопкою «Файл з медіатеки» (а не посиланням), — теж карткою документа
   upload: (args: any) => {
     const file = args.node?.value
@@ -83,7 +121,7 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
         {node.fields.items?.map((item, i) => (
           <details key={item.id || i} className="faq-item">
             <summary>{item.question}</summary>
-            <div className="faq-answer">{item.answer && <RichText data={item.answer} />}</div>
+            <div className="faq-answer">{item.answer && <RichText data={item.answer} converters={makeConverters(labels)} />}</div>
           </details>
         ))}
       </div>
@@ -97,7 +135,11 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
               <ResourceIcon name={item.icon} />
             </span>
             <div className="prose-card-title">{item.title}</div>
-            {item.text && <p>{item.text}</p>}
+            {item.text && (
+              <p>
+                <PhoneText text={item.text} />
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -107,7 +149,11 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
       <div className="prose-stat">
         <div className="prose-stat-num">{node.fields.number}</div>
         <div className="prose-stat-label">{node.fields.label}</div>
-        {node.fields.note && <p className="prose-stat-note">{node.fields.note}</p>}
+        {node.fields.note && (
+          <p className="prose-stat-note">
+            <PhoneText text={node.fields.note} />
+          </p>
+        )}
       </div>
     ),
   },
