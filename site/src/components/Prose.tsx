@@ -63,6 +63,15 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
     if (doc) return <DocCard url={doc.url} title={doc.title} labels={labels} />
     return (defaultConverters.paragraph as any)(args)
   },
+  // документ, вставлений кнопкою «Файл з медіатеки» (а не посиланням), — теж карткою документа
+  upload: (args: any) => {
+    const file = args.node?.value
+    if (file && typeof file === 'object' && file.url && DOC.test(file.filename || file.url)) {
+      const title = (args.node.fields?.alt || file.alt || '').trim() || String(file.filename).replace(/\.[a-z0-9]+$/i, '')
+      return <DocCard url={file.url} title={title} labels={labels} />
+    }
+    return (defaultConverters.upload as any)(args)
+  },
   link: smartLink(labels.newTab, defaultConverters.link),
   autolink: smartLink(labels.newTab, defaultConverters.autolink),
   blocks: {
