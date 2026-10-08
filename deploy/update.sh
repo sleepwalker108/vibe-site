@@ -68,6 +68,9 @@ if [ -f "$NGX" ] && ! grep -q ssl_certificate "$NGX"; then
   fi
 fi
 
+# ffmpeg — для стиснення відео під веб (якщо немає системної, сайт використає вбудовану з пакета)
+command -v ffmpeg >/dev/null 2>&1 || { apt-get install -y -qq ffmpeg >/dev/null 2>&1 && ok "Встановлено ffmpeg (стиснення відео)"; } || true
+
 say "3/6 Бібліотеки"
 if [ "$BEFORE" = "$AFTER" ] || ! git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then
   as_app "npm ci --no-audit --no-fund" || {

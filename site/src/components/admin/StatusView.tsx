@@ -5,6 +5,7 @@ import { duration, kyivTime, plural, size } from '@/lib/adminFormat'
 import { readErrors } from '@/lib/errorLog'
 import { getServerStatus } from '@/lib/serverStatus'
 import { LinksSection, UpdatesSection } from './StatusSections'
+import { VideosSection } from './VideoOptimizer'
 import { STATUS_CSS } from './statusStyles'
 
 const MONTHS = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня']
@@ -220,6 +221,7 @@ export const StatusView = async ({ initPageResult, params, searchParams }: Admin
 
       <UpdatesSection />
       <LinksSection />
+      <VideosSection />
 
       <section className="ss-section">
         <div className="ss-section-head">

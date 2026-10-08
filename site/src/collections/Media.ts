@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isLoggedIn } from '../access'
+import { enqueueVideo } from '../lib/videoOptimize'
 
 export const Media: CollectionConfig = {
   slug: 'media',

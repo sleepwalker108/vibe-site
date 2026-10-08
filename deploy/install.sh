@@ -31,7 +31,7 @@ HOST="${DOMAIN:-$IP}"
 say "1/9 Системні пакети (git, nginx, sqlite3…)"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq git curl ca-certificates nginx sqlite3 openssl >/dev/null
+apt-get install -y -qq git curl ca-certificates nginx sqlite3 openssl ffmpeg >/dev/null
 # київський час — для дат резервних копій і щоденної копії о 03:15
 timedatectl set-timezone Europe/Kyiv 2>/dev/null || true
 ok "Готово"
