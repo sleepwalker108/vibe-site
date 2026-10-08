@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { kyivTime, plural } from '@/lib/adminFormat'
 import type { LinkIssue, LinkIssueKind, LinkReport } from '@/lib/linkCheck'
 import type { UpdatesInfo } from '@/lib/serverStatus'
+import { OldFilesMigrator } from './OldFilesMigrator'
 
 // Ці дві частини «Стану сервера» вантажаться окремо (звернення до GitHub і перевірка всіх текстів),
 // щоб сама сторінка відкривалася миттєво
@@ -129,6 +130,7 @@ export const LinksSection = () => {
             Перевірено {plural(data.checked, ['посилання й картинку', 'посилання й картинки', 'посилань і картинок'])} у {plural(data.docs, ['тексті', 'текстах', 'текстах'])} (українською та англійською).
           </p>
           {!groups.length && <p>Усі посилання й картинки на місці.</p>}
+          <OldFilesMigrator hasOld={groups.some((g) => g.kind === 'old-site-file')} onDone={() => setKey((k) => k + 1)} />
           {groups.map((g) => (
             <details key={g.kind} className={`ss-group ${g.broken ? 'bad' : 'warn'}`} open={g.broken}>
               <summary>

@@ -59,4 +59,7 @@ html[data-theme='dark'] .ss-wrap { --ss-ok: #4ccb7f; --ss-warn: #f1b44c; --ss-ba
 @keyframes ss-pulse { 50% { opacity: .45; } }
 @media (max-width: 1000px) { .ss-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .ss-wrap { padding: 20px 16px 48px; } .ss-grid { grid-template-columns: 1fr; } }
+.ss-migrate { margin: 10px 0 12px; padding: 14px 16px; border-radius: 10px; background: var(--theme-elevation-50); border: 1px solid var(--theme-elevation-150); }
+.ss-migrate p { margin: 0 0 8px; font-size: 14px; }
+.ss-btn-primary { background: var(--theme-elevation-1000); color: var(--theme-elevation-0); border-color: var(--theme-elevation-1000); }
 `

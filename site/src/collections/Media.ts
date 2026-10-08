@@ -43,7 +43,14 @@ export const Media: CollectionConfig = {
   upload: {
     // Лише перелічені формати. SVG навмисно не дозволено: SVG-файл може містити скрипт, який виконався б
     // на домені сайту (тобто й адмінки) — так редактор міг би отримати права адміністратора.
-    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'application/pdf', 'video/mp4', 'video/webm'],
+    mimeTypes: [
+      'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif',
+      'application/pdf',
+      // документи Word і Excel (браузер їх не виконує — лише завантажує)
+      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'video/mp4', 'video/webm',
+    ],
     // Картинки (JPG, PNG…) під час завантаження автоматично перетворюються на WebP — у 2–5 разів легші,
     // сторінки вантажаться швидше. PDF, відео й SVG не змінюються.
     formatOptions: { format: 'webp', options: { quality: 82 } },

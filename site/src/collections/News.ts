@@ -4,6 +4,7 @@ import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
 import { fillSearchText, searchTextField } from '../fields/searchText'
+import { normalizeHeadings } from '../fields/normalizeHeadings'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -37,7 +38,11 @@ export const News: CollectionConfig = {
     delete: isAdmin,
   },
   // текст для пошуку по сайту оновлюється під час кожного збереження
-  hooks: { beforeChange: [markEnglish, fillSearchText(['title', 'excerpt', 'content'])] },
+  hooks: {
+    // заголовки зі старого сайту (h1, h5, h6) — до дозволених h2–h4, інакше новину не зберегти
+    beforeValidate: [normalizeHeadings(['content'])],
+    beforeChange: [markEnglish, fillSearchText(['title', 'excerpt', 'content'])],
+  },
   fields: [
   ...translationFields('news'),
     { name: 'title', type: 'text', label: 'Заголовок', required: true, localized: true },
