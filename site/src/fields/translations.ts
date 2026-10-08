@@ -32,3 +32,13 @@ export const markEnglish: CollectionBeforeChangeHook = ({ data, req }) => {
   if (req.locale === 'en') data.hasEnglish = Boolean(data.title && String(data.title).trim())
   return data
 }
+
+// Блок «Мови» для розділів налаштувань (статистика, річний звіт, мапа) — той самий перемикач, що й у новинах
+export const languageSwitcher: Field = {
+  name: 'languages',
+  type: 'ui',
+  admin: {
+    position: 'sidebar',
+    components: { Field: '/components/admin/LanguagePanel#LanguagePanel' },
+  },
+}

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
+import { languageSwitcher } from '../fields/translations'
 
 const rows = (name: string, label: string, description?: string) => ({
   name,
@@ -32,6 +33,8 @@ export const AnnualReport: GlobalConfig = {
   versions: { drafts: { autosave: { interval: 400 } }, max: 50 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
+    // перемикач Українська / English (як у новинах)
+    languageSwitcher,
     {
       type: 'row',
       fields: [

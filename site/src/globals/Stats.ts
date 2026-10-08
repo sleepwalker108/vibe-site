@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
+import { languageSwitcher } from '../fields/translations'
 
 export const Stats: GlobalConfig = {
   slug: 'stats',
@@ -14,6 +15,8 @@ export const Stats: GlobalConfig = {
   versions: { drafts: { autosave: { interval: 400 } }, max: 100 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
+    // перемикач Українська / English (як у новинах)
+    languageSwitcher,
     {
       type: 'row',
       fields: [

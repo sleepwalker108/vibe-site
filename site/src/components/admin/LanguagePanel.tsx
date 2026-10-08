@@ -6,9 +6,13 @@ const LANGS = [
   { code: 'en', short: 'EN', name: 'English' },
 ] as const
 
-// Блок «Мови» у правій колонці форми новини/сторінки: перемикання між українською та англійською версією
+// Блок «Мови» у правій колонці форми: перемикання між українською та англійською версією.
+// Працює для новин і сторінок, а також для розділів налаштувань (статистика, річний звіт, мапа).
 export const LanguagePanel = () => {
-  const { id, collectionSlug } = useDocumentInfo()
+  const { id, collectionSlug, globalSlug } = useDocumentInfo()
+  // розділ налаштувань (global) — окремий документ без «id»; англійська версія в ньому є завжди (порожні поля — українською)
+  const isGlobal = Boolean(globalSlug)
+  const base = isGlobal ? `/admin/globals/${globalSlug}` : `/admin/collections/${collectionSlug}/${id}`
   const locale = useLocale()
   const hasEnglish = useFormFields(([fields]) => Boolean(fields?.hasEnglish?.value))
   const current = locale?.code || 'uk'
@@ -17,7 +21,7 @@ export const LanguagePanel = () => {
     <div className="lang-panel">
       <style>{CSS}</style>
       <div className="lp-title">Мови</div>
-      {!id ? (
+      {!id && !isGlobal ? (
         <p className="lp-note">Спершу збережіть українську версію — тоді з’явиться можливість додати англійську.</p>
       ) : (
         <>
@@ -29,26 +33,32 @@ export const LanguagePanel = () => {
                 <li key={l.code}>
                   <a
                     className={`lp-row${active ? ' active' : ''}`}
-                    href={`/admin/collections/${collectionSlug}/${id}?locale=${l.code}`}
+                    href={`${base}?locale=${l.code}`}
                     aria-current={active ? 'page' : undefined}
                   >
                     <span className="lp-code">{l.short}</span>
                     <span className="lp-name">{l.name}</span>
                     <span className={`lp-status${exists ? ' ok' : ''}`}>
-                      {active ? 'редагується' : exists ? 'є ✎' : '+ додати'}
+                      {active ? 'редагується' : isGlobal ? 'перейти' : exists ? 'є ✎' : '+ додати'}
                     </span>
                   </a>
                 </li>
               )
             })}
           </ul>
-          {current === 'en' && !hasEnglish && (
+          {current === 'en' && isGlobal && (
+            <p className="lp-note">
+              Ви редагуєте англійські тексти. Порожні поля на англійській версії сайту показуються українською. Щоб узяти українські
+              тексти за основу: ⋮ угорі праворуч → «Копіювати до локалізації» → з «Українська» в «English». Цифри спільні для обох мов.
+            </p>
+          )}
+          {current === 'en' && !isGlobal && !hasEnglish && (
             <p className="lp-note">
               Англійської версії ще немає. Щоб узяти український текст за основу, натисніть ⋮ угорі праворуч →
               «Копіювати до локалізації» → з «Українська» в «English». Потім перекладіть і збережіть.
             </p>
           )}
-          {current === 'en' && hasEnglish && <p className="lp-note">Порожні англійські поля на сайті показуються українською.</p>}
+          {current === 'en' && !isGlobal && hasEnglish && <p className="lp-note">Порожні англійські поля на сайті показуються українською.</p>}
         </>
       )}
     </div>

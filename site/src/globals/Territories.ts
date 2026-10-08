@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
 import { UA_REGION_OPTIONS } from '../data/regionNames'
+import { languageSwitcher } from '../fields/translations'
 
 const num = (name: string, label: string) => ({ name, type: 'number' as const, label, min: 0, defaultValue: 0 })
 
@@ -18,6 +19,8 @@ export const Territories: GlobalConfig = {
   versions: { drafts: { autosave: { interval: 400 } }, max: 50 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
+    // перемикач Українська / English (як у новинах)
+    languageSwitcher,
     { name: 'show', type: 'checkbox', label: 'Показувати блок на головній', defaultValue: true },
     { name: 'title', type: 'text', label: 'Заголовок', localized: true },
     { name: 'subtitle', type: 'textarea', label: 'Підзаголовок', localized: true },
