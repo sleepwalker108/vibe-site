@@ -14,7 +14,10 @@ export const Media: CollectionConfig = {
     pagination: { defaultLimit: 50 },
   },
   access: {
-    read: () => true,
+    // Самі файли (/api/media/file/…) доступні всім — вони на сторінках сайту. А перелік медіатеки через API
+    // бачать лише ті, хто увійшов: інакше можна було б знайти файли, завантажені для ще не опублікованих сторінок.
+    // (Сайт отримує картинки напряму з бази, без цього переліку.)
+    read: ({ req }) => Boolean(req.user) || /\/api\/media\/file\//.test(req.url || ''),
     create: isLoggedIn,
     update: isLoggedIn,
     delete: isLoggedIn,
