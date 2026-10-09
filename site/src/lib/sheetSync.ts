@@ -84,7 +84,10 @@ export const toCsvUrl = (raw: string): string | null => {
   } catch {
     return null
   }
-  if (u.protocol !== 'https:' || u.hostname !== 'docs.google.com' || !u.pathname.startsWith('/spreadsheets/d/')) return null
+  if (u.protocol !== 'https:') return null
+  // Google-скрипт (deploy/google-form.gs, функція siteLinks): віддає відповіді закритої таблиці за секретним ключем
+  if (u.hostname === 'script.google.com' && /^\/macros\/s\/[\w-]+\/exec$/.test(u.pathname)) return u.toString()
+  if (u.hostname !== 'docs.google.com' || !u.pathname.startsWith('/spreadsheets/d/')) return null
   // «Файл → Поділитися → Опублікувати в інтернеті» → …/d/e/<id>/pub?output=csv (або pubhtml)
   if (u.pathname.startsWith('/spreadsheets/d/e/')) {
     u.pathname = u.pathname.replace(/\/pub(html)?$/, '/pub')
@@ -226,8 +229,12 @@ const readSheet = async (payload: Payload, slug: SheetSlug): Promise<Parsed> => 
     return {
       ok: false,
       questions,
-      message: `Google не віддав таблицю (код ${res.status}). Перевірте доступ до таблиці: «Поділитися» → «Усі, хто має посилання» (читач).`,
+      message: /script\.google\.com/.test(url)
+        ? `Google-скрипт не віддав відповіді (код ${res.status}). Перевірте, що скрипт розгорнуто як веб-застосунок з доступом «Усі» (Anyone), і скопіюйте посилання ще раз (функція siteLinks).`
+        : `Google не віддав таблицю (код ${res.status}). Перевірте доступ до таблиці: «Поділитися» → «Усі, хто має посилання» (читач) — або підключіть закриту таблицю через Google-скрипт (функція siteLinks).`,
     }
+  // відмова самого скрипта (неправильний ключ, таблицю не знайдено) — він відповідає «ПОМИЛКА: …»
+  if (/^ПОМИЛКА:/.test(text.trim())) return { ok: false, questions, message: `Google-скрипт: ${text.trim().slice(9, 300)}` }
   if (text.length > 5_000_000) return { ok: false, questions, message: 'Таблиця завелика (понад 5 МБ).' }
 
   const rows = parseCsv(text).filter((r) => r.some((c) => c.trim()))

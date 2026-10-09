@@ -7,9 +7,11 @@
  * Що робить кожна функція:
  *   • створює Google-форму з усіма питаннями (назви — такі, як рядки в адмінці сайту);
  *   • створює Google-таблицю для відповідей (українські формати дат) і прив'язує її до форми;
- *   • відкриває таблицю на перегляд за посиланням — щоб сайт міг її прочитати;
  *   • вмикає листи вам на пошту про кожну нову відповідь;
- *   • показує посилання: на форму (для працівників) і на таблицю (вставити в адмінку сайту).
+ *   • показує посилання на форму (для працівників). Таблиця лишається ЗАКРИТОЮ (доступ лише у вас).
+ *
+ * Сайт читає закриті таблиці через цей самий скрипт: він працює від вашого імені й віддає сайту лише
+ * відповіді ваших форм — і лише за секретним ключем (функції doGet і siteLinks унизу).
  *
  * Як запустити (5 хвилин):
  *   1. Відкрийте https://script.google.com → «Новий проєкт».
@@ -17,10 +19,17 @@
  *   3. Угорі виберіть функцію (createHotlineForm, createAnnualReportForm або createTerritoriesForm) → «Виконати».
  *   4. Google попросить дозволи (створювати форми й таблиці, надсилати вам листи) → «Дозволити».
  *      Якщо з'явиться «Google не перевірив цю програму» → «Додатково» → «Перейти до проєкту». Це ваш власний скрипт.
- *   5. Унизу («Журнал виконання») з'являться посилання:
- *        • ФОРМА — її відкривають працівники й вносять цифри;
- *        • ТАБЛИЦЯ — вставте в адмінці сайту у відповідному розділі → блок «Google-форма» → поле посилання → «Зберегти».
+ *   5. Унизу («Журнал виконання») з'явиться посилання на ФОРМУ — її відкривають працівники й вносять цифри.
  *   Для інших форм повторіть крок 3 з іншою функцією.
+ *
+ * Підключення до сайту (один раз; таблиці лишаються закритими):
+ *   6. Угорі справа «Розгорнути» → «Нове розгортання» → значок шестерні → «Веб-застосунок».
+ *      «Виконувати як»: Я (ваш акаунт); «Хто має доступ»: Усі (Anyone) → «Розгорнути» → «Дозволити».
+ *   7. Виберіть функцію siteLinks → «Виконати». У журналі з'явиться посилання для кожної форми —
+ *      вставте його в адмінці сайту у відповідному розділі → блок «Google-форма» → поле посилання → «Зберегти».
+ *   Якщо колись зміните скрипт — «Розгорнути» → «Керувати розгортаннями» → олівець → «Нова версія» (посилання не зміниться).
+ *   Посилання містить секретний ключ — не публікуйте його. Щоб замінити ключ: функція newSiteKey, потім знову siteLinks.
+ *   Форми, створені раніше старою версією скрипта, теж підхопляться — siteLinks знайде їх сам.
  *
  * Назви рядків мають збігатися з назвами в адмінці сайту (регістр і лапки не важливі) — точний перелік питань
  * видно в адмінці, у блоці «Google-форма» → «Як налаштувати Google-форму».
@@ -166,16 +175,16 @@ function createStatsForm_(o) {
       .filter((s) => s.getSheetId() !== responses.getSheetId() && s.getLastRow() === 0)
       .forEach((s) => ss.deleteSheet(s));
   }
-  DriveApp.getFileById(ss.getId()).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  // таблиця лишається закритою: сайт читає її через цей скрипт (doGet) за секретним ключем
 
-  // лист вам на пошту після кожної нової відповіді
+  // лист вам на пошту після кожної нової відповіді (за цим тригером скрипт також знаходить свої форми)
   PropertiesService.getScriptProperties().setProperty('admin:' + form.getId(), o.adminSection);
   ScriptApp.newTrigger('notifyNewResponse').forForm(form).onFormSubmit().create();
 
-  const sheetUrl = ss.getUrl() + (responses ? '#gid=' + responses.getSheetId() : '');
   Logger.log('ФОРМА для працівників (надішліть їм це посилання):\n' + form.getPublishedUrl());
   Logger.log('Редагувати форму:\n' + form.getEditUrl());
-  Logger.log('ТАБЛИЦЯ — вставте в адмінці сайту («' + o.adminSection + '» → блок «Google-форма»):\n' + sheetUrl);
+  Logger.log('Таблиця відповідей (закрита, лише для вас):\n' + ss.getUrl());
+  Logger.log('Посилання для адмінки сайту — запустіть функцію siteLinks (після кроку 6 з інструкції вгорі).');
 }
 
 // Лист власнику скрипта: які цифри надіслали й куди зайти, щоб перенести їх на сайт
@@ -194,4 +203,72 @@ function notifyNewResponse(e) {
       '\n\nЩоб перенести цифри на сайт: адмінка → «Сайт» → «' + section + '» → блок «Google-форма» → ' +
       '«Перенести в статистику (чернетка)», перевірте й натисніть «Опублікувати».'
   );
+}
+
+// ---------- доступ сайту до закритих таблиць ----------
+// Секретний ключ (створюється сам при першому запуску siteLinks)
+function siteKey_() {
+  const props = PropertiesService.getScriptProperties();
+  let key = props.getProperty('siteKey');
+  if (!key) {
+    key = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
+    props.setProperty('siteKey', key);
+  }
+  return key;
+}
+
+// Форми, створені цим скриптом (за тригером листів про нові відповіді), — і їхні таблиці
+function myForms_() {
+  return ScriptApp.getProjectTriggers()
+    .filter((t) => t.getHandlerFunction() === 'notifyNewResponse')
+    .map((t) => {
+      try {
+        const form = FormApp.openById(t.getTriggerSourceId());
+        return { form: form, sheetId: form.getDestinationId() };
+      } catch (e) {
+        return null; // форму видалено
+      }
+    })
+    .filter((x) => x && x.sheetId);
+}
+
+// Посилання для адмінки сайту — по одному на кожну форму
+function siteLinks() {
+  const base = ScriptApp.getService().getUrl();
+  if (!base) {
+    Logger.log('Спершу розгорніть скрипт як веб-застосунок (крок 6 з інструкції вгорі), потім запустіть siteLinks ще раз.');
+    return;
+  }
+  const key = siteKey_();
+  const forms = myForms_();
+  if (!forms.length) Logger.log('Форм ще немає — спершу створіть форму (createHotlineForm тощо).');
+  forms.forEach((f) => {
+    const section = PropertiesService.getScriptProperties().getProperty('admin:' + f.form.getId()) || 'відповідний розділ';
+    Logger.log('«' + f.form.getTitle() + '» → адмінка: «' + section + '» → блок «Google-форма»:\n' + base + '?id=' + f.sheetId + '&key=' + key);
+  });
+}
+
+// Замінити секретний ключ (старі посилання перестануть працювати — вставте нові з siteLinks)
+function newSiteKey() {
+  PropertiesService.getScriptProperties().deleteProperty('siteKey');
+  siteKey_();
+  Logger.log('Ключ замінено. Запустіть siteLinks і вставте нові посилання в адмінку сайту.');
+}
+
+// Сайт читає відповіді: ?id=<таблиця>&key=<ключ> → CSV аркуша з відповідями.
+// Лише таблиці форм цього скрипта і лише з правильним ключем.
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  const text = (s) => ContentService.createTextOutput(s).setMimeType(ContentService.MimeType.TEXT);
+  const key = PropertiesService.getScriptProperties().getProperty('siteKey');
+  if (!key || p.key !== key) return text('ПОМИЛКА: неправильний ключ доступу. Скопіюйте посилання ще раз (функція siteLinks).');
+  if (!myForms_().some((f) => f.sheetId === p.id)) return text('ПОМИЛКА: таблицю не знайдено серед форм цього скрипта.');
+  const ss = SpreadsheetApp.openById(p.id);
+  const sheet = ss.getSheets().find((s) => s.getFormUrl()) || ss.getSheets()[0];
+  const csv = sheet
+    .getDataRange()
+    .getDisplayValues()
+    .map((row) => row.map((v) => '"' + String(v).replace(/"/g, '""') + '"').join(','))
+    .join('\n');
+  return ContentService.createTextOutput(csv).setMimeType(ContentService.MimeType.CSV);
 }
