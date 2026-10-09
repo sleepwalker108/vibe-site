@@ -221,7 +221,20 @@ const readSheet = async (payload: Payload, slug: SheetSlug): Promise<Parsed> => 
   const questions = questionsOf(spec, doc)
   if (!doc.sheetUrl?.trim()) return { ok: false, questions, message: 'Посилання на Google-таблицю ще не вказано.' }
   const url = toCsvUrl(doc.sheetUrl)
-  if (!url) return { ok: false, questions, message: 'Це не посилання на Google-таблицю (має починатися з https://docs.google.com/spreadsheets/…).' }
+  // …/dev — тестова адреса Google: працює лише для власника в браузері, сервер її відкрити не може
+  if (!url && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/dev\b/.test(doc.sheetUrl.trim()))
+    return {
+      ok: false,
+      questions,
+      message:
+        'Це тестове посилання скрипта (закінчується на /dev) — сайт його відкрити не може. Потрібне робоче (/exec): у скрипті вгорі вставте адресу веб-застосунку в WEB_APP_URL, збережіть і запустіть siteLinks ще раз.',
+    }
+  if (!url)
+    return {
+      ok: false,
+      questions,
+      message: 'Посилання не впізнано: потрібне посилання з Google-скрипта (https://script.google.com/macros/s/…/exec?id=…&key=…) або на Google-таблицю.',
+    }
 
   const res = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(20000), cache: 'no-store' })
   const text = await res.text()
