@@ -6,9 +6,9 @@ import { RefreshRouteOnSave } from './RefreshRouteOnSave'
 import { Linkify } from './Linkify'
 import { ToTop } from './ToTop'
 
-// Гаряча лінія 1648 у підвалі — окрема колонка поруч із 1548, у тому ж стилі
+// Гаряча лінія 1648 у підвалі — окрема колонка перед 1548, у тому ж стилі (на телефоні — після 1548)
 const Hotline1648 = ({ t }: { t: { hotline: string; callsAbroad: string } }) => (
-  <div>
+  <div className="foot-1648">
     <h2 className="foot-h">{t.hotline}</h2>
     <a className="foot-hot" href="tel:1648">
       1648
@@ -91,6 +91,7 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                 </p>
               ))}
             </div>
+            <Hotline1648 t={t} />
             <div>
               <h2 className="foot-h">{t.hotline}</h2>
               {c.hotline?.number && (
@@ -104,7 +105,6 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                 </p>
               ))}
             </div>
-            <Hotline1648 t={t} />
           </div>
           <div className="foot-bottom">
             <span>© {new Date().getFullYear()} dp-reintegration.gov.ua</span>

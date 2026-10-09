@@ -199,7 +199,7 @@
 
   /* ---------- footer ---------- */
   footer { background: var(--navy-deep); color: rgba(255,255,255,.82); padding: 64px 0 28px; font-size: .92rem; }
-  .foot { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.25fr 1fr; gap: 32px; }
+  .foot { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr 1.25fr; gap: 32px; }
   footer h4, footer .foot-h { color: #fff; font-weight: 700; margin: 0 0 12px; font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; }
   footer p { margin: 0 0 8px; }
   footer a:hover { color: var(--yellow); }
@@ -1521,5 +1521,6 @@ html.contrast footer p a, html.contrast a.foot-hot { color: #ff0 !important; tex
 /* номер телефону в синьому блоці «виділена цифра» — світлий, як і текст блоку */
 .prose-stat .tel-link { color: #fff; font-weight: 700; text-decoration-color: rgba(255, 255, 255, .45); }
 .prose-stat .tel-link:hover { color: var(--yellow); text-decoration-color: var(--yellow); }
-/* підвал: гаряча лінія 1648 — п’ята колонка, поруч із 1548 */
+/* підвал: гаряча лінія 1648 — колонка перед 1548; на телефоні (колонки одна під одною) — після основної лінії 1548 */
+@media (max-width: 640px) { .foot-1648 { order: 1; } }
 .foot-note { display: block; margin-top: 2px; font-size: .82rem; color: rgba(255, 255, 255, .6); }
