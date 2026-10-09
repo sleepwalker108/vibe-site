@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import type { Payload } from 'payload'
 
 // «Статистика гарячих ліній» з Google-форми — ВРУЧНУ.
@@ -113,6 +115,8 @@ export type SheetPreview = {
   changes?: { label: string; from: string; to: string }[] // що зміниться на сайті
   unmatched?: string[] // питання форми, яким не знайшлося поля
   applied?: boolean
+  undo?: { at: string } // останнє перенесення можна скасувати (коли воно було)
+  undone?: boolean
 }
 
 type Parsed = SheetPreview & { data?: Record<string, unknown> }
@@ -197,18 +201,65 @@ const safe = async (fn: () => Promise<SheetPreview>): Promise<SheetPreview> => {
   }
 }
 
+// «Скасувати перенесення»: перед перенесенням запам'ятовуємо цифри, які були (файл переживає перезапуск сайту)
+const UNDO_FILE = path.join(process.cwd(), 'logs', 'stats-sheet-undo.json')
+type Undo = { at: string; before: Record<string, unknown> }
+const readUndo = (): Undo | null => {
+  try {
+    return JSON.parse(fs.readFileSync(UNDO_FILE, 'utf8')) as Undo
+  } catch {
+    return null
+  }
+}
+const undoInfo = () => {
+  const u = readUndo()
+  return u ? { undo: { at: u.at } } : {}
+}
+
 // Показати останню відповідь форми і що зміниться (нічого не записує)
 export const previewSheet = (payload: Payload) =>
   safe(async () => {
     const { data: _data, ...preview } = await readSheet(payload)
-    return preview
+    return { ...preview, ...undoInfo() }
   })
 
 // Перенести цифри з останньої відповіді в «Статистику гарячих ліній» — як чернетку
 export const applySheet = (payload: Payload) =>
   safe(async () => {
     const { data, ...preview } = await readSheet(payload)
-    if (!preview.ok || !data || !preview.changes?.length) return preview
+    if (!preview.ok || !data || !preview.changes?.length) return { ...preview, ...undoInfo() }
+    // те, що зараз (чернетка або опубліковане), — щоб можна було повернути
+    const cur = (await payload.findGlobal({ slug: 'stats', draft: true, locale: 'uk', depth: 0, overrideAccess: true })) as unknown as StatsDoc
+    const before = {
+      categories: (cur.categories || []).map((c) => ({ id: c.id, name: c.name, value: c.value })),
+      registered: cur.registered ?? null,
+      messengers: cur.messengers ?? null,
+      asOf: cur.asOf ?? null,
+    }
+    fs.mkdirSync(path.dirname(UNDO_FILE), { recursive: true, mode: 0o700 })
+    fs.writeFileSync(UNDO_FILE, JSON.stringify({ at: new Date().toISOString(), before } satisfies Undo))
     await payload.updateGlobal({ slug: 'stats', locale: 'uk', draft: true, depth: 0, overrideAccess: true, data: data as never })
-    return { ...preview, applied: true, message: 'Цифри з форми перенесено як чернетку. Перевірте їх і натисніть «Опублікувати».' }
+    return {
+      ...preview,
+      ...undoInfo(),
+      applied: true,
+      message: 'Цифри з форми перенесено як чернетку. Перевірте їх і натисніть «Опублікувати» — або «Скасувати перенесення».',
+    }
+  })
+
+// Скасувати останнє перенесення: повертаємо цифри, які були до нього (теж як чернетку)
+export const undoSheet = (payload: Payload) =>
+  safe(async () => {
+    const u = readUndo()
+    if (!u) return { ok: false, message: 'Немає перенесення, яке можна скасувати.' }
+    await payload.updateGlobal({ slug: 'stats', locale: 'uk', draft: true, depth: 0, overrideAccess: true, data: u.before as never })
+    fs.rmSync(UNDO_FILE, { force: true })
+    // цифри вже повернуто; таблицю читаємо лише щоб показати, що в ній (якщо Google недоступний — не страшно)
+    const { data: _data, ...preview } = await readSheet(payload).catch((): Parsed => ({ ok: true, message: '' }))
+    return {
+      ...preview,
+      undone: true,
+      message:
+        'Перенесення скасовано — цифри повернуто, як були. Якщо перенесені цифри вже встигли опублікувати, натисніть «Опублікувати», щоб на сайті теж стали старі.',
+    }
   })

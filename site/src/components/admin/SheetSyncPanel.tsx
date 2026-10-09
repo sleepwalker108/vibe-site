@@ -7,7 +7,7 @@ import type { SheetPreview } from '@/lib/sheetSync'
 // Унизу — інструкція й точний перелік питань форми (назви — з поточних категорій, щоб сайт їх упізнав).
 export const SheetSyncPanel = () => {
   const [st, setSt] = useState<SheetPreview | null>(null)
-  const [busy, setBusy] = useState<'check' | 'apply' | null>('check')
+  const [busy, setBusy] = useState<'check' | 'apply' | 'undo' | null>('check')
   const [questions, setQuestions] = useState<string[]>([])
   const [copied, setCopied] = useState(false)
 
@@ -45,6 +45,20 @@ export const SheetSyncPanel = () => {
     }
   }
 
+  // повернути цифри, які були до останнього перенесення
+  const undo = async () => {
+    if (!confirm('Повернути цифри, які були до перенесення з форми?')) return
+    setBusy('undo')
+    try {
+      const r = await fetch('/api/stats-sheet', { method: 'DELETE', credentials: 'include' })
+      setSt(await r.json())
+    } catch (e) {
+      setSt({ ok: false, message: (e as Error).message })
+    } finally {
+      setBusy(null)
+    }
+  }
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(questions.join('\n'))
@@ -53,7 +67,8 @@ export const SheetSyncPanel = () => {
     } catch {}
   }
 
-  const hasChanges = !!st?.ok && !!st.changes?.length && !st.applied
+  const hasChanges = !!st?.ok && !!st.changes?.length && !st.applied && !st.undone
+  const time = (iso: string) => new Date(iso).toLocaleString('uk-UA', { dateStyle: 'short', timeStyle: 'short' })
 
   return (
     <div className="ssp">
@@ -65,6 +80,7 @@ export const SheetSyncPanel = () => {
           <>
             <p className={`ssp-msg ${st.ok === false ? 'bad' : st.applied ? 'good' : hasChanges ? 'new' : ''}`}>
               {st.message}
+              {st.undo && !st.applied && <span className="ssp-muted"> Останнє перенесення з форми: {time(st.undo.at)}.</span>}
               {st.responseAt && (
                 <span className="ssp-muted">
                   {' '}
@@ -109,7 +125,12 @@ export const SheetSyncPanel = () => {
             {busy === 'apply' ? 'Переношу…' : 'Перенести в статистику (чернетка)'}
           </button>
         )}
-        {st?.applied ? (
+        {st?.undo && (
+          <button type="button" className="ssp-btn ssp-btn-undo" onClick={undo} disabled={!!busy} title={`Перенесено ${time(st.undo.at)}`}>
+            {busy === 'undo' ? 'Повертаю…' : '↶ Скасувати перенесення'}
+          </button>
+        )}
+        {st?.applied || st?.undone ? (
           <button type="button" className="ssp-btn" onClick={() => location.reload()}>
             Оновити сторінку, щоб побачити чернетку
           </button>
@@ -160,6 +181,8 @@ const CSS = `
 .ssp-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .ssp-btn { font: inherit; font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; background: var(--theme-elevation-1000); color: var(--theme-elevation-0); }
 .ssp-btn-ghost { background: transparent; color: inherit; border-color: var(--theme-elevation-250); }
+.ssp-btn-undo { background: transparent; color: #c2410c; border-color: #c2410c; }
+html[data-theme='dark'] .ssp-btn-undo { color: #ff8a5c; border-color: #ff8a5c; }
 .ssp-btn:disabled { opacity: .6; cursor: progress; }
 .ssp-muted { font-size: 12px; color: var(--theme-elevation-600); }
 .ssp-msg { margin: 0; font-size: 13px; padding: 8px 12px; border-radius: 8px; background: var(--theme-elevation-50); border-left: 3px solid var(--theme-elevation-400); }
