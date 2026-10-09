@@ -7,7 +7,11 @@ export const Media: CollectionConfig = {
   labels: { singular: 'Файл', plural: 'Медіатека' },
   admin: {
     // кнопка «Скасувати» біля збереження/публікації
-    components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
+    components: {
+      edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] },
+      // перемикач «Плитки / Список», фільтр за типом файлу, сортування (як у WordPress)
+      beforeListTable: ['/components/admin/MediaGrid#MediaGrid'],
+    },
     group: 'Контент',
     useAsTitle: 'filename',
     defaultColumns: ['filename', 'alt', 'mimeType', 'copyLink', 'updatedAt'],
@@ -37,6 +41,8 @@ export const Media: CollectionConfig = {
       label: 'Посилання',
       admin: { components: { Field: false, Cell: '/components/admin/MediaCopyCell#MediaCopyCell' } },
     },
+    // вбудоване поле типу файлу — лише українська назва колонки (за нею можна сортувати список)
+    { name: 'mimeType', type: 'text', label: 'Тип файлу', admin: { readOnly: true, hidden: true } },
     {
       name: 'alt',
       type: 'text',
