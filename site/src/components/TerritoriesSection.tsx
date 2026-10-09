@@ -46,6 +46,41 @@ const fmt = (n?: number | null) => (n || 0).toLocaleString('uk-UA')
 const R = 30 // радіус кільця
 const SW = 17 // товщина кільця
 const C = 2 * Math.PI * R
+const LR = R + SW / 2 + 13 // на якій відстані від центру стоять підписи сегментів
+
+// Підписи сегментів: спершу — навпроти середини свого сегмента. Якщо підписи налазять один на одного
+// (кілька дрібних сегментів поруч), розсуваємо їх по колу, доки не розійдуться; до відсунутого підпису
+// ведемо тонку лінію-виноску. Так підписи не зливаються за будь-яких цифр, без ручного підбору.
+type SegLabel = { key: string; text: string; angle: number }
+const norm = (a: number) => Math.atan2(Math.sin(a), Math.cos(a)) // кут у межах −π…π
+const labelBox = (cx: number, cy: number, angle: number, text: string) => {
+  const x = cx + Math.cos(angle) * LR
+  const y = cy + Math.sin(angle) * LR
+  const anchor: 'start' | 'middle' | 'end' = Math.abs(Math.cos(angle)) < 0.3 ? 'middle' : Math.cos(angle) > 0 ? 'start' : 'end'
+  const w = text.length * 9 + 2 // цифри 15 px, жирні — ≈ 9 px на знак
+  const left = anchor === 'start' ? x : anchor === 'end' ? x - w : x - w / 2
+  return { x, y, anchor, l: left, r: left + w, t: y - 11, b: y + 11 } // висота з білою обводкою ≈ 22 px
+}
+const placeLabels = (cx: number, cy: number, labels: SegLabel[]) => {
+  const items = labels.map((l) => ({ ...l, a: l.angle }))
+  const box = (i: number) => labelBox(cx, cy, items[i].a, items[i].text)
+  for (let pass = 0; pass < 200; pass++) {
+    let moved = false
+    for (let i = 0; i < items.length; i++)
+      for (let j = i + 1; j < items.length; j++) {
+        const p = box(i)
+        const q = box(j)
+        if (p.l < q.r + 3 && q.l < p.r + 3 && p.t < q.b + 1 && q.t < p.b + 1) {
+          const dir = norm(items[j].a - items[i].a) >= 0 ? 1 : -1
+          items[i].a -= 0.025 * dir
+          items[j].a += 0.025 * dir
+          moved = true
+        }
+      }
+    if (!moved) break
+  }
+  return items.map((it) => ({ ...labelBox(cx, cy, it.a, it.text), key: it.key, text: it.text, angle: it.a, shifted: Math.abs(norm(it.a - it.angle)) > 0.2, from: it.angle }))
+}
 
 export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; locale: Locale }) => {
   const regions = (t.regions || [])
@@ -184,6 +219,18 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
                 let si = 0
                 const nonZero = r.values.filter((v) => v.value > 0)
                 const gap = nonZero.length > 1 ? 2.5 : 0
+                // середини сегментів → розставлені підписи, що не налазять один на одного
+                let pos = 0
+                const labels = placeLabels(
+                  r.x,
+                  r.y,
+                  nonZero.map((v) => {
+                    const len = (v.value / r.total) * C
+                    const angle = ((pos + len / 2) / C + r.rot) * 2 * Math.PI - Math.PI / 2
+                    pos += len
+                    return { key: v.key, text: fmt(v.value), angle }
+                  }),
+                )
                 return (
                   <g key={r.id} className="ua-donut" data-geo={r.geo.id}>
                     <title>
@@ -201,10 +248,7 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
                       const start = acc
                       acc += len
                       const dash = Math.max(len - gap, 1.2)
-                      const mid = ((start + len / 2) / C + r.rot) * 2 * Math.PI - Math.PI / 2
-                      const lr = R + SW / 2 + 13
-                      const lx = r.x + Math.cos(mid) * lr
-                      const ly = r.y + Math.sin(mid) * lr
+                      const lb = labels.find((l) => l.key === v.key)!
                       return (
                         <g key={v.key}>
                           <circle
@@ -222,13 +266,17 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
                             data-dash={`${dash.toFixed(2)} ${C.toFixed(2)}`}
                             style={{ strokeDasharray: `${dash.toFixed(2)} ${C.toFixed(2)}` }}
                           />
-                          <text
-                            x={lx}
-                            y={ly}
-                            className="seg-label"
-                            textAnchor={Math.abs(Math.cos(mid)) < 0.3 ? 'middle' : Math.cos(mid) > 0 ? 'start' : 'end'}
-                            dominantBaseline="middle"
-                          >
+                          {lb.shifted && (
+                            // підпис відсунуто від свого сегмента — тонка лінія показує, до якого він належить
+                            <line
+                              className="seg-leader"
+                              x1={r.x + Math.cos(lb.from) * (R + SW / 2 + 1)}
+                              y1={r.y + Math.sin(lb.from) * (R + SW / 2 + 1)}
+                              x2={r.x + Math.cos(lb.angle) * (LR - 5)}
+                              y2={r.y + Math.sin(lb.angle) * (LR - 5)}
+                            />
+                          )}
+                          <text x={lb.x} y={lb.y} className="seg-label" textAnchor={lb.anchor} dominantBaseline="middle">
                             {fmt(v.value)}
                           </text>
                         </g>

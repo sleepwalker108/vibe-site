@@ -399,9 +399,11 @@
   .donut-total { font-size: 12px; font-weight: 800; fill: var(--navy-ink); font-variant-numeric: tabular-nums; }
   .donut-name { font-size: 12.5px; font-weight: 700; fill: var(--navy); paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: 3px; stroke-linejoin: round; }
   .terr-map svg { overflow: visible; }
+  /* лінія від сегмента до відсунутого підпису (коли кілька дрібних сегментів поруч) */
+  .seg-leader { stroke: var(--navy-ink); stroke-width: 1; opacity: .45; }
   .terr-mobile { display: none; }
   @media (max-width: 640px) {
-    .seg-label, .donut-name, .donut-total { display: none; }
+    .seg-label, .seg-leader, .donut-name, .donut-total { display: none; }
     .terr-map { padding: 10px; }
     .terr-mobile { display: grid; gap: 10px; list-style: none; margin: 16px 0 0; padding: 0; }
     .terr-mobile li { background: #fff; border-radius: 16px; padding: 14px 16px; }
@@ -524,6 +526,7 @@
   html.contrast .donut-hole { fill: #000; }
   html.contrast .donut-halo { fill: #000; stroke: #fff; stroke-width: 1.5; }
   html.contrast .seg-label, html.contrast .donut-total, html.contrast .donut-name { fill: #fff; stroke: #000; }
+  html.contrast .seg-leader { stroke: #fff; opacity: 1; }
   html.contrast .donut circle:first-child { stroke: #333; }
   html.contrast .donut-center .dc-num, html.contrast .donut-center .dc-label { color: #fff !important; }
 
