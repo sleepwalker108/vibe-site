@@ -24,6 +24,7 @@ import * as migration_20261008_132809_territories_card_link from './20261008_132
 import * as migration_20261009_060641_visits_country from './20261009_060641_visits_country';
 import * as migration_20261009_101538_stats_sheet from './20261009_101538_stats_sheet';
 import * as migration_20261009_111443_annual_report_sheet from './20261009_111443_annual_report_sheet';
+import * as migration_20261009_112310_territories_sheet from './20261009_112310_territories_sheet';
 
 export const migrations = [
   {
@@ -154,6 +155,11 @@ export const migrations = [
   {
     up: migration_20261009_111443_annual_report_sheet.up,
     down: migration_20261009_111443_annual_report_sheet.down,
-    name: '20261009_111443_annual_report_sheet'
+    name: '20261009_111443_annual_report_sheet',
+  },
+  {
+    up: migration_20261009_112310_territories_sheet.up,
+    down: migration_20261009_112310_territories_sheet.down,
+    name: '20261009_112310_territories_sheet'
   },
 ];

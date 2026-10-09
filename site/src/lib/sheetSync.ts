@@ -1,23 +1,39 @@
 import fs from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
+import { regionName } from '../data/regionNames'
 
-// Статистика з Google-форми — ВРУЧНУ: «Статистика гарячих ліній» і «Річний звіт гарячих ліній».
+// Статистика з Google-форми — ВРУЧНУ: «Статистика гарячих ліній», «Річний звіт гарячих ліній», «Мапа: статуси територій».
 // Відповіді форми потрапляють у Google-таблицю (доступ «усі, хто має посилання»). Коли в адмінці відкривають
 // розділ, сайт читає таблицю й показує ОСТАННЮ відповідь: що в ній змінилося порівняно з цифрами в адмінці.
 // Цифри переносяться лише кнопкою «Перенести» — як чернетка; на сайт вони потрапляють після «Опублікувати».
 // Останнє перенесення можна скасувати. Сам сайт нічого не оновлює.
 // Питання форми зіставляються з полями за назвою (без регістру, лапок і розділових знаків):
-//   • дати й окремі числа — за ключовими словами (SPECS нижче);
-//   • рядки списків — за назвою рядка, як в адмінці; для річного звіту з префіксом списку: «Канали: Месенджери».
+//   • дати й окремі числа — за назвою поля або ключовими словами (SPECS нижче);
+//   • рядки списків — за назвою рядка, як в адмінці; для річного звіту з префіксом списку: «Канали: Месенджери»;
+//   • таблиці «рядок × стовпець» (мапа) — «Донецька область: Активних бойових дій».
 // Назви рядків і переклади лишаються в адмінці, з форми беруться лише числа й дати.
 
-type Field = { field: string; label: string; match: RegExp }
+type Field = { field: string; label: string; match?: RegExp } // field може бути «група.поле»; без match — збіг за назвою
+type List = { field: string; label: string; prefix?: string } // рядки «назва + кількість»; prefix — питання «Префікс: назва»
+type Matrix = { field: string; rowName: (row: Record<string, unknown>) => string; columns: { field: string; label: string }[] }
 type Spec = {
   dates: Field[]
   numbers: Field[]
-  arrays: { field: string; label: string; prefix?: string }[] // prefix — питання «Префікс: назва рядка»
+  arrays: List[]
+  matrix?: Matrix[]
   ignore?: RegExp // підсумки, які сайт рахує сам
+}
+
+const STATUSES = [
+  { field: 'possible', label: 'Можливих бойових дій' },
+  { field: 'eres', label: 'Активних бойових дій (з е-ресурсами)' },
+  { field: 'active', label: 'Активних бойових дій' },
+  { field: 'occupied', label: 'Тимчасово окуповані' },
+]
+const regionTitle = (row: Record<string, unknown>) => {
+  const name = regionName(row.region as string) || String(row.region || '')
+  return /крим/i.test(name) ? name : `${name} область`
 }
 
 export const SPECS = {
@@ -45,6 +61,15 @@ export const SPECS = {
       { field: 'outgoing', label: 'Вихідні', prefix: 'Вихідні' },
     ],
     ignore: /^(всього|загалом|разом|вхідні дзвінки|вихідні дзвінки)/,
+  },
+  territories: {
+    dates: [],
+    // громади (ТГ) за статусами: «Громади (ТГ): Можливих бойових дій»
+    numbers: STATUSES.map((s) => ({ field: `communities.${s.field}`, label: `Громади (ТГ): ${s.label}` })),
+    arrays: [],
+    // населені пункти (НП) за статусами по кожній області зі списку в адмінці
+    matrix: [{ field: 'regions', rowName: regionTitle, columns: STATUSES }],
+    ignore: /^(всього|загалом|разом)/,
   },
 } satisfies Record<string, Spec>
 
@@ -138,6 +163,7 @@ const toDate = (s: string): string | null => {
 const fmt = (n?: number | null) => (n == null ? '—' : n.toLocaleString('uk-UA'))
 const day = (iso?: string | null) => (iso ? new Date(iso).toLocaleDateString('uk-UA', { timeZone: 'UTC' }) : '—')
 
+
 type Row = { id?: string | null; name: string; value: number }
 type Doc = Record<string, unknown> & { sheetUrl?: string | null }
 
@@ -156,16 +182,34 @@ export type SheetPreview = {
 type Parsed = SheetPreview & { data?: Record<string, unknown> }
 
 const rowsOf = (doc: Doc, field: string): Row[] => ((doc[field] as Row[] | null) || []).map((r) => ({ id: r.id, name: r.name, value: r.value }))
+const matrixRows = (doc: Doc, field: string) => ((doc[field] as Record<string, unknown>[] | null) || []).map((r) => ({ ...r }))
+// «група.поле» → значення
+const getPath = (doc: Doc, p: string) => p.split('.').reduce<unknown>((o, k) => (o && typeof o === 'object' ? (o as Record<string, unknown>)[k] : undefined), doc)
+const groupOf = (p: string) => (p.includes('.') ? p.split('.')[0] : null)
 
 // Питання форми — у тому порядку, як поля в адмінці
 const questionsOf = (spec: Spec, doc: Doc) => [
   ...spec.dates.map((d) => `${d.label} (дата)`),
   ...spec.arrays.flatMap((a) => rowsOf(doc, a.field).map((r) => (a.prefix ? `${a.prefix}: ${r.name}` : r.name))),
   ...spec.numbers.map((n) => n.label),
+  ...(spec.matrix || []).flatMap((m) => matrixRows(doc, m.field).flatMap((r) => m.columns.map((c) => `${m.rowName(r)}: ${c.label}`))),
 ]
 
 const loadDoc = async (payload: Payload, slug: SheetSlug) =>
   (await payload.findGlobal({ slug, draft: true, locale: 'uk', depth: 0, overrideAccess: true })) as unknown as Doc
+
+// Поля, які перенесення може змінити, — у вигляді для збереження (групи — цілком, списки — усі рядки)
+const snapshot = (spec: Spec, doc: Doc) => {
+  const out: Record<string, unknown> = {}
+  for (const a of spec.arrays) out[a.field] = rowsOf(doc, a.field)
+  for (const m of spec.matrix || []) out[m.field] = matrixRows(doc, m.field)
+  for (const f of [...spec.numbers, ...spec.dates]) {
+    const g = groupOf(f.field)
+    if (g) out[g] = { ...((doc[g] as object) || {}) }
+    else out[f.field] = doc[f.field] ?? null
+  }
+  return out
+}
 
 // Читає таблицю й готує зміни (нічого не записує)
 const readSheet = async (payload: Payload, slug: SheetSlug): Promise<Parsed> => {
@@ -191,15 +235,19 @@ const readSheet = async (payload: Payload, slug: SheetSlug): Promise<Parsed> => 
   const header = rows[0]
   const last = rows[rows.length - 1]
 
-  const arrays = spec.arrays.map((a) => ({ ...a, rows: rowsOf(doc, a.field), p: a.prefix ? norm(a.prefix) : '' }))
-  const findRow = (list: Row[], h: string) =>
-    list.find((r) => norm(r.name) === h) || list.find((r) => norm(r.name).length > 5 && (h.startsWith(norm(r.name)) || norm(r.name).startsWith(h)))
+  const data = snapshot(spec, doc) // сюди записуємо нові значення
+  const arrays = spec.arrays.map((a) => ({ ...a, rows: data[a.field] as Row[], p: a.prefix ? norm(a.prefix) : '' }))
+  const matrices = (spec.matrix || []).map((m) => ({ ...m, rows: data[m.field] as Record<string, unknown>[] }))
+  const similar = (a: string, b: string) => a === b || (b.length > 5 && a.startsWith(b)) || (a.length > 5 && b.startsWith(a))
+  const findRow = (list: Row[], h: string) => list.find((r) => norm(r.name) === h) || list.find((r) => similar(h, norm(r.name)))
 
-  const dates: Record<string, string> = {}
-  const numbers: Record<string, number> = {}
-  const found = new Map<Row, number>()
+  const changes: NonNullable<SheetPreview['changes']> = []
   const unmatched: string[] = []
   let responseAt = ''
+  const setNumber = (label: string, from: unknown, to: number, write: () => void) => {
+    if (from !== to) changes.push({ label, from: fmt(from as number | null), to: fmt(to) })
+    write()
+  }
 
   header.forEach((title, i) => {
     const h = norm(title)
@@ -209,60 +257,58 @@ const readSheet = async (payload: Payload, slug: SheetSlug): Promise<Parsed> => 
       responseAt = value
       return
     }
-    // «Префікс: назва рядка»
+    const n = toNumber(value)
     const colon = title.indexOf(':')
     if (colon > 0) {
-      const p = norm(title.slice(0, colon))
-      const list = arrays.find((a) => a.p && a.p === p)
+      const left = norm(title.slice(0, colon))
+      const right = norm(title.slice(colon + 1))
+      // «Префікс: назва рядка» — списки річного звіту
+      const list = arrays.find((a) => a.p && a.p === left)
       if (list) {
-        const row = findRow(list.rows, norm(title.slice(colon + 1)))
-        const n = toNumber(value)
-        if (row && n != null) found.set(row, n)
+        const row = findRow(list.rows, right)
+        if (row && n != null) setNumber(title.trim(), row.value, n, () => (row.value = n))
         else if (value) unmatched.push(title.trim())
         return
       }
+      // «Рядок: стовпець» — таблиця мапи (область: статус)
+      for (const m of matrices) {
+        const row = m.rows.find((r) => similar(left, norm(m.rowName(r))))
+        const col = m.columns.find((c) => norm(c.label) === right)
+        if (row && col) {
+          if (n != null) setNumber(`${m.rowName(row)}: ${col.label}`, row[col.field], n, () => (row[col.field] = n))
+          else if (value) unmatched.push(title.trim())
+          return
+        }
+      }
     }
     if (spec.ignore?.test(h)) return
-    const d = spec.dates.find((x) => x.match.test(h))
+    const d = spec.dates.find((x) => (x.match ? x.match.test(h) : norm(x.label) === h))
     if (d) {
       const iso = toDate(value)
-      if (iso) dates[d.field] = iso
+      if (iso && day(iso) !== day(doc[d.field] as string | null)) changes.push({ label: d.label, from: day(doc[d.field] as string | null), to: day(iso) })
+      if (iso) data[d.field] = iso
       return
     }
-    const nf = spec.numbers.find((x) => x.match.test(h))
+    const nf = spec.numbers.find((x) => (x.match ? x.match.test(h) : norm(x.label) === h))
     if (nf) {
-      const n = toNumber(value)
-      if (n != null) numbers[nf.field] = n
+      if (n == null) return
+      const g = groupOf(nf.field)
+      setNumber(nf.label, getPath(doc, nf.field), n, () => {
+        if (g) (data[g] as Record<string, unknown>)[nf.field.split('.')[1]] = n
+        else data[nf.field] = n
+      })
       return
     }
     // рядки списків без префікса
     for (const a of arrays.filter((x) => !x.p)) {
       const row = findRow(a.rows, h)
-      const n = toNumber(value)
       if (row && n != null) {
-        found.set(row, n)
+        setNumber(row.name, row.value, n, () => (row.value = n))
         return
       }
     }
     if (value) unmatched.push(title.trim())
   })
-
-  const changes: NonNullable<SheetPreview['changes']> = []
-  for (const a of arrays)
-    for (const r of a.rows) {
-      const n = found.get(r)
-      if (n == null) continue
-      if (r.value !== n) changes.push({ label: a.prefix ? `${a.prefix}: ${r.name}` : r.name, from: fmt(r.value), to: fmt(n) })
-      r.value = n
-    }
-  for (const nf of spec.numbers) {
-    const n = numbers[nf.field]
-    if (n != null && n !== doc[nf.field]) changes.push({ label: nf.label, from: fmt(doc[nf.field] as number | null), to: fmt(n) })
-  }
-  for (const d of spec.dates) {
-    const iso = dates[d.field]
-    if (iso && day(iso) !== day(doc[d.field] as string | null)) changes.push({ label: d.label, from: day(doc[d.field] as string | null), to: day(iso) })
-  }
 
   return {
     ok: true,
@@ -272,11 +318,7 @@ const readSheet = async (payload: Payload, slug: SheetSlug): Promise<Parsed> => 
     changes,
     unmatched,
     message: changes.length ? 'В останній відповіді форми є нові цифри.' : 'Остання відповідь форми збігається з цифрами в адмінці — переносити нічого.',
-    data: {
-      ...Object.fromEntries(arrays.map((a) => [a.field, a.rows])),
-      ...numbers,
-      ...dates,
-    },
+    data,
   }
 }
 
@@ -316,12 +358,7 @@ export const applySheet = (payload: Payload, slug: SheetSlug) =>
     const { data, ...preview } = await readSheet(payload, slug)
     if (!preview.ok || !data || !preview.changes?.length) return { ...preview, ...undoInfo(slug) }
     // те, що зараз (чернетка або опубліковане), — щоб можна було повернути
-    const spec: Spec = SPECS[slug]
-    const cur = await loadDoc(payload, slug)
-    const before = Object.fromEntries([
-      ...spec.arrays.map((a) => [a.field, rowsOf(cur, a.field)]),
-      ...[...spec.numbers, ...spec.dates].map((f) => [f.field, cur[f.field] ?? null]),
-    ])
+    const before = snapshot(SPECS[slug], await loadDoc(payload, slug))
     fs.mkdirSync(path.dirname(undoFile(slug)), { recursive: true, mode: 0o700 })
     fs.writeFileSync(undoFile(slug), JSON.stringify({ at: new Date().toISOString(), before } satisfies Undo))
     await payload.updateGlobal({ slug, locale: 'uk', draft: true, depth: 0, overrideAccess: true, data: data as never })

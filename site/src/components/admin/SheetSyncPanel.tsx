@@ -3,10 +3,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDocumentInfo } from '@payloadcms/ui'
 import type { SheetPreview } from '@/lib/sheetSync'
 
-// «Статистика гарячих ліній» і «Річний звіт» → блок «Google-форма»: остання відповідь форми, що зміниться,
+// «Статистика гарячих ліній», «Річний звіт» і «Мапа: статуси територій» → блок «Google-форма»: остання відповідь форми, що зміниться,
 // кнопки «Перенести в статистику» (як чернетку) і «Скасувати перенесення». Сам сайт нічого не оновлює.
 // Унизу — інструкція й точний перелік питань форми (назви — з поточних рядків, щоб сайт їх упізнав).
-const SCRIPT_FN: Record<string, string> = { stats: 'createHotlineForm', 'annual-report': 'createAnnualReportForm' }
+const SCRIPT_FN: Record<string, string> = {
+  stats: 'createHotlineForm',
+  'annual-report': 'createAnnualReportForm',
+  territories: 'createTerritoriesForm',
+}
 
 export const SheetSyncPanel = () => {
   const { globalSlug } = useDocumentInfo()

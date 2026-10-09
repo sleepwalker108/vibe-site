@@ -1115,6 +1115,10 @@ export interface Territory {
    * Напр.: «…затверджений наказом Мінрозвитку від 28.02.2025 № 376 (зі змінами…)»
    */
   source?: string | null;
+  /**
+   * Посилання на таблицю з доступом «Усі, хто має посилання» (читач). Сайт нічого не оновлює сам: нові цифри показуються нижче й переносяться кнопкою.
+   */
+  sheetUrl?: string | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1451,6 +1455,7 @@ export interface TerritoriesSelect<T extends boolean = true> {
         id?: T;
       };
   source?: T;
+  sheetUrl?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

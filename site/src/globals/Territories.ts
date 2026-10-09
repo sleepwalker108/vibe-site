@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
 import { UA_REGION_OPTIONS } from '../data/regionNames'
 import { languageSwitcher } from '../fields/translations'
+import { sheetSyncFields } from '../fields/sheetSync'
 
 const num = (name: string, label: string) => ({ name, type: 'number' as const, label, min: 0, defaultValue: 0 })
 
@@ -78,5 +79,7 @@ export const Territories: GlobalConfig = {
       localized: true,
       admin: { description: 'Напр.: «…затверджений наказом Мінрозвитку від 28.02.2025 № 376 (зі змінами…)»' },
     },
+    // цифри з Google-форми: адмінка показує останню відповідь, перенесення — лише кнопкою
+    sheetSyncFields,
   ],
 }

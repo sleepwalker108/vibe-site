@@ -1,7 +1,8 @@
 /**
  * Google-форми зі статистикою гарячих ліній для сайту НАРТУ — кожна створюється одним запуском:
  *   • createHotlineForm      — «Звіт роботи гарячих ліній» (адмінка: «Сайт → Статистика гарячих ліній»);
- *   • createAnnualReportForm — «Річний звіт гарячих ліній» (адмінка: «Сайт → Річний звіт гарячих ліній»).
+ *   • createAnnualReportForm — «Річний звіт гарячих ліній» (адмінка: «Сайт → Річний звіт гарячих ліній»);
+ *   • createTerritoriesForm  — «Мапа: статуси територій» (адмінка: «Сайт → Мапа: статуси територій»).
  *
  * Що робить кожна функція:
  *   • створює Google-форму з усіма питаннями (назви — такі, як рядки в адмінці сайту);
@@ -13,13 +14,13 @@
  * Як запустити (5 хвилин):
  *   1. Відкрийте https://script.google.com → «Новий проєкт».
  *   2. Видаліть усе в редакторі й вставте цей файл повністю. Збережіть (значок дискети).
- *   3. Угорі виберіть функцію (createHotlineForm або createAnnualReportForm) → «Виконати».
+ *   3. Угорі виберіть функцію (createHotlineForm, createAnnualReportForm або createTerritoriesForm) → «Виконати».
  *   4. Google попросить дозволи (створювати форми й таблиці, надсилати вам листи) → «Дозволити».
  *      Якщо з'явиться «Google не перевірив цю програму» → «Додатково» → «Перейти до проєкту». Це ваш власний скрипт.
  *   5. Унизу («Журнал виконання») з'являться посилання:
  *        • ФОРМА — її відкривають працівники й вносять цифри;
  *        • ТАБЛИЦЯ — вставте в адмінці сайту у відповідному розділі → блок «Google-форма» → поле посилання → «Зберегти».
- *   Для другої форми повторіть крок 3 з іншою функцією.
+ *   Для інших форм повторіть крок 3 з іншою функцією.
  *
  * Назви рядків мають збігатися з назвами в адмінці сайту (регістр і лапки не важливі) — точний перелік питань
  * видно в адмінці, у блоці «Google-форма» → «Як налаштувати Google-форму».
@@ -84,12 +85,52 @@ function createAnnualReportForm() {
   });
 }
 
+// ---------- «Мапа: статуси територій» ----------
+// Області — як у списку «Області на мапі» в адмінці. Питання: «Донецька область: Активних бойових дій».
+const TERRITORY_STATUSES = ['Можливих бойових дій', 'Активних бойових дій (з е-ресурсами)', 'Активних бойових дій', 'Тимчасово окуповані'];
+const TERRITORY_REGIONS = [
+  'Чернігівська область',
+  'Сумська область',
+  'Харківська область',
+  'Луганська область',
+  'Донецька область',
+  'Дніпропетровська область',
+  'Запорізька область',
+  'Миколаївська область',
+  'Херсонська область',
+  'Одеська область',
+  'Автономна Республіка Крим',
+];
+
+function createTerritoriesForm() {
+  createStatsForm_({
+    title: 'Мапа: статуси територій — для сайту НАРТУ',
+    description:
+      'Кількість територіальних громад (ТГ) і населених пунктів (НП) за статусами — за чинним переліком територій. ' +
+      'Лише цифри, без пробілів; якщо немає — 0. Підсумки сайт рахує сам.',
+    dates: [],
+    sections: [
+      { header: 'Територіальні громади (ТГ)', help: 'Кількість громад за статусами — по всій Україні.', prefix: 'Громади (ТГ)', rows: TERRITORY_STATUSES },
+      ...TERRITORY_REGIONS.map((region) => ({
+        header: region,
+        help: 'Кількість населених пунктів (НП) за статусами.',
+        prefix: region,
+        rows: TERRITORY_STATUSES,
+        page: true, // кожна область — окрема сторінка форми
+      })),
+    ],
+    numbers: [],
+    adminSection: 'Мапа: статуси територій',
+  });
+}
+
 // ---------- спільне ----------
 function createStatsForm_(o) {
   const form = FormApp.create(o.title);
   form.setDescription(o.description + ' Після відправлення цифри з’являться в адмінці сайту, а на сайт потраплять після перевірки й публікації.');
   form.setCollectEmail(false);
   form.setAllowResponseEdits(false);
+  form.setProgressBar(o.sections.some((s) => s.page));
   form.setConfirmationMessage('Дякуємо! Цифри отримано — вони з’являться на сайті після перевірки.');
 
   const number = () =>
@@ -97,7 +138,8 @@ function createStatsForm_(o) {
 
   o.dates.forEach((t) => form.addDateItem().setTitle(t).setRequired(true));
   o.sections.forEach((s) => {
-    form.addSectionHeaderItem().setTitle(s.header).setHelpText(s.help);
+    if (s.page) form.addPageBreakItem().setTitle(s.header).setHelpText(s.help);
+    else form.addSectionHeaderItem().setTitle(s.header).setHelpText(s.help);
     s.rows.forEach((name) =>
       form
         .addTextItem()
@@ -106,7 +148,7 @@ function createStatsForm_(o) {
         .setRequired(true)
     );
   });
-  form.addSectionHeaderItem().setTitle('Інше');
+  if (o.numbers.length) form.addSectionHeaderItem().setTitle('Інше');
   o.numbers.forEach((t) => form.addTextItem().setTitle(t).setValidation(number()).setRequired(true));
 
   // таблиця відповідей: українські формати (дата 09.10.2026), доступ на перегляд за посиланням
