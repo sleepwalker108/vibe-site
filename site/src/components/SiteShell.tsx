@@ -6,6 +6,21 @@ import { RefreshRouteOnSave } from './RefreshRouteOnSave'
 import { Linkify } from './Linkify'
 import { ToTop } from './ToTop'
 
+// Гаряча лінія 1648 у підвалі — у тому ж стилі, що й 1548. На комп'ютері — під контактами (там вільне місце),
+// на телефоні — після блоку 1548 (видно лише одну з двох копій)
+const Hotline1648 = ({ t, className }: { t: { hotline: string; callsAbroad: string }; className: string }) => (
+  <div className={className}>
+    <h2 className="foot-h">{t.hotline}</h2>
+    <a className="foot-hot" href="tel:1648">
+      1648
+    </a>
+    <p>
+      <a href="tel:+380442878165">+38 (044) 287-81-65</a>
+      <span className="foot-note">({t.callsAbroad})</span>
+    </p>
+  </div>
+)
+
 // Шапка + підвал + (у режимі перегляду) автооновлення з адмінки
 export const SiteShell = async ({ children, draft }: { children: ReactNode; draft: boolean }) => {
   const payload = await getClient()
@@ -76,17 +91,7 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                   <Linkify text={l.text} />
                 </p>
               ))}
-              {/* гаряча лінія 1648 — у вільному місці під контактами, в тому ж стилі, що й 1548 */}
-              <div className="foot-hot2">
-                <h2 className="foot-h">{t.hotline}</h2>
-                <a className="foot-hot" href="tel:1648">
-                  1648
-                </a>
-                <p>
-                  <a href="tel:+380442878165">+38 (044) 287-81-65</a>
-                  <span className="foot-note">({t.callsAbroad})</span>
-                </p>
-              </div>
+              <Hotline1648 t={t} className="foot-hot2 foot-hot2-wide" />
             </div>
             <div>
               <h2 className="foot-h">{t.hotline}</h2>
@@ -100,6 +105,8 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                   <Linkify text={l.text} />
                 </p>
               ))}
+              {/* на телефоні колонки йдуть одна під одною — тут 1648 стоїть після основної лінії 1548 */}
+              <Hotline1648 t={t} className="foot-hot2 foot-hot2-narrow" />
             </div>
           </div>
           <div className="foot-bottom">
