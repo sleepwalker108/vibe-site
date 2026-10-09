@@ -1,12 +1,5 @@
 import type { Instrumentation } from 'next'
 
-// Під час запуску сайту: фонова перевірка Google-таблиці зі статистикою гарячих ліній (раз на 15 хвилин)
-export async function register() {
-  if (process.env.NEXT_RUNTIME !== 'nodejs') return
-  const { startSheetSync } = await import('./lib/sheetSync')
-  startSheetSync()
-}
-
 // Кожну помилку сервера записуємо в журнал — його видно в адмінці, розділ «Стан сервера»
 export const onRequestError: Instrumentation.onRequestError = async (err, request, context) => {
   if (process.env.NEXT_RUNTIME !== 'nodejs') return

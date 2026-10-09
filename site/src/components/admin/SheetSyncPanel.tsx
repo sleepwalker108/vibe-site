@@ -1,44 +1,47 @@
 'use client'
-import { useEffect, useState } from 'react'
-import type { SyncState } from '@/lib/sheetSync'
+import { useCallback, useEffect, useState } from 'react'
+import type { SheetPreview } from '@/lib/sheetSync'
 
-// «Статистика гарячих ліній» → блок «Google-форма»: коли й що підтягнулося, кнопка «Оновити зараз»
-// і точний перелік питань для форми (назви — з поточних категорій, щоб сайт їх упізнав).
-const time = (iso?: string) => (iso ? new Date(iso).toLocaleString('uk-UA', { dateStyle: 'short', timeStyle: 'short' }) : '—')
-
+// «Статистика гарячих ліній» → блок «Google-форма»: остання відповідь форми, що зміниться на сайті,
+// і кнопка «Перенести в статистику» (як чернетку). Сам сайт нічого не оновлює — лише за кнопкою.
+// Унизу — інструкція й точний перелік питань форми (назви — з поточних категорій, щоб сайт їх упізнав).
 export const SheetSyncPanel = () => {
-  const [st, setSt] = useState<SyncState | null>(null)
-  const [busy, setBusy] = useState(false)
+  const [st, setSt] = useState<SheetPreview | null>(null)
+  const [busy, setBusy] = useState<'check' | 'apply' | null>('check')
   const [questions, setQuestions] = useState<string[]>([])
   const [copied, setCopied] = useState(false)
 
+  const check = useCallback(async () => {
+    setBusy('check')
+    try {
+      const r = await fetch('/api/stats-sheet', { credentials: 'include' })
+      setSt(await r.json())
+    } catch (e) {
+      setSt({ ok: false, message: (e as Error).message })
+    } finally {
+      setBusy(null)
+    }
+  }, [])
+
   useEffect(() => {
-    fetch('/api/stats-sheet', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setSt)
-      .catch(() => {})
+    check()
     fetch('/api/globals/stats?draft=true&locale=uk&depth=0', { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
       .then((g: { categories?: { name: string }[] } | null) =>
-        setQuestions([
-          'Станом на (дата)',
-          ...(g?.categories || []).map((c) => c.name),
-          'Зареєстровано звернень',
-          'Звернень через месенджери',
-        ]),
+        setQuestions(['Станом на (дата)', ...(g?.categories || []).map((c) => c.name), 'Зареєстровано звернень', 'Звернень через месенджери']),
       )
       .catch(() => {})
-  }, [])
+  }, [check])
 
-  const syncNow = async () => {
-    setBusy(true)
+  const apply = async () => {
+    setBusy('apply')
     try {
       const r = await fetch('/api/stats-sheet', { method: 'POST', credentials: 'include' })
       setSt(await r.json())
     } catch (e) {
       setSt({ ok: false, message: (e as Error).message })
     } finally {
-      setBusy(false)
+      setBusy(null)
     }
   }
 
@@ -50,39 +53,82 @@ export const SheetSyncPanel = () => {
     } catch {}
   }
 
+  const hasChanges = !!st?.ok && !!st.changes?.length && !st.applied
+
   return (
     <div className="ssp">
       <style>{CSS}</style>
+      {busy === 'check' && !st ? (
+        <p className="ssp-muted">Читаю Google-таблицю…</p>
+      ) : (
+        st && (
+          <>
+            <p className={`ssp-msg ${st.ok === false ? 'bad' : st.applied ? 'good' : hasChanges ? 'new' : ''}`}>
+              {st.message}
+              {st.responseAt && (
+                <span className="ssp-muted">
+                  {' '}
+                  Остання відповідь: {st.responseAt}
+                  {st.responses ? ` (усього відповідей: ${st.responses})` : ''}.
+                </span>
+              )}
+            </p>
+            {!!st.changes?.length && (
+              <table className="ssp-table">
+                <thead>
+                  <tr>
+                    <th>Що змінюється</th>
+                    <th>{st.applied ? 'Було' : 'Зараз'}</th>
+                    <th>{st.applied ? 'Стало (чернетка)' : 'З форми'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {st.changes.map((c) => (
+                    <tr key={c.label}>
+                      <td>{c.label}</td>
+                      <td>{c.from}</td>
+                      <td>
+                        <b>{c.to}</b>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {!!st.unmatched?.length && (
+              <p className="ssp-msg bad">
+                Не впізнано питання форми: {st.unmatched.map((u) => `«${u}»`).join(', ')}. Назва питання має збігатися з назвою категорії.
+              </p>
+            )}
+          </>
+        )
+      )}
       <div className="ssp-row">
-        <button type="button" className="ssp-btn" onClick={syncNow} disabled={busy}>
-          {busy ? 'Перевіряю таблицю…' : 'Оновити зараз'}
-        </button>
-        <span className="ssp-muted">Сайт сам перевіряє таблицю раз на 15 хвилин. Востаннє: {time(st?.checkedAt)}</span>
-      </div>
-      {st?.message && <p className={`ssp-msg ${st.ok === false ? 'bad' : 'good'}`}>{st.message}</p>}
-      {!!st?.changes?.length && st.draftAt && (
-        <div className="ssp-box">
-          <b>Остання чернетка з форми ({time(st.draftAt)}):</b>
-          <ul>
-            {st.changes.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-          <button type="button" className="ssp-link" onClick={() => location.reload()}>
+        {hasChanges && (
+          <button type="button" className="ssp-btn" onClick={apply} disabled={!!busy}>
+            {busy === 'apply' ? 'Переношу…' : 'Перенести в статистику (чернетка)'}
+          </button>
+        )}
+        {st?.applied ? (
+          <button type="button" className="ssp-btn" onClick={() => location.reload()}>
             Оновити сторінку, щоб побачити чернетку
           </button>
-        </div>
-      )}
-      {!!st?.unmatched?.length && (
-        <p className="ssp-msg bad">
-          Не впізнано питання форми: {st.unmatched.map((u) => `«${u}»`).join(', ')}. Назва питання має збігатися з назвою категорії нижче.
-        </p>
-      )}
+        ) : (
+          <button type="button" className="ssp-btn ssp-btn-ghost" onClick={check} disabled={!!busy}>
+            {busy === 'check' ? 'Перевіряю…' : 'Перевірити форму ще раз'}
+          </button>
+        )}
+      </div>
+
       <details className="ssp-help">
-        <summary>Як налаштувати Google-форму (5 хвилин)</summary>
+        <summary>Як налаштувати Google-форму</summary>
         <ol>
           <li>
-            Створіть Google-форму з питаннями «Коротка відповідь» (для дати — «Дата»). Назви питань — <b>точно як тут</b>:
+            Найпростіше — запустити готовий скрипт: він сам створить форму з усіма питаннями й таблицю відповідей
+            (інструкція — у файлі <code>deploy/google-form.gs</code> у коді сайту).
+          </li>
+          <li>
+            Або створіть форму вручну: питання «Коротка відповідь» (для дати — «Дата»), назви — <b>точно як тут</b>:
             <div className="ssp-q">
               <ul>
                 {questions.map((q) => (
@@ -93,17 +139,16 @@ export const SheetSyncPanel = () => {
                 {copied ? 'Скопійовано ✓' : 'Скопіювати перелік'}
               </button>
             </div>
-            Загальну кількість дзвінків («Прийнято») вносити не треба — сайт рахує її сам.
+            Потім: «Відповіді» → «Зв’язати з Таблицями»; у таблиці «Поділитися» → «Усі, хто має посилання» (читач).
           </li>
-          <li>У формі: вкладка «Відповіді» → «Зв’язати з Таблицями» → створити нову таблицю.</li>
+          <li>Скопіюйте посилання на таблицю, вставте в поле вище й збережіть.</li>
           <li>
-            У таблиці: «Файл» → «Поділитися» → «Опублікувати в інтернеті» → аркуш з відповідями, формат <b>CSV</b> → «Опублікувати».
+            Щоб дізнаватися про нові відповіді на пошту: у формі «Відповіді» → ⋮ → «Отримувати сповіщення про нові відповіді на
+            ел. пошту».
           </li>
-          <li>Скопіюйте посилання, вставте його в поле вище й збережіть (кнопка «Зберегти чернетку» або «Опублікувати»).</li>
-          <li>Після кожної нової відповіді цифри з’являтимуться тут як чернетка — перевірте й натисніть «Опублікувати».</li>
         </ol>
         <p className="ssp-muted">
-          Опубліковану таблицю може відкрити кожен, хто знає посилання, — тож тримайте в ній лише ці цифри (без імен і контактів).
+          Таблицю може відкрити кожен, хто знає посилання, — тож тримайте в ній лише ці цифри (без імен і контактів).
         </p>
       </details>
     </div>
@@ -112,14 +157,17 @@ export const SheetSyncPanel = () => {
 
 const CSS = `
 .ssp { margin: 4px 0 24px; display: grid; gap: 10px; }
-.ssp-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.ssp-btn { font: inherit; font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 999px; border: 0; cursor: pointer; background: var(--theme-elevation-1000); color: var(--theme-elevation-0); }
+.ssp-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ssp-btn { font: inherit; font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; background: var(--theme-elevation-1000); color: var(--theme-elevation-0); }
+.ssp-btn-ghost { background: transparent; color: inherit; border-color: var(--theme-elevation-250); }
 .ssp-btn:disabled { opacity: .6; cursor: progress; }
 .ssp-muted { font-size: 12px; color: var(--theme-elevation-600); }
 .ssp-msg { margin: 0; font-size: 13px; padding: 8px 12px; border-radius: 8px; background: var(--theme-elevation-50); border-left: 3px solid var(--theme-elevation-400); }
-.ssp-msg.good { border-left-color: #2f9e5f; } .ssp-msg.bad { border-left-color: #c2410c; }
-.ssp-box { font-size: 13px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--theme-elevation-150); }
-.ssp-box ul { margin: 6px 0; padding-left: 18px; }
+.ssp-msg.good { border-left-color: #2f9e5f; } .ssp-msg.bad { border-left-color: #c2410c; } .ssp-msg.new { border-left-color: #e0a800; }
+.ssp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ssp-table th { text-align: left; font-weight: 500; font-size: 12px; color: var(--theme-elevation-500); padding: 0 8px 6px 0; }
+.ssp-table td { padding: 6px 8px 6px 0; border-top: 1px solid var(--theme-elevation-100); font-variant-numeric: tabular-nums; }
+.ssp-table td:not(:first-child), .ssp-table th:not(:first-child) { text-align: right; white-space: nowrap; }
 .ssp-link { font: inherit; font-size: 12px; font-weight: 600; background: none; border: 0; padding: 0; color: var(--theme-success-600, #2f6fdb); cursor: pointer; text-decoration: underline; }
 .ssp-help { font-size: 13px; border: 1px solid var(--theme-elevation-150); border-radius: 8px; padding: 10px 14px; }
 .ssp-help summary { cursor: pointer; font-weight: 600; }
