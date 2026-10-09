@@ -6,6 +6,9 @@ html[data-theme='dark'] .st-wrap, html[data-theme='dark'] .st-summary { --st-vie
 .st-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
 .st-head h1 { margin: 0 0 6px; }
 .st-sub { margin: 0; color: var(--theme-elevation-600); max-width: 640px; }
+.st-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.st-badge { display: inline-block; vertical-align: middle; margin-left: 10px; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--st-views); color: var(--theme-elevation-1000); }
+.st-code { display: inline-block; min-width: 26px; margin-right: 8px; padding: 1px 4px; border-radius: 4px; font-size: 11px; font-weight: 700; text-align: center; background: var(--theme-elevation-100); color: var(--theme-elevation-700); }
 .st-periods { display: flex; border: 1px solid var(--theme-elevation-150); border-radius: 999px; padding: 3px; }
 .st-periods a { padding: 6px 14px; border-radius: 999px; text-decoration: none; color: inherit; font-size: 13px; font-weight: 600; }
 .st-periods a.active { background: var(--theme-elevation-1000); color: var(--theme-elevation-0); }

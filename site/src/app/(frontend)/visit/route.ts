@@ -1,8 +1,9 @@
 import { createHash } from 'crypto'
 import { getClient } from '@/lib/payload'
+import { countryOf } from '@/lib/geo'
 
 // Сюди сайт надсилає «перегляд сторінки» (компонент VisitTracker).
-// Не зберігаємо ні IP, ні cookie: лише сторінку, домен звідки прийшли, тип пристрою, мову
+// Не зберігаємо ні IP, ні cookie: лише сторінку, домен звідки прийшли, тип пристрою, мову, країну
 // і анонімний відбиток відвідувача, який щодня змінюється (порахувати унікальних, але не стежити).
 const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|monitor/i
 
@@ -64,8 +65,10 @@ export async function POST(req: Request) {
   const device = /tablet|ipad/i.test(ua) ? 'tablet' : /mobi|android|iphone/i.test(ua) ? 'mobile' : 'desktop'
   const lang = /(?:^|;\s*)lang=en/.test(cookie) ? 'en' : 'uk'
 
+  const country = countryOf(ip)
+
   const payload = await getClient()
-  await payload.create({ collection: 'visits', data: { path, visitor, referrer, device, lang }, overrideAccess: true })
+  await payload.create({ collection: 'visits', data: { path, visitor, referrer, device, lang, country }, overrideAccess: true })
   cleanup(payload)
   return new Response(null, { status: 204 })
 }

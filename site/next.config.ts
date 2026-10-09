@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
   // не повідомляємо, на чому зроблено сайт (заголовок X-Powered-By)
   poweredByHeader: false,
+  // база «IP → країна» для статистики читає свої файли з власної папки — не вбудовуємо її в збірку
+  serverExternalPackages: ['geoip-country'],
   // Захисні заголовки для всіх сторінок і файлів
   async headers() {
     return [

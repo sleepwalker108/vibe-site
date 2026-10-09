@@ -1,7 +1,7 @@
 import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { redirect } from 'next/navigation'
-import { getReport, type Item, type Report } from '@/lib/visitStats'
+import { getReport, type Item, type Lang, type Report } from '@/lib/visitStats'
 import { STATS_CSS } from './statsStyles'
 
 const PERIODS = [7, 30, 90] as const
@@ -15,6 +15,23 @@ const plural = (n: number, [one, few, many]: [string, string, string]) => {
 }
 const DEVICE: Record<string, string> = { desktop: "Комп'ютер", mobile: 'Телефон', tablet: 'Планшет' }
 const LANG: Record<string, string> = { uk: 'Українська', en: 'English' }
+// перемикач мовної версії: увесь сайт / лише українська / лише англійська
+const LANGS: { value: Lang; label: string }[] = [
+  { value: 'all', label: 'Усі мови' },
+  { value: 'uk', label: 'Українська' },
+  { value: 'en', label: 'English' },
+]
+// назви країн українською: UA → «Україна», PL → «Польща»
+const regionNames = new Intl.DisplayNames(['uk'], { type: 'region' })
+const countryName = (code: string) => {
+  if (!code) return 'Не визначено'
+  try {
+    return regionNames.of(code) || code
+  } catch {
+    return code
+  }
+}
+const statsUrl = (days: number, lang: Lang) => `/admin/stats?days=${days}${lang === 'all' ? '' : `&lang=${lang}`}`
 const MONTHS = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд']
 const dayLabel = (d: string) => `${Number(d.slice(8, 10))} ${MONTHS[Number(d.slice(5, 7)) - 1]}`
 
@@ -142,7 +159,10 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
 
   const asked = Number(searchParams?.days)
   const days = (PERIODS as readonly number[]).includes(asked) ? asked : 30
-  const report = await getReport(req.payload, days)
+  const lang: Lang = searchParams?.lang === 'en' || searchParams?.lang === 'uk' ? searchParams.lang : 'all'
+  const report = await getReport(req.payload, days, lang)
+  // назви сторінок — мовою вибраної версії (англійська — якщо вона є, інакше українська)
+  const titleLocale = lang === 'en' ? 'en' : 'uk'
 
   // Назви сторінок і новин замість адрес
   const slugs = report.pages.map((p) => decode(p.label))
@@ -152,7 +172,7 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
       where: { slug: { in: slugs.map((s) => s.replace(/^\//, '')) } },
       limit: 50,
       depth: 0,
-      locale: 'uk',
+      locale: titleLocale,
       select: { title: true, slug: true },
     }),
     req.payload.find({
@@ -160,7 +180,7 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
       where: { slug: { in: slugs.filter((s) => s.startsWith('/news/')).map((s) => s.slice(6)) } },
       limit: 50,
       depth: 0,
-      locale: 'uk',
+      locale: titleLocale,
       select: { title: true, slug: true },
     }),
   ])
@@ -168,6 +188,7 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
     ['/', 'Головна сторінка'],
     ['/news', 'Новини (список)'],
     ['/video', 'Відеоматеріали'],
+    ['/search', 'Пошук по сайту'],
     ...pages.docs.map((p) => [`/${p.slug}`, p.title] as [string, string]),
     ...news.docs.map((n) => [`/news/${n.slug}`, `Новина: ${n.title}`] as [string, string]),
   ])
@@ -189,24 +210,38 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
       <div className="st-wrap">
         <div className="st-head">
           <div>
-            <h1>Статистика відвідувань</h1>
+            <h1>
+              Статистика відвідувань
+              {lang !== 'all' && <span className="st-badge">{lang === 'en' ? 'англійська версія' : 'українська версія'}</span>}
+            </h1>
             <p className="st-sub">
               Рахуються лише відвідувачі сайту — без ботів і без працівників, які увійшли в адмінку. Без файлів cookie та
               збору особистих даних.
             </p>
           </div>
-          <nav className="st-periods" aria-label="Період">
-            {PERIODS.map((p) => (
-              <a key={p} href={`/admin/stats?days=${p}`} className={p === days ? 'active' : undefined}>
-                {p} днів
-              </a>
-            ))}
-          </nav>
+          <div className="st-controls">
+            <nav className="st-periods" aria-label="Версія сайту">
+              {LANGS.map((l) => (
+                <a key={l.value} href={statsUrl(days, l.value)} className={l.value === lang ? 'active' : undefined} aria-current={l.value === lang ? 'page' : undefined}>
+                  {l.label}
+                </a>
+              ))}
+            </nav>
+            <nav className="st-periods" aria-label="Період">
+              {PERIODS.map((p) => (
+                <a key={p} href={statsUrl(p, lang)} className={p === days ? 'active' : undefined} aria-current={p === days ? 'page' : undefined}>
+                  {p} днів
+                </a>
+              ))}
+            </nav>
+          </div>
         </div>
 
         {empty && (
           <div className="st-note">
-            Статистика збирається з моменту ввімкнення. Перші цифри з’являться, щойно хтось відкриє сайт.
+            {lang === 'all'
+              ? 'Статистика збирається з моменту ввімкнення. Перші цифри з’являться, щойно хтось відкриє сайт.'
+              : `За цей період ${lang === 'en' ? 'англійську' : 'українську'} версію сайту ще не відкривали.`}
           </div>
         )}
 
@@ -260,8 +295,32 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
               total={total}
               label={(it) => it.label || 'Прямі заходи (закладки, введена адреса)'}
             />
+            <Table
+              title="Країни"
+              items={report.countries}
+              total={total}
+              label={(it) => (
+                <span title={it.label ? undefined : 'Внутрішня мережа або відвідування до ввімкнення визначення країни'}>
+                  {it.label && <span className="st-code">{it.label}</span>}
+                  {countryName(it.label)}
+                </span>
+              )}
+            />
             <Table title="Пристрої" items={report.devices} total={total} label={(it) => DEVICE[it.label] || it.label} />
-            <Table title="Мова сайту" items={report.langs} total={total} label={(it) => LANG[it.label] || it.label} />
+            <Table
+              title="Мова сайту (весь сайт)"
+              items={report.langs}
+              total={report.langs.reduce((n, it) => n + it.views, 0)}
+              label={(it) =>
+                it.label === 'uk' || it.label === 'en' ? (
+                  <a href={statsUrl(days, it.label)} title="Показати статистику лише цієї версії">
+                    {LANG[it.label]}
+                  </a>
+                ) : (
+                  it.label
+                )
+              }
+            />
           </div>
         </div>
       </div>

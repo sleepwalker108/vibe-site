@@ -13,21 +13,25 @@ const DAY = 86400000
 export type Totals = { views: number; visitors: number }
 export type Item = { label: string; views: number; visitors: number }
 export type Day = { date: string; views: number; visitors: number }
+// мова версії сайту: усі відвідування, лише українська або лише англійська
+export type Lang = 'all' | 'uk' | 'en'
+const langCond = (lang: Lang) => (lang === 'all' ? sql`` : sql` AND lang = ${lang}`)
 
-const totals = async (payload: Payload, from: Date, to: Date): Promise<Totals> => {
+const totals = async (payload: Payload, from: Date, to: Date, lang: Lang = 'all'): Promise<Totals> => {
   const [r] = await all(
     payload,
-    sql`SELECT count(*) AS views, count(DISTINCT visitor) AS visitors FROM visits WHERE created_at >= ${iso(from)} AND created_at < ${iso(to)}`,
+    sql`SELECT count(*) AS views, count(DISTINCT visitor) AS visitors FROM visits WHERE created_at >= ${iso(from)} AND created_at < ${iso(to)}${langCond(lang)}`,
   )
   return { views: num(r?.views), visitors: num(r?.visitors) }
 }
 
-const grouped = async (payload: Payload, column: 'path' | 'referrer' | 'device' | 'lang', from: Date, limit: number) => {
-  const col = sql.raw(column)
+const grouped = async (payload: Payload, column: 'path' | 'referrer' | 'device' | 'lang' | 'country', from: Date, limit: number, lang: Lang) => {
+  // порожнє й «немає значення» (старі записи) — одна група
+  const col = sql.raw(`coalesce(${column}, '')`)
   const rows = await all(
     payload,
     sql`SELECT ${col} AS label, count(*) AS views, count(DISTINCT visitor) AS visitors FROM visits
-        WHERE created_at >= ${iso(from)} GROUP BY ${col} ORDER BY views DESC LIMIT ${limit}`,
+        WHERE created_at >= ${iso(from)}${langCond(lang)} GROUP BY ${col} ORDER BY views DESC LIMIT ${limit}`,
   )
   return rows.map((r) => ({ label: String(r.label ?? ''), views: num(r.views), visitors: num(r.visitors) }))
 }
@@ -45,27 +49,28 @@ export const getSummary = async (payload: Payload) => {
   return { today, week, online: online.visitors }
 }
 
-// Повний звіт за останні `days` днів (і порівняння з попереднім таким самим періодом)
-export const getReport = async (payload: Payload, days: number) => {
+// Повний звіт за останні `days` днів (і порівняння з попереднім таким самим періодом) — для всього сайту чи однієї мовної версії
+export const getReport = async (payload: Payload, days: number, lang: Lang = 'all') => {
   const now = new Date()
   const start = new Date(now)
   start.setHours(0, 0, 0, 0)
   start.setDate(start.getDate() - (days - 1))
   const prevStart = new Date(start.getTime() - days * DAY)
 
-  const [current, previous, perDayRows, pages, referrers, devices, langs, online] = await Promise.all([
-    totals(payload, start, now),
-    totals(payload, prevStart, start),
+  const [current, previous, perDayRows, pages, referrers, devices, langs, countries, online] = await Promise.all([
+    totals(payload, start, now, lang),
+    totals(payload, prevStart, start, lang),
     all(
       payload,
       sql`SELECT date(created_at, 'localtime') AS d, count(*) AS views, count(DISTINCT visitor) AS visitors FROM visits
-          WHERE created_at >= ${iso(start)} GROUP BY d`,
+          WHERE created_at >= ${iso(start)}${langCond(lang)} GROUP BY d`,
     ),
-    grouped(payload, 'path', start, 15),
-    grouped(payload, 'referrer', start, 10),
-    grouped(payload, 'device', start, 5),
-    grouped(payload, 'lang', start, 5),
-    totals(payload, new Date(now.getTime() - 5 * 60000), now),
+    grouped(payload, 'path', start, 15, lang),
+    grouped(payload, 'referrer', start, 10, lang),
+    grouped(payload, 'device', start, 5, lang),
+    grouped(payload, 'lang', start, 5, 'all'), // частка кожної мови — завжди від усього сайту
+    grouped(payload, 'country', start, 15, lang),
+    totals(payload, new Date(now.getTime() - 5 * 60000), now, lang),
   ])
 
   // усі дні періоду, навіть без відвідувань
@@ -78,7 +83,7 @@ export const getReport = async (payload: Payload, days: number) => {
     return { date: key, views: num(r?.views), visitors: num(r?.visitors) }
   })
 
-  return { days, current, previous, perDay, pages, referrers, devices, langs, online: online.visitors }
+  return { days, lang, current, previous, perDay, pages, referrers, devices, langs, countries, online: online.visitors }
 }
 
 export type Report = Awaited<ReturnType<typeof getReport>>

@@ -21,6 +21,7 @@ import * as migration_20261008_121239_hotline_1648 from './20261008_121239_hotli
 import * as migration_20261008_124212_territories_list_button from './20261008_124212_territories_list_button';
 import * as migration_20261008_132515_fix_bot_name from './20261008_132515_fix_bot_name';
 import * as migration_20261008_132809_territories_card_link from './20261008_132809_territories_card_link';
+import * as migration_20261009_060641_visits_country from './20261009_060641_visits_country';
 
 export const migrations = [
   {
@@ -136,6 +137,11 @@ export const migrations = [
   {
     up: migration_20261008_132809_territories_card_link.up,
     down: migration_20261008_132809_territories_card_link.down,
-    name: '20261008_132809_territories_card_link'
+    name: '20261008_132809_territories_card_link',
+  },
+  {
+    up: migration_20261009_060641_visits_country.up,
+    down: migration_20261009_060641_visits_country.down,
+    name: '20261009_060641_visits_country'
   },
 ];

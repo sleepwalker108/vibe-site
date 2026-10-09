@@ -28,6 +28,7 @@
     "@payloadcms/ui": "3.90.2",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
+    "geoip-country": "^5.0.202610070241",
     "graphql": "^16.8.1",
     "next": "16.4.0",
     "payload": "3.90.2",

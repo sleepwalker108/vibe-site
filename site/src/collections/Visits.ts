@@ -18,6 +18,8 @@ export const Visits: CollectionConfig = {
     { name: 'visitor', type: 'text', index: true },
     { name: 'referrer', type: 'text' },
     { name: 'device', type: 'text' },
-    { name: 'lang', type: 'text' },
+    { name: 'lang', type: 'text', index: true },
+    // країна відвідувача (код, напр. UA) — визначається на сервері за IP; сама IP-адреса не зберігається
+    { name: 'country', type: 'text' },
   ],
 }

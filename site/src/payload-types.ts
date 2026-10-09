@@ -405,6 +405,7 @@ export interface Visit {
   referrer?: string | null;
   device?: string | null;
   lang?: string | null;
+  country?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -751,6 +752,7 @@ export interface VisitsSelect<T extends boolean = true> {
   referrer?: T;
   device?: T;
   lang?: T;
+  country?: T;
   updatedAt?: T;
   createdAt?: T;
 }
