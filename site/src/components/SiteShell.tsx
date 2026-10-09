@@ -76,6 +76,17 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                   <Linkify text={l.text} />
                 </p>
               ))}
+              {/* гаряча лінія 1648 — у вільному місці під контактами, в тому ж стилі, що й 1548 */}
+              <div className="foot-hot2">
+                <h2 className="foot-h">{t.hotline}</h2>
+                <a className="foot-hot" href="tel:1648">
+                  1648
+                </a>
+                <p>
+                  <a href="tel:+380442878165">+38 (044) 287-81-65</a>
+                  <span className="foot-note">({t.callsAbroad})</span>
+                </p>
+              </div>
             </div>
             <div>
               <h2 className="foot-h">{t.hotline}</h2>

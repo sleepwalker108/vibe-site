@@ -1521,3 +1521,6 @@ html.contrast footer p a, html.contrast a.foot-hot { color: #ff0 !important; tex
 /* номер телефону в синьому блоці «виділена цифра» — світлий, як і текст блоку */
 .prose-stat .tel-link { color: #fff; font-weight: 700; text-decoration-color: rgba(255, 255, 255, .45); }
 .prose-stat .tel-link:hover { color: var(--yellow); text-decoration-color: var(--yellow); }
+/* підвал: блок гарячої лінії 1648 під контактами — відокремлений тонкою лінією */
+.foot-hot2 { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .14); }
+.foot-note { display: block; margin-top: 2px; font-size: .82rem; color: rgba(255, 255, 255, .6); }
