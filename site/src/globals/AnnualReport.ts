@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
 import { languageSwitcher } from '../fields/translations'
+import { sheetSyncFields } from '../fields/sheetSync'
 
 const rows = (name: string, label: string, description?: string) => ({
   name,
@@ -59,5 +60,7 @@ export const AnnualReport: GlobalConfig = {
     },
     rows('topQuestions', 'Топ питань громадян', 'Показуються в тому порядку, як тут — від найчастішого.'),
     rows('outgoing', 'Вихідні дзвінки за типами', 'Сума цих рядків = «Вихідні дзвінки».'),
+    // цифри з Google-форми: адмінка показує останню відповідь, перенесення — лише кнопкою
+    sheetSyncFields,
   ],
 }

@@ -1,42 +1,41 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
+import { useDocumentInfo } from '@payloadcms/ui'
 import type { SheetPreview } from '@/lib/sheetSync'
 
-// «Статистика гарячих ліній» → блок «Google-форма»: остання відповідь форми, що зміниться на сайті,
-// і кнопка «Перенести в статистику» (як чернетку). Сам сайт нічого не оновлює — лише за кнопкою.
-// Унизу — інструкція й точний перелік питань форми (назви — з поточних категорій, щоб сайт їх упізнав).
+// «Статистика гарячих ліній» і «Річний звіт» → блок «Google-форма»: остання відповідь форми, що зміниться,
+// кнопки «Перенести в статистику» (як чернетку) і «Скасувати перенесення». Сам сайт нічого не оновлює.
+// Унизу — інструкція й точний перелік питань форми (назви — з поточних рядків, щоб сайт їх упізнав).
+const SCRIPT_FN: Record<string, string> = { stats: 'createHotlineForm', 'annual-report': 'createAnnualReportForm' }
+
 export const SheetSyncPanel = () => {
+  const { globalSlug } = useDocumentInfo()
+  const api = `/api/sheet-sync/${globalSlug}`
   const [st, setSt] = useState<SheetPreview | null>(null)
   const [busy, setBusy] = useState<'check' | 'apply' | 'undo' | null>('check')
-  const [questions, setQuestions] = useState<string[]>([])
   const [copied, setCopied] = useState(false)
 
   const check = useCallback(async () => {
     setBusy('check')
     try {
-      const r = await fetch('/api/stats-sheet', { credentials: 'include' })
+      const r = await fetch(api, { credentials: 'include' })
       setSt(await r.json())
     } catch (e) {
       setSt({ ok: false, message: (e as Error).message })
     } finally {
       setBusy(null)
     }
-  }, [])
+  }, [api])
 
   useEffect(() => {
     check()
-    fetch('/api/globals/stats?draft=true&locale=uk&depth=0', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((g: { categories?: { name: string }[] } | null) =>
-        setQuestions(['Станом на (дата)', ...(g?.categories || []).map((c) => c.name), 'Зареєстровано звернень', 'Звернень через месенджери']),
-      )
-      .catch(() => {})
   }, [check])
+  const questions = st?.questions || []
 
   const apply = async () => {
     setBusy('apply')
     try {
-      const r = await fetch('/api/stats-sheet', { method: 'POST', credentials: 'include' })
+      const r = await fetch(api, { method: 'POST', credentials: 'include' })
       setSt(await r.json())
     } catch (e) {
       setSt({ ok: false, message: (e as Error).message })
@@ -50,7 +49,7 @@ export const SheetSyncPanel = () => {
     if (!confirm('Повернути цифри, які були до перенесення з форми?')) return
     setBusy('undo')
     try {
-      const r = await fetch('/api/stats-sheet', { method: 'DELETE', credentials: 'include' })
+      const r = await fetch(api, { method: 'DELETE', credentials: 'include' })
       setSt(await r.json())
     } catch (e) {
       setSt({ ok: false, message: (e as Error).message })
@@ -113,7 +112,7 @@ export const SheetSyncPanel = () => {
             )}
             {!!st.unmatched?.length && (
               <p className="ssp-msg bad">
-                Не впізнано питання форми: {st.unmatched.map((u) => `«${u}»`).join(', ')}. Назва питання має збігатися з назвою категорії.
+                Не впізнано питання форми: {st.unmatched.map((u) => `«${u}»`).join(', ')}. Назва питання має збігатися з назвою рядка в адмінці (як у переліку нижче).
               </p>
             )}
           </>
@@ -146,7 +145,7 @@ export const SheetSyncPanel = () => {
         <ol>
           <li>
             Найпростіше — запустити готовий скрипт: він сам створить форму з усіма питаннями й таблицю відповідей
-            (інструкція — у файлі <code>deploy/google-form.gs</code> у коді сайту).
+            (файл <code>deploy/google-form.gs</code> у коді сайту, функція <code>{SCRIPT_FN[globalSlug || ''] || 'createHotlineForm'}</code>).
           </li>
           <li>
             Або створіть форму вручну: питання «Коротка відповідь» (для дати — «Дата»), назви — <b>точно як тут</b>:

@@ -1048,6 +1048,10 @@ export interface AnnualReport {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Посилання на таблицю з доступом «Усі, хто має посилання» (читач). Сайт нічого не оновлює сам: нові цифри показуються нижче й переносяться кнопкою.
+   */
+  sheetUrl?: string | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1414,6 +1418,7 @@ export interface AnnualReportSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  sheetUrl?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

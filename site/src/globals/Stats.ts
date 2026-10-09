@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
 import { languageSwitcher } from '../fields/translations'
+import { sheetSyncFields } from '../fields/sheetSync'
 
 export const Stats: GlobalConfig = {
   slug: 'stats',
@@ -50,26 +51,7 @@ export const Stats: GlobalConfig = {
       ],
     },
     { name: 'note', type: 'text', label: 'Підпис під блоком', localized: true },
-    // цифри з Google-форми (див. lib/sheetSync.ts): адмінка показує останню відповідь, перенесення — лише кнопкою
-    {
-      type: 'collapsible',
-      label: 'Google-форма: цифри з таблиці відповідей',
-      admin: { initCollapsed: false },
-      fields: [
-        {
-          name: 'sheetUrl',
-          type: 'text',
-          label: 'Посилання на опубліковану Google-таблицю з відповідями',
-          admin: {
-            description:
-              'Посилання на таблицю з доступом «Усі, хто має посилання» (читач). Сайт нічого не оновлює сам: нові цифри показуються нижче й переносяться кнопкою.',
-            placeholder: 'https://docs.google.com/spreadsheets/d/…/edit',
-          },
-          validate: (v: string | null | undefined) =>
-            !v || v.trim().startsWith('https://docs.google.com/spreadsheets/d/') ||'Потрібне посилання на Google-таблицю (https://docs.google.com/spreadsheets/…)',
-        },
-        { name: 'sheetSync', type: 'ui', admin: { components: { Field: '/components/admin/SheetSyncPanel#SheetSyncPanel' } } },
-      ],
-    },
+    // цифри з Google-форми: адмінка показує останню відповідь, перенесення — лише кнопкою
+    sheetSyncFields,
   ],
 }
