@@ -995,6 +995,10 @@ export interface Stat {
   registered?: number | null;
   messengers?: number | null;
   note?: string | null;
+  /**
+   * Таблиця → «Файл» → «Поділитися» → «Опублікувати в інтернеті» → формат CSV. Порожнє поле — форма не використовується.
+   */
+  sheetUrl?: string | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1371,6 +1375,7 @@ export interface StatsSelect<T extends boolean = true> {
   registered?: T;
   messengers?: T;
   note?: T;
+  sheetUrl?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

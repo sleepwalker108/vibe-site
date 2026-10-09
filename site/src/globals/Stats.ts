@@ -50,5 +50,25 @@ export const Stats: GlobalConfig = {
       ],
     },
     { name: 'note', type: 'text', label: 'Підпис під блоком', localized: true },
+    // цифри з Google-форми (див. lib/sheetSync.ts): сайт бере останню відповідь і зберігає її як чернетку
+    {
+      type: 'collapsible',
+      label: 'Google-форма: цифри з таблиці відповідей',
+      admin: { initCollapsed: false },
+      fields: [
+        {
+          name: 'sheetUrl',
+          type: 'text',
+          label: 'Посилання на опубліковану Google-таблицю з відповідями',
+          admin: {
+            description: 'Таблиця → «Файл» → «Поділитися» → «Опублікувати в інтернеті» → формат CSV. Порожнє поле — форма не використовується.',
+            placeholder: 'https://docs.google.com/spreadsheets/d/e/…/pub?output=csv',
+          },
+          validate: (v: string | null | undefined) =>
+            !v || v.trim().startsWith('https://docs.google.com/spreadsheets/d/') ||'Потрібне посилання на Google-таблицю (https://docs.google.com/spreadsheets/…)',
+        },
+        { name: 'sheetSync', type: 'ui', admin: { components: { Field: '/components/admin/SheetSyncPanel#SheetSyncPanel' } } },
+      ],
+    },
   ],
 }

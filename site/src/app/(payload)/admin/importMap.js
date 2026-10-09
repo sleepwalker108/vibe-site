@@ -30,6 +30,7 @@ import { MediaLinks as MediaLinks_a0f5ff356e417ae5c213fc0e217bee73 } from '../..
 import { MediaCopyCell as MediaCopyCell_6d76666deabf00faf1496015be4b4c07 } from '../../../components/admin/MediaCopyCell'
 import { MediaGrid as MediaGrid_497a71e43c82ad88f73f560e1c49eea7 } from '../../../components/admin/MediaGrid'
 import { NavRowLabel as NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0 } from '../../../components/admin/NavRowLabel'
+import { SheetSyncPanel as SheetSyncPanel_7d22a07fc4fcea33e7c25c6624c49506 } from '../../../components/admin/SheetSyncPanel'
 import { RegionRowLabel as RegionRowLabel_c05ae2a17043c4c44c8bed5650e19e94 } from '../../../components/admin/RegionRowLabel'
 import { StatsNavLink as StatsNavLink_3c443f0c28ffcebbd081f1f092e5f5c9 } from '../../../components/admin/StatsNavLink'
 import { AdminNavLinks as AdminNavLinks_6e8db327abb4c1711d058b611f9e01a3 } from '../../../components/admin/AdminNavLinks'
@@ -78,6 +79,7 @@ export const importMap = {
   "/components/admin/MediaCopyCell#MediaCopyCell": MediaCopyCell_6d76666deabf00faf1496015be4b4c07,
   "/components/admin/MediaGrid#MediaGrid": MediaGrid_497a71e43c82ad88f73f560e1c49eea7,
   "/components/admin/NavRowLabel#NavRowLabel": NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0,
+  "/components/admin/SheetSyncPanel#SheetSyncPanel": SheetSyncPanel_7d22a07fc4fcea33e7c25c6624c49506,
   "/components/admin/RegionRowLabel#RegionRowLabel": RegionRowLabel_c05ae2a17043c4c44c8bed5650e19e94,
   "/components/admin/StatsNavLink#StatsNavLink": StatsNavLink_3c443f0c28ffcebbd081f1f092e5f5c9,
   "/components/admin/AdminNavLinks#AdminNavLinks": AdminNavLinks_6e8db327abb4c1711d058b611f9e01a3,
