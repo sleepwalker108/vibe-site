@@ -19,7 +19,12 @@ export const VisitTracker = () => {
     if (last.path === path && Date.now() - last.at < 1000) return
     last = { path, at: Date.now() }
     // звідки прийшли — лише для першої сторінки; далі людина ходить сайтом
-    const data = JSON.stringify({ path, ref: first ? document.referrer : '' })
+    // часовий пояс пристрою (напр. Europe/Kyiv) — щоб країна визначалась правильно й тоді, коли людина з VPN
+    let tz = ''
+    try {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+    } catch {}
+    const data = JSON.stringify({ path, ref: first ? document.referrer : '', tz })
     first = false
     if (!navigator.sendBeacon?.('/visit', data)) fetch('/visit', { method: 'POST', body: data, keepalive: true }).catch(() => {})
   }, [pathname])

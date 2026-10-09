@@ -3,6 +3,8 @@ import { DefaultTemplate } from '@payloadcms/next/templates'
 import { redirect } from 'next/navigation'
 import { getReport, type Item, type Lang, type Report } from '@/lib/visitStats'
 import { STATS_CSS } from './statsStyles'
+import { MyGeo } from './MyGeo'
+import { visitorCountry } from '@/lib/geo'
 
 const PERIODS = [7, 30, 90] as const
 const fmt = (n: number) => n.toLocaleString('uk-UA')
@@ -200,6 +202,7 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
     ...news.docs.map((n) => [`/news/${n.slug}`, `Новина: ${n.title}`] as [string, string]),
   ])
   const total = report.current.views
+  const me = visitorCountry(req.headers)
   const empty = total === 0
 
   return (
@@ -302,17 +305,20 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
               total={total}
               label={(it) => it.label || 'Прямі заходи (закладки, введена адреса)'}
             />
-            <Table
-              title="Країни"
-              items={report.countries}
-              total={total}
-              label={(it) => (
-                <span title={COUNTRY_HINT[it.label]}>
-                  {/^[A-Z]{2}$/.test(it.label) && <span className="st-code">{it.label}</span>}
-                  {countryName(it.label)}
-                </span>
-              )}
-            />
+            <div className="st-stack-item">
+              <Table
+                title="Країни"
+                items={report.countries}
+                total={total}
+                label={(it) => (
+                  <span title={COUNTRY_HINT[it.label]}>
+                    {/^[A-Z]{2}$/.test(it.label) && <span className="st-code">{it.label}</span>}
+                    {countryName(it.label)}
+                  </span>
+                )}
+              />
+              <MyGeo ip={me.ip} byIp={countryName(me.byIp)} />
+            </div>
             <Table title="Пристрої" items={report.devices} total={total} label={(it) => DEVICE[it.label] || it.label} />
             <Table
               title="Мова сайту (весь сайт)"

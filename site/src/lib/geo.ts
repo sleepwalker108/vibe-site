@@ -15,3 +15,30 @@ export const countryOf = (ip: string): string => {
     return ''
   }
 }
+
+// Часові пояси України. За IP людина з VPN, «Приватним ретрансляцієм» iCloud чи VPN в Opera виглядає
+// як іноземець (Австрія, Польща…), а часовий пояс телефона/комп’ютера від цього не змінюється.
+const UA_TZ = /^Europe\/(Kyiv|Kiev|Zaporozhye|Uzhgorod|Simferopol)$/
+
+// Справжня адреса відвідувача — від nginx (X-Real-IP); X-Forwarded-For може підробити сам відвідувач
+export const clientIp = (headers: Headers) =>
+  headers.get('x-real-ip') || (headers.get('x-forwarded-for') || '').split(',').pop()?.trim() || ''
+
+// Країна відвідувача: київський час на пристрої → Україна; інакше — за IP.
+// Якщо до nginx запит прийшов через проксі установи (внутрішня адреса), справжня адреса — у ланцюжку
+// X-Forwarded-For: беремо найближчу до нас зовнішню. Підробити її можна, але це вплине лише на країну в статистиці.
+export const visitorCountry = (headers: Headers, timeZone = ''): { ip: string; byIp: string; country: string } => {
+  const ip = clientIp(headers)
+  let byIp = countryOf(ip)
+  if (byIp === 'LAN') {
+    const chain = (headers.get('x-forwarded-for') || '').split(',').map((s) => s.trim()).reverse()
+    for (const a of chain) {
+      const c = countryOf(a)
+      if (c && c !== 'LAN') {
+        byIp = c
+        break
+      }
+    }
+  }
+  return { ip, byIp, country: UA_TZ.test(timeZone) ? 'UA' : byIp }
+}

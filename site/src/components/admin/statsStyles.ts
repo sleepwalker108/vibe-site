@@ -54,6 +54,7 @@ html[data-theme='dark'] .st-wrap, html[data-theme='dark'] .st-summary { --st-vie
 .st-name a { color: inherit; text-decoration: none; } .st-name a:hover { text-decoration: underline; }
 .st-share { height: 4px; background: var(--theme-elevation-100); border-radius: 2px; margin-top: 5px; overflow: hidden; }
 .st-share span { display: block; height: 100%; background: var(--st-visitors); border-radius: 2px; }
+.st-mygeo { margin: 8px 4px 0; font-size: 12px; color: var(--theme-elevation-600); }
 .st-empty { margin: 0; color: var(--theme-elevation-500); font-size: 13px; }
 @media (max-width: 1000px) { .st-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st-cols { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .st-wrap { padding: 20px 16px 48px; } .st-kpi-value { font-size: 24px; } .st-chart { height: 180px; } }

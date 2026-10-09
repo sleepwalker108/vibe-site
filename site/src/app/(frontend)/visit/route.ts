@@ -1,6 +1,6 @@
 import { createHash } from 'crypto'
 import { getClient } from '@/lib/payload'
-import { countryOf } from '@/lib/geo'
+import { clientIp, visitorCountry } from '@/lib/geo'
 
 // Сюди сайт надсилає «перегляд сторінки» (компонент VisitTracker).
 // Не зберігаємо ні IP, ні cookie: лише сторінку, домен звідки прийшли, тип пристрою, мову, країну
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   // боти та працівники, які увійшли в адмінку, не рахуються
   if (!ua || BOT.test(ua) || cookie.includes('payload-token=')) return new Response(null, { status: 204 })
 
-  let body: { path?: string; ref?: string } = {}
+  let body: { path?: string; ref?: string; tz?: string } = {}
   try {
     body = JSON.parse(await req.text())
   } catch {
@@ -54,8 +54,7 @@ export async function POST(req: Request) {
     if (host && host !== new URL(req.url).hostname) referrer = host
   } catch {}
 
-  // справжня адреса відвідувача — від nginx (X-Real-IP); X-Forwarded-For може підробити сам відвідувач
-  const ip = req.headers.get('x-real-ip') || (req.headers.get('x-forwarded-for') || '').split(',').pop()?.trim() || ''
+  const ip = clientIp(req.headers)
   if (tooMany(ip || ua)) return new Response(null, { status: 204 })
   const day = new Date().toISOString().slice(0, 10)
   const visitor = createHash('sha256')
@@ -65,19 +64,8 @@ export async function POST(req: Request) {
   const device = /tablet|ipad/i.test(ua) ? 'tablet' : /mobi|android|iphone/i.test(ua) ? 'mobile' : 'desktop'
   const lang = /(?:^|;\s*)lang=en/.test(cookie) ? 'en' : 'uk'
 
-  // Якщо до nginx запит прийшов через проксі установи (внутрішня адреса), справжня адреса відвідувача —
-  // у ланцюжку X-Forwarded-For: беремо найближчу до нас зовнішню. Підробити її можна, але це вплине лише на країну в статистиці.
-  let country = countryOf(ip)
-  if (country === 'LAN') {
-    const chain = (req.headers.get('x-forwarded-for') || '').split(',').map((s) => s.trim()).reverse()
-    for (const a of chain) {
-      const c = countryOf(a)
-      if (c && c !== 'LAN') {
-        country = c
-        break
-      }
-    }
-  }
+  // країна: за часовим поясом пристрою (Україна) або за IP — див. lib/geo.ts
+  const { country } = visitorCountry(req.headers, String(body.tz || '').slice(0, 64))
 
   const payload = await getClient()
   await payload.create({ collection: 'visits', data: { path, visitor, referrer, device, lang, country }, overrideAccess: true })
