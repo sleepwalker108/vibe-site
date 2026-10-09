@@ -19,7 +19,7 @@ export const NewsCard = ({
   const tag = topicName(item.topics?.[0])
   return (
     <Link className={`news-card${featured ? ' featured' : ''}`} href={`/news/${encodeURIComponent(item.slug || '')}`}>
-      <div className="img">{img ? <img src={img} alt="" loading="lazy" /> : <div className="ph">1548</div>}</div>
+      <div className="img">{img ? <img src={img} alt="" loading="lazy" /> : <div className="ph"><img src="/img/logo-white.webp" alt="" loading="lazy" /></div>}</div>
       <div className="body">
         {featured && tag && <span className="tag">{tag}</span>}
         <time>

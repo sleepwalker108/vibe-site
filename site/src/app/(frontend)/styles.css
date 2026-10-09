@@ -1524,3 +1524,7 @@ html.contrast footer p a, html.contrast a.foot-hot { color: #ff0 !important; tex
 /* підвал: гаряча лінія 1648 — колонка перед 1548; на телефоні (колонки одна під одною) — після основної лінії 1548 */
 @media (max-width: 640px) { .foot-1648 { order: 1; } }
 .foot-note { display: block; margin-top: 2px; font-size: .82rem; color: rgba(255, 255, 255, .6); }
+/* новина без картинки: білий логотип НАРТУ на синьому тлі (замість «1548») */
+.news-card .img .ph img { width: 34%; max-width: 120px; height: auto; object-fit: contain; opacity: .95; transition: transform .3s; }
+.news-card:hover .img .ph img { transform: scale(1.05); }
+.news-small .news-card .img .ph img, .news-grid .news-card .img .ph img { width: 30%; }
