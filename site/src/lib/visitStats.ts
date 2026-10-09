@@ -26,8 +26,8 @@ const totals = async (payload: Payload, from: Date, to: Date, lang: Lang = 'all'
 }
 
 const grouped = async (payload: Payload, column: 'path' | 'referrer' | 'device' | 'lang' | 'country', from: Date, limit: number, lang: Lang) => {
-  // порожнє й «немає значення» (старі записи) — одна група
-  const col = sql.raw(`coalesce(${column}, '')`)
+  // порожнє й «немає значення» — одна група; лише в країни «немає значення» — окремо: це відвідування до появи підрахунку країн
+  const col = sql.raw(`coalesce(${column}, '${column === 'country' ? 'OLD' : ''}')`)
   const rows = await all(
     payload,
     sql`SELECT ${col} AS label, count(*) AS views, count(DISTINCT visitor) AS visitors FROM visits

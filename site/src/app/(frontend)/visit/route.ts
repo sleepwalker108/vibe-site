@@ -65,7 +65,19 @@ export async function POST(req: Request) {
   const device = /tablet|ipad/i.test(ua) ? 'tablet' : /mobi|android|iphone/i.test(ua) ? 'mobile' : 'desktop'
   const lang = /(?:^|;\s*)lang=en/.test(cookie) ? 'en' : 'uk'
 
-  const country = countryOf(ip)
+  // Якщо до nginx запит прийшов через проксі установи (внутрішня адреса), справжня адреса відвідувача —
+  // у ланцюжку X-Forwarded-For: беремо найближчу до нас зовнішню. Підробити її можна, але це вплине лише на країну в статистиці.
+  let country = countryOf(ip)
+  if (country === 'LAN') {
+    const chain = (req.headers.get('x-forwarded-for') || '').split(',').map((s) => s.trim()).reverse()
+    for (const a of chain) {
+      const c = countryOf(a)
+      if (c && c !== 'LAN') {
+        country = c
+        break
+      }
+    }
+  }
 
   const payload = await getClient()
   await payload.create({ collection: 'visits', data: { path, visitor, referrer, device, lang, country }, overrideAccess: true })

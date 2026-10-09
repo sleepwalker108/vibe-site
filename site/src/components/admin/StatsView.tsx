@@ -25,11 +25,18 @@ const LANGS: { value: Lang; label: string }[] = [
 const regionNames = new Intl.DisplayNames(['uk'], { type: 'region' })
 const countryName = (code: string) => {
   if (!code) return 'Не визначено'
+  if (code === 'LAN') return 'Внутрішня мережа'
+  if (code === 'OLD') return 'Без країни (до оновлення)'
   try {
     return regionNames.of(code) || code
   } catch {
     return code
   }
+}
+const COUNTRY_HINT: Record<string, string> = {
+  LAN: 'Сайт відкрили з внутрішньої мережі (Wi-Fi чи мережа установи) — у таких адрес немає країни',
+  OLD: 'Відвідування до того, як статистика почала визначати країну',
+  '': 'Країну за цією адресою не знайдено в базі',
 }
 const statsUrl = (days: number, lang: Lang) => `/admin/stats?days=${days}${lang === 'all' ? '' : `&lang=${lang}`}`
 const MONTHS = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд']
@@ -300,8 +307,8 @@ export const StatsView = async ({ initPageResult, params, searchParams }: AdminV
               items={report.countries}
               total={total}
               label={(it) => (
-                <span title={it.label ? undefined : 'Внутрішня мережа або відвідування до ввімкнення визначення країни'}>
-                  {it.label && <span className="st-code">{it.label}</span>}
+                <span title={COUNTRY_HINT[it.label]}>
+                  {/^[A-Z]{2}$/.test(it.label) && <span className="st-code">{it.label}</span>}
                   {countryName(it.label)}
                 </span>
               )}
