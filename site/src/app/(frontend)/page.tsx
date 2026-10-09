@@ -98,11 +98,6 @@ export default async function HomePage({ searchParams }: Props) {
                 ☎ {hero.primary.label}
               </a>
             )}
-            {hero?.call2?.label && (
-              <a className="btn btn-yellow" href={safeHref(hero.call2.url)}>
-                ☎ {hero.call2.label}
-              </a>
-            )}
             {hero?.secondary?.label && (
               <a
                 className="btn btn-ghost"
@@ -111,6 +106,11 @@ export default async function HomePage({ searchParams }: Props) {
                 {...(/\.(pdf|docx?|xlsx?)([?#]|$)/i.test(hero.secondary.url || '') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {hero.secondary.label}
+              </a>
+            )}
+            {hero?.call2?.label && (
+              <a className="btn btn-yellow" href={safeHref(hero.call2.url)}>
+                ☎ {hero.call2.label}
               </a>
             )}
           </div>
