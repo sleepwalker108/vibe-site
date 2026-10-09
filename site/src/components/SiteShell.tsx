@@ -6,10 +6,9 @@ import { RefreshRouteOnSave } from './RefreshRouteOnSave'
 import { Linkify } from './Linkify'
 import { ToTop } from './ToTop'
 
-// Гаряча лінія 1648 у підвалі — у тому ж стилі, що й 1548. На комп'ютері — під контактами (там вільне місце),
-// на телефоні — після блоку 1548 (видно лише одну з двох копій)
-const Hotline1648 = ({ t, className }: { t: { hotline: string; callsAbroad: string }; className: string }) => (
-  <div className={className}>
+// Гаряча лінія 1648 у підвалі — окрема колонка поруч із 1548, у тому ж стилі
+const Hotline1648 = ({ t }: { t: { hotline: string; callsAbroad: string } }) => (
+  <div>
     <h2 className="foot-h">{t.hotline}</h2>
     <a className="foot-hot" href="tel:1648">
       1648
@@ -91,7 +90,6 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                   <Linkify text={l.text} />
                 </p>
               ))}
-              <Hotline1648 t={t} className="foot-hot2 foot-hot2-wide" />
             </div>
             <div>
               <h2 className="foot-h">{t.hotline}</h2>
@@ -105,9 +103,8 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
                   <Linkify text={l.text} />
                 </p>
               ))}
-              {/* на телефоні колонки йдуть одна під одною — тут 1648 стоїть після основної лінії 1548 */}
-              <Hotline1648 t={t} className="foot-hot2 foot-hot2-narrow" />
             </div>
+            <Hotline1648 t={t} />
           </div>
           <div className="foot-bottom">
             <span>© {new Date().getFullYear()} dp-reintegration.gov.ua</span>
