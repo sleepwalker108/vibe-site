@@ -503,40 +503,46 @@
 
 
   /* ======================================================================
-     Версія для людей з порушенням зору (кнопка ◐): чорний фон, білий текст,
-     жовті посилання, рамки замість кольорових плашок — на ВСЬОМУ сайті.
+     Версія для людей з порушенням зору (кнопка з окулярами → панель налаштувань): контрастні кольори,
+     рамки замість кольорових плашок — на ВСЬОМУ сайті. Колірні схеми (клас на <html>):
+       contrast                — біле на чорному, жовті посилання;
+       contrast hc-light       — чорне на білому, сині посилання;
+       contrast hc-blue        — темно-синє на блакитному (зручно при дислексії й світлочутливості).
      ====================================================================== */
-  html.contrast { --navy: #fff; --navy-deep: #000; --navy-ink: #fff; --sky: #000; --sky-2: #fff; --ink: #fff; --muted: #fff; --line: #fff; --yellow: #ff0; }
+  html.contrast { --hc-bg: #000; --hc-fg: #fff; --hc-link: #ff0; --hc-bg2: #333; --hc-bg3: #444; color-scheme: dark; }
+  html.contrast.hc-light { --hc-bg: #fff; --hc-fg: #000; --hc-link: #0a3fb0; --hc-bg2: #e2e2e2; --hc-bg3: #c4c4c4; color-scheme: light; }
+  html.contrast.hc-blue { --hc-bg: #9dd1ff; --hc-fg: #063462; --hc-link: #063462; --hc-bg2: #7fbcef; --hc-bg3: #64aee6; color-scheme: light; }
+  html.contrast { --navy: var(--hc-fg); --navy-deep: var(--hc-bg); --navy-ink: var(--hc-fg); --sky: var(--hc-bg); --sky-2: var(--hc-fg); --ink: var(--hc-fg); --muted: var(--hc-fg); --line: var(--hc-fg); --yellow: var(--hc-link); }
   html.contrast body,
   html.contrast body :where(*:not(svg):not(svg *):not(.sw):not(.tp-sw):not(.tm-bar span):not(.tm-vals i):not(img):not(video):not(canvas)) {
-    background-color: #000 !important; background-image: none !important; color: #fff !important;
-    border-color: #fff !important; box-shadow: none !important; text-shadow: none !important;
+    background-color: var(--hc-bg) !important; background-image: none !important; color: var(--hc-fg) !important;
+    border-color: var(--hc-fg) !important; box-shadow: none !important; text-shadow: none !important;
   }
-  html.contrast a, html.contrast a * { color: #ff0 !important; }
+  html.contrast a, html.contrast a * { color: var(--hc-link) !important; }
   html.contrast a { text-decoration: underline !important; text-underline-offset: 3px; }
   html.contrast .card, html.contrast .news-card, html.contrast .res-card, html.contrast .doc, html.contrast .rcard, html.contrast .rk,
   html.contrast .kpi, html.contrast .terr-panel, html.contrast .terr-map, html.contrast .terr-table, html.contrast .tool,
   html.contrast .btn, html.contrast .chip, html.contrast .period, html.contrast .asof, html.contrast .not-translated,
-  html.contrast .terr-mobile li, html.contrast .card.evac, html.contrast .sub { border: 2px solid #fff !important; }
-  html.contrast .tool[aria-pressed="true"] { background-color: #ff0 !important; color: #000 !important; }
-  html.contrast :focus-visible { outline: 3px solid #ff0 !important; outline-offset: 3px; }
+  html.contrast .terr-mobile li, html.contrast .card.evac, html.contrast .sub { border: 2px solid var(--hc-fg) !important; }
+  html.contrast .tool[aria-pressed="true"] { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
+  html.contrast :focus-visible { outline: 3px solid var(--hc-link) !important; outline-offset: 3px; }
   /* декоративні фони вимикаємо */
   html.contrast #flag, html.contrast .flag-video, html.contrast .hero::before, html.contrast .stats-sec::before, html.contrast .page-head::after { display: none !important; }
   html.contrast .hero { min-height: 70vh; }
   /* смуги графіків — яскраво-жовті на темно-сірій доріжці */
-  html.contrast .fill, html.contrast .rank-track .fill { background-color: #ff0 !important; }
-  html.contrast .rank-track, html.contrast .bar .track { background-color: #333 !important; }
-  html.contrast .hl { color: #ff0 !important; }
-  html.contrast .steps .n, html.contrast .rank-n, html.contrast .card-ico, html.contrast .res-ico, html.contrast .rk-ico { border: 2px solid #fff !important; }
+  html.contrast .fill, html.contrast .rank-track .fill { background-color: var(--hc-link) !important; }
+  html.contrast .rank-track, html.contrast .bar .track { background-color: var(--hc-bg2) !important; }
+  html.contrast .hl { color: var(--hc-link) !important; }
+  html.contrast .steps .n, html.contrast .rank-n, html.contrast .card-ico, html.contrast .res-ico, html.contrast .rk-ico { border: 2px solid var(--hc-fg) !important; }
   /* мапа і кругові діаграми */
-  html.contrast .ua-regions path { fill: #222; stroke: #fff; }
-  html.contrast .ua-regions path.has-data { fill: #444; }
-  html.contrast .donut-hole { fill: #000; }
-  html.contrast .donut-halo { fill: #000; stroke: #fff; stroke-width: 1.5; }
-  html.contrast .seg-label, html.contrast .donut-total, html.contrast .donut-name { fill: #fff; stroke: #000; }
-  html.contrast .seg-leader { stroke: #fff; opacity: 1; }
-  html.contrast .donut circle:first-child { stroke: #333; }
-  html.contrast .donut-center .dc-num, html.contrast .donut-center .dc-label { color: #fff !important; }
+  html.contrast .ua-regions path { fill: var(--hc-bg2); stroke: var(--hc-fg); }
+  html.contrast .ua-regions path.has-data { fill: var(--hc-bg3); }
+  html.contrast .donut-hole { fill: var(--hc-bg); }
+  html.contrast .donut-halo { fill: var(--hc-bg); stroke: var(--hc-fg); stroke-width: 1.5; }
+  html.contrast .seg-label, html.contrast .donut-total, html.contrast .donut-name { fill: var(--hc-fg); stroke: var(--hc-bg); }
+  html.contrast .seg-leader { stroke: var(--hc-fg); opacity: 1; }
+  html.contrast .donut circle:first-child { stroke: var(--hc-bg2); }
+  html.contrast .donut-center .dc-num, html.contrast .donut-center .dc-label { color: var(--hc-fg) !important; }
 
   /* ======================================================================
      Підсторінки: текст ліворуч, меню розділу й гаряча лінія праворуч
@@ -625,9 +631,9 @@
   @media (max-width: 1080px) { .page-side { position: static; } }
 
   /* контрастний режим для нових елементів */
-  html.contrast .faq-item, html.contrast .side-nav, html.contrast .side-hot { border: 2px solid #fff !important; }
-  html.contrast .side-nav a.active { background-color: #ff0 !important; color: #000 !important; }
-  html.contrast .prose a[href$=".pdf" i]::before { background: #ff0 !important; color: #000 !important; }
+  html.contrast .faq-item, html.contrast .side-nav, html.contrast .side-hot { border: 2px solid var(--hc-fg) !important; }
+  html.contrast .side-nav a.active { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
+  html.contrast .prose a[href$=".pdf" i]::before { background: var(--hc-link) !important; color: var(--hc-bg) !important; }
 
   /* ---------- відеоматеріали ---------- */
   .video-sec { padding: 48px 0 96px; }
@@ -659,13 +665,13 @@
   .video-frame video, .video-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
   @media (max-width: 1080px) { .video-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .video-grid { grid-template-columns: 1fr; } .video-card.featured { grid-column: auto; grid-row: auto; } .video-play { width: 56px; height: 56px; } }
-  html.contrast .video-card { border: 2px solid #fff !important; }
-  html.contrast .video-play { background-color: #ff0 !important; color: #000 !important; }
+  html.contrast .video-card { border: 2px solid var(--hc-fg) !important; }
+  html.contrast .video-play { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
 
   /* контраст: картки-посилання — біла рамка-жовта, текст білий без підкреслення; меню без підкреслення */
-  html.contrast :is(a.card, a.news-card, a.res-card, a.doc, a.side-hot, .video-card, .brand) { text-decoration: none !important; border-color: #ff0 !important; }
-  html.contrast :is(a.card, a.news-card, a.res-card, a.doc, a.side-hot, .video-card, .brand) * { color: #fff !important; text-decoration: none !important; }
-  html.contrast :is(a.card, a.news-card, a.res-card, a.doc, .video-card) :is(h3, .video-title, .res-name, .more) { color: #ff0 !important; }
+  html.contrast :is(a.card, a.news-card, a.res-card, a.doc, a.side-hot, .video-card, .brand) { text-decoration: none !important; border-color: var(--hc-link) !important; }
+  html.contrast :is(a.card, a.news-card, a.res-card, a.doc, a.side-hot, .video-card, .brand) * { color: var(--hc-fg) !important; text-decoration: none !important; }
+  html.contrast :is(a.card, a.news-card, a.res-card, a.doc, .video-card) :is(h3, .video-title, .res-name, .more) { color: var(--hc-link) !important; }
   html.contrast :is(.nav, .sub, .side-nav) a { text-decoration: none !important; }
 
 
@@ -687,8 +693,8 @@
   .lang-code { flex: none; width: 30px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: var(--sky); color: var(--navy); font-size: .72rem; font-weight: 800; letter-spacing: .04em; }
   .lang-menu button.active .lang-code { background: var(--navy-bg); color: #fff; }
   .lang-check { margin-left: auto; color: var(--navy); font-weight: 800; }
-  html.contrast .lang-menu { border: 2px solid #fff !important; }
-  html.contrast .lang-menu button.active .lang-code { background-color: #ff0 !important; color: #000 !important; }
+  html.contrast .lang-menu { border: 2px solid var(--hc-fg) !important; }
+  html.contrast .lang-menu button.active .lang-code { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
   /* невидимий «місток» між кнопкою мови та списком — мишка не «провалюється» в щілину */
   .lang-menu::before { content: ""; position: absolute; left: 0; right: 0; top: -10px; height: 10px; }
 
@@ -763,8 +769,8 @@
       font: inherit; font-size: 15px; font-weight: 800; color: var(--navy); cursor: pointer;
     }
     .nt-btn.active, .nt-btn[aria-pressed="true"] { background: var(--navy-bg); border-color: var(--navy-bg); color: #fff; }
-    html.contrast .nt-btn { border: 2px solid #fff !important; }
-    html.contrast .nt-btn.active, html.contrast .nt-btn[aria-pressed="true"] { background-color: #ff0 !important; color: #000 !important; }
+    html.contrast .nt-btn { border: 2px solid var(--hc-fg) !important; }
+    html.contrast .nt-btn.active, html.contrast .nt-btn[aria-pressed="true"] { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
 
     /* шапка: емблема, назва і велика кнопка меню */
     .topbar .tool.burger { min-width: 44px; height: 44px; font-size: 20px; }
@@ -839,8 +845,8 @@
   .prose-stat-label { position: relative; margin-top: 8px; font-size: 1.15rem; font-weight: 700; }
   .prose-stat-note { position: relative; margin: 12px 0 0 !important; font-size: .95rem; line-height: 1.6; color: rgba(255,255,255,.82); max-width: 620px; }
   @media (max-width: 640px) { .prose-cards { grid-template-columns: 1fr; } .prose-stat { padding: 22px; } }
-  html.contrast .prose-card, html.contrast .prose-stat { border: 2px solid #fff !important; }
-  html.contrast .prose-stat-num { color: #ff0 !important; }
+  html.contrast .prose-card, html.contrast .prose-stat { border: 2px solid var(--hc-fg) !important; }
+  html.contrast .prose-stat-num { color: var(--hc-link) !important; }
 
 /* «Корисні ресурси»: текст під заголовком (редагується в адмінці) */
 .res-sec .sec-head { flex-wrap: wrap; }
@@ -1001,9 +1007,9 @@ a.mm-contact:hover { border-color: var(--navy); }
 .mm-c-text small { color: var(--muted); font-size: .8em; line-height: 1.3; margin-top: 2px; }
 
 /* режим високого контрасту */
-html.contrast .mm-panel, html.contrast .mm-contact, html.contrast .mm-social, html.contrast .mm-contacts, html.contrast .mm-seg, html.contrast .mm-icon-btn { background: #000 !important; color: #fff !important; border-color: #fff !important; }
-html.contrast .mm-row, html.contrast .mm-sub-link, html.contrast .mm-toggle, html.contrast .mm-brand strong, html.contrast .mm-c-text strong { color: #fff !important; background: transparent !important; }
-html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.contrast .mm-seg button.on, html.contrast .mm-icon-btn[aria-pressed="true"] { background: #ff0 !important; color: #000 !important; }
+html.contrast .mm-panel, html.contrast .mm-contact, html.contrast .mm-social, html.contrast .mm-contacts, html.contrast .mm-seg, html.contrast .mm-icon-btn { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border-color: var(--hc-fg) !important; }
+html.contrast .mm-row, html.contrast .mm-sub-link, html.contrast .mm-toggle, html.contrast .mm-brand strong, html.contrast .mm-c-text strong { color: var(--hc-fg) !important; background: transparent !important; }
+html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.contrast .mm-seg button.on, html.contrast .mm-icon-btn[aria-pressed="true"] { background: var(--hc-link) !important; color: var(--hc-bg) !important; }
 
 /* мобільне меню: усі рядки внизу — однакової ширини й з однаковими відступами */
 .mm-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1057,8 +1063,8 @@ html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.cont
   .card { padding: 20px !important; }
   .card .big { font-size: 2.1rem !important; }
 }
-html.contrast .quick-tile { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
-html.contrast .quick-ico { background: #000 !important; color: #ff0 !important; border: 2px solid #ff0 !important; }
+html.contrast .quick-tile { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
+html.contrast .quick-ico { background: var(--hc-bg) !important; color: var(--hc-link) !important; border: 2px solid var(--hc-link) !important; }
 
 /* ---------- статистика гарячих ліній: рейтинг на телефоні ---------- */
 .bar-rank, .bar-pct, .bars-toggle { display: none; }
@@ -1097,7 +1103,7 @@ html.contrast .quick-ico { background: #000 !important; color: #ff0 !important; 
   .kpi .k-label { font-size: .66rem; }
   .kpi .msgr span { font-size: .68rem; padding: 3px 8px; }
 }
-html.contrast .bar-rank, html.contrast .bars-toggle { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+html.contrast .bar-rank, html.contrast .bars-toggle { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
 
 /* ---------- телефон: «Річний звіт» і «Градація статусів» компактніше ---------- */
 @media (max-width: 640px) {
@@ -1162,7 +1168,7 @@ html.contrast .bar-rank, html.contrast .bars-toggle { background: #000 !importan
   .tpk-list b { color: var(--navy-ink); font-variant-numeric: tabular-nums; }
   .tpk-list small { color: var(--muted); font-weight: 700; text-align: right; }
 }
-html.contrast .tpk-card, html.contrast .tpk-list li, html.contrast .tpk-nav { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
+html.contrast .tpk-card, html.contrast .tpk-list li, html.contrast .tpk-nav { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
 
 /* ================= телефон: фірмовий дизайн (головна + меню) ================= */
 @media (max-width: 640px) {
@@ -1215,7 +1221,7 @@ html.contrast .tpk-card, html.contrast .tpk-list li, html.contrast .tpk-nav { ba
   .mm-hot .mm-c-text small { color: #4a4100; font-weight: 600; }
   .mm-socials { background: transparent; border: 0; padding: 0; }
 }
-html.contrast .mm-head { background: #000 !important; }
+html.contrast .mm-head { background: var(--hc-bg) !important; }
 
 /* ================= телефон: естетика стартової сторінки ================= */
 @media (max-width: 640px) {
@@ -1276,7 +1282,7 @@ html.contrast .mm-head { background: #000 !important; }
   .rcard-fold.is-open .rcard-inner { padding: 0 16px 16px; }
   .rcard-fold:not(.is-open) .rcard-inner { padding: 0 16px; }
 }
-html.contrast .rcard-sum { background: #ff0 !important; color: #000 !important; }
+html.contrast .rcard-sum { background: var(--hc-link) !important; color: var(--hc-bg) !important; }
 
 /* ---------- телефон: «Корисні ресурси» квадратиками по 2 в ряд ---------- */
 @media (max-width: 640px) {
@@ -1351,8 +1357,8 @@ html.contrast .mm-overlay { background: rgba(0, 0, 0, .7) !important; }
 .mm-search { display: flex; gap: 6px; margin: 16px 0 0; }
 .mm-search input { flex: 1; min-width: 0; height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--sky); color: var(--ink); font: inherit; font-size: .95rem; }
 .mm-search button { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border: 0; border-radius: 12px; background: var(--navy-bg); color: #fff; cursor: pointer; }
-html.contrast .search-form input, html.contrast .mm-search input { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
-html.contrast .search-form button, html.contrast .mm-search button { background: #ff0 !important; color: #000 !important; }
+html.contrast .search-form input, html.contrast .mm-search input { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
+html.contrast .search-form button, html.contrast .mm-search button { background: var(--hc-link) !important; color: var(--hc-bg) !important; }
 @media (max-width: 640px) {
   .search-form input, .search-form button { height: 46px; }
   .search-form button { padding: 0 16px; }
@@ -1375,8 +1381,8 @@ html.contrast .search-form button, html.contrast .mm-search button { background:
 .hit-card a { color: var(--navy); font-weight: 600; }
 .hit-card small { color: var(--muted); }
 .hit-more { display: inline-block; margin-top: 8px; font-size: .9rem; }
-html.contrast .hit, html.contrast .hit-card { background: #000 !important; border: 2px solid #fff !important; }
-html.contrast .hit-snip mark, html.contrast .hit-card mark { background: #ff0 !important; color: #000 !important; }
+html.contrast .hit, html.contrast .hit-card { background: var(--hc-bg) !important; border: 2px solid var(--hc-fg) !important; }
+html.contrast .hit-snip mark, html.contrast .hit-card mark { background: var(--hc-link) !important; color: var(--hc-bg) !important; }
 @media (max-width: 640px) { .hit, .hit-card { padding: 14px 16px; } .hit h2 { font-size: 1.02rem; } }
 
 /* фільтри новин і пошуку: теми-кнопки з кількістю, рік, місяць, порядок */
@@ -1405,9 +1411,9 @@ html.contrast .hit-snip mark, html.contrast .hit-card mark { background: #ff0 !i
 /* зі скриптом списки застосовуються одразу; кнопка «Показати» потрібна лише для поля пошуку в новинах */
 .filter-form:not(:has(.filter-q)) .filter-apply { display: none; }
 @media (scripting: none) { .filter-form .filter-apply { display: inline-block !important; } }
-html.contrast .topic-chips a, html.contrast .type-tabs a, html.contrast .filter-field select, html.contrast .filter-field input { background: #000 !important; color: #fff !important; border: 2px solid #fff !important; }
-html.contrast .topic-chips a[aria-current], html.contrast .type-tabs a[aria-current], html.contrast .filter-apply { background: #ff0 !important; color: #000 !important; border-color: #ff0 !important; }
-html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria-current] span { color: #000 !important; }
+html.contrast .topic-chips a, html.contrast .type-tabs a, html.contrast .filter-field select, html.contrast .filter-field input { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
+html.contrast .topic-chips a[aria-current], html.contrast .type-tabs a[aria-current], html.contrast .filter-apply { background: var(--hc-link) !important; color: var(--hc-bg) !important; border-color: var(--hc-link) !important; }
+html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria-current] span { color: var(--hc-bg) !important; }
 @media (max-width: 640px) {
   /* на телефоні теми гортаються вбік одним рядком */
   .topic-chips, .type-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
@@ -1453,8 +1459,8 @@ html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria
   .with-filters .hits, .with-filters .hit-extras { max-width: none; }
 }
 @media (min-width: 1000px) and (max-width: 1240px) { .with-filters .news-grid { grid-template-columns: 1fr 1fr; } }
-html.contrast .filters-side { background: #000 !important; border: 2px solid #fff !important; }
-html.contrast .list-progress { background: #ff0 !important; }
+html.contrast .filters-side { background: var(--hc-bg) !important; border: 2px solid var(--hc-fg) !important; }
+html.contrast .list-progress { background: var(--hc-link) !important; }
 @media (prefers-reduced-motion: reduce) { .list-progress { animation: none; transform: scaleX(.85); } }
 
 /* документи на сторінках: картка, що розгортається натисканням будь-де на заголовку й показує PDF */
@@ -1487,9 +1493,9 @@ html.contrast .list-progress { background: #ff0 !important; }
 .doc-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .doc-btn { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 12px; background: var(--navy-bg); color: #fff !important; font-weight: 700; }
 .doc-btn.ghost { background: var(--card); color: var(--navy) !important; border: 1px solid var(--line); }
-html.contrast .doc-card, html.contrast .doc-head, html.contrast .doc-ico, html.contrast .doc-state, html.contrast .doc-noinline { background: #000 !important; color: #fff !important; border-color: #fff !important; }
-html.contrast .doc-card.is-open .doc-state { background: #ff0 !important; color: #000 !important; }
-html.contrast .doc-dl { color: #ff0 !important; border-color: #fff !important; }
+html.contrast .doc-card, html.contrast .doc-head, html.contrast .doc-ico, html.contrast .doc-state, html.contrast .doc-noinline { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border-color: var(--hc-fg) !important; }
+html.contrast .doc-card.is-open .doc-state { background: var(--hc-link) !important; color: var(--hc-bg) !important; }
+html.contrast .doc-dl { color: var(--hc-link) !important; border-color: var(--hc-fg) !important; }
 @media (max-width: 640px) {
   .doc-head { gap: 10px; padding: 12px; }
   .doc-ico { width: 36px; height: 36px; }
@@ -1519,8 +1525,8 @@ html.contrast .doc-dl { color: #ff0 !important; border-color: #fff !important; }
 .side-hot-2 b { color: var(--on-yellow); }
 .side-hot-2 .side-hot-label, .side-hot-2 span:last-child { opacity: 1; }
 .side-hot-2:hover { background: #f2c900; }
-html.contrast .side-hot-2 { background: #000 !important; color: #fff !important; }
-html.contrast .side-hot-2 b { color: #ff0 !important; }
+html.contrast .side-hot-2 { background: var(--hc-bg) !important; color: var(--hc-fg) !important; }
+html.contrast .side-hot-2 b { color: var(--hc-link) !important; }
 
 /* підвал: телефони, месенджери, бот, адреса — клікабельні; підкреслення показує, що це посилання */
 footer p a { color: inherit; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .3); text-underline-offset: 3px; transition: color .15s, text-decoration-color .15s; }
@@ -1528,7 +1534,7 @@ footer p a:hover { color: var(--yellow); text-decoration-color: var(--yellow); }
 a.foot-hot { display: inline-block; text-decoration: none; }
 a.foot-hot:hover { color: #fff; }
 footer a:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; border-radius: 4px; }
-html.contrast footer p a, html.contrast a.foot-hot { color: #ff0 !important; text-decoration-color: #ff0 !important; }
+html.contrast footer p a, html.contrast a.foot-hot { color: var(--hc-link) !important; text-decoration-color: var(--hc-link) !important; }
 /* номер телефону в синьому блоці «виділена цифра» — світлий, як і текст блоку */
 .prose-stat .tel-link { color: #fff; font-weight: 700; text-decoration-color: rgba(255, 255, 255, .45); }
 .prose-stat .tel-link:hover { color: var(--yellow); text-decoration-color: var(--yellow); }
@@ -1612,3 +1618,55 @@ html.contrast footer p a, html.contrast a.foot-hot { color: #ff0 !important; tex
   & .doc-type { background: #4a1f1c; color: #ffb4a8; }
   & .ua-regions path:hover { fill: #36597f; }
 }
+
+/* ===================== Версія для людей з порушенням зору: панель налаштувань =====================
+   Кнопка з окулярами в шапці / мобільному меню → панель (компонент A11yPanel). */
+.tool-a11y[data-active] { background: var(--yellow); color: var(--on-yellow); border-color: var(--yellow); }
+.a11y-layer { position: fixed; inset: 0; z-index: 9000; }
+.a11y-overlay { position: absolute; inset: 0; background: rgba(6, 20, 36, .45); }
+.a11y-panel {
+  position: absolute; top: calc(var(--bar-h) + 8px); right: max(16px, calc((100vw - 1240px) / 2));
+  width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--bar-h) - 24px); overflow-y: auto;
+  background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(6, 20, 36, .35); padding: 18px 20px 20px; display: grid; gap: 14px;
+}
+.a11y-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.a11y-head h2 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 800; color: var(--navy-ink); line-height: 1.25; }
+.a11y-close { flex: none; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--sky); color: var(--navy); font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.a11y-group { margin: 0; padding: 0; border: 0; display: grid; gap: 8px; }
+.a11y-group legend { padding: 0; margin-bottom: 8px; font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.a11y-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.a11y-opt {
+  flex: 1 1 auto; min-height: 46px; padding: 8px 14px; border-radius: 12px; border: 2px solid var(--line);
+  background: var(--sky); color: var(--navy-ink); font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer;
+}
+.a11y-opt:hover { border-color: var(--navy); }
+.a11y-opt[aria-pressed="true"] { border-color: var(--navy); box-shadow: inset 0 0 0 2px var(--navy); }
+.a11y-opt:disabled { opacity: .45; cursor: default; }
+.a11y-val { min-width: 64px; text-align: center; font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+/* кнопки колірних схем — у кольорах самої схеми, щоб було видно, що вибираєш */
+.a11y-schemes { display: grid; grid-template-columns: 1fr 1fr; }
+.a11y-opt.sc-dark { background: #000 !important; color: #fff !important; }
+.a11y-opt.sc-light { background: #fff !important; color: #000 !important; }
+.a11y-opt.sc-blue { background: #9dd1ff !important; color: #063462 !important; }
+.a11y-opt.sc-dark[aria-pressed="true"], .a11y-opt.sc-light[aria-pressed="true"], .a11y-opt.sc-blue[aria-pressed="true"] { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.a11y-reset { justify-self: start; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--navy); font: inherit; font-weight: 700; cursor: pointer; }
+.a11y-reset:hover { background: var(--sky); }
+@media (max-width: 640px) {
+  /* на телефоні — панель знизу на всю ширину */
+  .a11y-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 88vh; border-radius: 22px 22px 0 0; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+}
+html.contrast .a11y-panel { border: 2px solid var(--hc-fg) !important; }
+html.contrast .a11y-opt[aria-pressed="true"]:not(.sc-dark):not(.sc-light):not(.sc-blue) { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
+html.contrast .tool-a11y[data-active] { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
+
+/* збільшені інтервали між літерами, словами й рядками */
+html.a11y-spacing body { letter-spacing: .05em; word-spacing: .14em; }
+html.a11y-spacing :is(p, li, dd, td, th, blockquote, summary, label) { line-height: 1.9 !important; }
+html.a11y-spacing :is(h1, h2, h3, h4) { line-height: 1.35 !important; }
+/* зображення: чорно-білі або сховані (логотипи й значки лишаються) */
+html.a11y-img-gray :is(img, video, #flag, .flag-video) { filter: grayscale(1) !important; }
+html.a11y-img-hide :is(main, footer) img:not(.brand img):not(.foot-brand img),
+html.a11y-img-hide :is(main video, #flag, .flag-video, .video-thumb img) { visibility: hidden !important; }
+/* лінії кнопки меню (☰) — кольору тексту схеми, а не тла */
+html.contrast .ti-burger span { background-color: var(--hc-fg) !important; }

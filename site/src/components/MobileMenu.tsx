@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom'
 import type { Dict, Locale } from '@/lib/dictionary'
 import type { MenuItem } from './Header'
 import { IconTheme } from './theme'
+import { IconGlasses } from './A11yPanel'
 import { safeHref } from '@/lib/safeHref'
 
 export type Social = { network?: string | null; label?: string | null; url?: string | null }
@@ -73,8 +74,8 @@ type Props = {
   kicker?: string | null
   locale: Locale
   t: Dict
-  contrast: boolean
-  onContrast: () => void
+  a11yActive: boolean // увімкнено якісь налаштування версії для людей з порушенням зору
+  onA11y: () => void // відкрити панель налаштувань
   dark: boolean
   onTheme: () => void
   onFont: (dir: 1 | -1) => void
@@ -88,7 +89,7 @@ type Props = {
  * Пункти з розділювачами, підменю — акордеоном (відкрите лише одне), поточна сторінка підсвічена;
  * унизу — розмір тексту й мова, соцмережі та контакти.
  */
-export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, locale, t, contrast, onContrast, dark, onTheme, onFont, onLang, contacts, returnFocus }: Props) => {
+export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, locale, t, a11yActive, onA11y, dark, onTheme, onFont, onLang, contacts, returnFocus }: Props) => {
   const pathname = decode(usePathname() || '/')
   const [mounted, setMounted] = useState(false)
   const [expanded, setExpanded] = useState<number | null>(null)
@@ -165,11 +166,8 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
             <button type="button" className="mm-icon-btn theme-toggle" aria-label={t.darkTheme} aria-pressed={dark} onClick={onTheme}>
               <IconTheme size={20} />
             </button>
-            <button type="button" className="mm-icon-btn" aria-label={t.contrast} aria-pressed={contrast} onClick={onContrast}>
-              <svg className="ti ti-contrast" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
-              </svg>
+            <button type="button" className="mm-icon-btn" aria-label={t.a11yTitle} aria-haspopup="dialog" aria-pressed={a11yActive} onClick={onA11y}>
+              <IconGlasses />
             </button>
           </div>
         </div>

@@ -34,7 +34,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             next/script (beforeInteractive) виконує його до «оживлення» сторінки й не викликає попереджень React */}
         <Script id="a11y-init" strategy="beforeInteractive">
           {/* тема: збережений вибір (☾/☀ у шапці) або налаштування пристрою */}
-          {`try{var a=JSON.parse(localStorage.getItem('a11y')||'{}'),d=document.documentElement;if(a.c)d.classList.add('contrast');if(a.fs){d.style.setProperty('--fs',a.fs+'px');d.style.setProperty('--fs-scale',String(a.fs/16))}var t=localStorage.getItem('nartu-theme');d.setAttribute('data-theme',t==='dark'||t==='light'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}`}
+          {/* версія для людей з порушенням зору (див. A11yPanel.applyA11y): схема кольорів, інтервали, зображення, розмір тексту */}
+          {`try{var a=JSON.parse(localStorage.getItem('a11y')||'{}'),d=document.documentElement,k=d.classList;if(a.c){k.add('contrast');if(a.c==='light')k.add('hc-light');if(a.c==='blue')k.add('hc-blue')}if(a.sp)k.add('a11y-spacing');if(a.img==='gray')k.add('a11y-img-gray');if(a.img==='hide')k.add('a11y-img-hide');if(a.fs){d.style.setProperty('--fs',a.fs+'px');d.style.setProperty('--fs-scale',String(a.fs/16))}var t=localStorage.getItem('nartu-theme');d.setAttribute('data-theme',t==='dark'||t==='light'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}`}
         </Script>
         {children}
         <VisitTracker />

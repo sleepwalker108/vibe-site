@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { IconTheme, useTheme } from './theme'
+import { A11yPanel, IconGlasses, useA11y } from './A11yPanel'
 import { A11Y_KEY, LOCALE_COOKIE, type Dict, type Locale } from '@/lib/dictionary'
 import { LanguageSelect } from './LanguageSelect'
 import { MobileMenu, type MenuContacts } from './MobileMenu'
@@ -47,12 +48,6 @@ const IconFont = ({ dir }: { dir: 'up' | 'down' }) => (
     <span className="ti-sign">{dir === 'up' ? '+' : '−'}</span>
   </span>
 )
-const IconContrast = () => (
-  <svg className="ti ti-contrast" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="2" />
-    <path className="ti-half" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
-  </svg>
-)
 // Стрілочка підменю: повертається догори, коли підменю відкрите
 const Caret = () => (
   <svg className="nav-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -71,8 +66,11 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
   const burgerRef = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
   // null — ще не прочитали збережені налаштування (щоб не скинути їх при першому рендері)
-  const [fs, setFs] = useState<number | null>(null)
-  const [contrast, setContrast] = useState<boolean | null>(null)
+  // версія для людей з порушенням зору: розмір тексту, колірна схема, інтервали, зображення (див. A11yPanel)
+  const a11y = useA11y()
+  const fs = a11y.a.fs
+  const [a11yOpen, setA11yOpen] = useState(false)
+  const a11yBtn = useRef<HTMLButtonElement>(null)
   const theme = useTheme()
   const [scrolled, setScrolled] = useState(false)
   // compact — назва біля логотипа сховалась (бракує місця); stacked — меню перенеслось на другий рядок
@@ -137,25 +135,6 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
-  // Налаштування доступності зберігаються в браузері й діють на всіх сторінках
-  useEffect(() => {
-    let saved: { fs?: number; c?: boolean } = {}
-    try {
-      saved = JSON.parse(localStorage.getItem(A11Y_KEY) || '{}')
-    } catch {}
-    setFs(saved.fs || 16)
-    setContrast(!!saved.c)
-  }, [])
-  useEffect(() => {
-    if (fs === null || contrast === null) return
-    const html = document.documentElement
-    html.style.setProperty('--fs', fs + 'px')
-    html.style.setProperty('--fs-scale', String(fs / 16)) // множник для тексту в шапці
-    html.classList.toggle('contrast', contrast)
-    try {
-      localStorage.setItem(A11Y_KEY, JSON.stringify({ fs, c: contrast }))
-    } catch {}
-  }, [fs, contrast])
 
   // Чи вміщується шапка в один рядок за поточного розміру шрифту.
   // Рахуємо «природні» ширини частин, тож результат не залежить від того, що зараз сховано.
@@ -301,17 +280,26 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
               <path d="m16 16 4.5 4.5" />
             </svg>
           </Link>
-          <button className="tool hide-sm" aria-label={t.fontSmaller} onClick={() => setFs((v) => Math.max(14, (v || 16) - 2))}>
+          <button className="tool hide-sm" aria-label={t.fontSmaller} onClick={() => a11y.font(-1)}>
             <IconFont dir="down" />
           </button>
-          <button className="tool hide-sm" aria-label={t.fontBigger} onClick={() => setFs((v) => Math.min(24, (v || 16) + 2))}>
+          <button className="tool hide-sm" aria-label={t.fontBigger} onClick={() => a11y.font(1)}>
             <IconFont dir="up" />
           </button>
           <button className="tool hide-sm theme-toggle" aria-label={t.darkTheme} title={t.darkTheme} aria-pressed={theme.dark} onClick={theme.toggle}>
             <IconTheme />
           </button>
-          <button className="tool hide-sm" aria-label={t.contrast} aria-pressed={!!contrast} onClick={() => setContrast((v) => !v)}>
-            <IconContrast />
+          <button
+            ref={a11yBtn}
+            className="tool hide-sm tool-a11y"
+            aria-label={t.a11yTitle}
+            title={t.a11yTitle}
+            aria-haspopup="dialog"
+            aria-expanded={a11yOpen}
+            data-active={a11y.active || undefined}
+            onClick={() => setA11yOpen((v) => !v)}
+          >
+            <IconGlasses />
           </button>
           <div className="hide-sm">
             <LanguageSelect locale={locale} label={t.language} />
@@ -331,14 +319,18 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
         kicker={kicker}
         locale={locale}
         t={t}
-        contrast={!!contrast}
-        onContrast={() => setContrast((v) => !v)}
+        a11yActive={a11y.active}
+        onA11y={() => {
+          setOpen(false)
+          setA11yOpen(true)
+        }}
         dark={theme.dark}
         onTheme={theme.toggle}
-        onFont={(d) => setFs((v) => Math.min(24, Math.max(14, (v || 16) + d * 2)))}
+        onFont={a11y.font}
         onLang={setLang}
         contacts={contacts}
       />
+      <A11yPanel open={a11yOpen} onClose={() => setA11yOpen(false)} t={t} state={a11y} returnFocus={() => a11yBtn.current?.focus()} />
     </header>
   )
 }
