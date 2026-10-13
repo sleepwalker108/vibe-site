@@ -39,6 +39,9 @@ say "1/6 Резервна копія бази"
 say "2/6 Забираю зміни з GitHub"
 BEFORE=$(sudo -u "$APP_USER" git -C "$APP_DIR" rev-parse HEAD)
 sudo -u "$APP_USER" git -C "$APP_DIR" fetch --quiet origin "$BRANCH"
+# Автоматично згенеровані файли (Payload сам переписує їх при запуску) — повертаємо як у GitHub,
+# інакше git вважає їх «власними змінами на сервері» й відмовляється оновлюватись
+sudo -u "$APP_USER" git -C "$APP_DIR" checkout -- site/src/payload-types.ts "site/src/app/(payload)/admin/importMap.js" 2>/dev/null || true
 sudo -u "$APP_USER" git -C "$APP_DIR" merge --ff-only "origin/$BRANCH" || fail "Не вдалося оновити код (на сервері є власні зміни?). Нічого не змінено."
 AFTER=$(sudo -u "$APP_USER" git -C "$APP_DIR" rev-parse HEAD)
 if [ "$BEFORE" = "$AFTER" ] && [ "${FORCE:-0}" != "1" ]; then

@@ -87,6 +87,9 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
+    // типи оновлюються вручну (npm run generate:types) разом зі змінами в коді: якщо Payload переписує файл сам,
+    // на сервері з'являються «власні зміни», і nartu-update відмовляється оновлюватись
+    autoGenerate: false,
   },
   db: sqliteAdapter({
     // Структура бази змінюється лише міграціями (src/migrations):
