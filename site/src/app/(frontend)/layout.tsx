@@ -33,7 +33,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Вмикаємо збережені налаштування доступності ще до показу сторінки — без блимання.
             next/script (beforeInteractive) виконує його до «оживлення» сторінки й не викликає попереджень React */}
         <Script id="a11y-init" strategy="beforeInteractive">
-          {`try{var a=JSON.parse(localStorage.getItem('a11y')||'{}'),d=document.documentElement;if(a.c)d.classList.add('contrast');if(a.fs){d.style.setProperty('--fs',a.fs+'px');d.style.setProperty('--fs-scale',String(a.fs/16))}}catch(e){}`}
+          {/* тема: збережений вибір (☾/☀ у шапці) або налаштування пристрою */}
+          {`try{var a=JSON.parse(localStorage.getItem('a11y')||'{}'),d=document.documentElement;if(a.c)d.classList.add('contrast');if(a.fs){d.style.setProperty('--fs',a.fs+'px');d.style.setProperty('--fs-scale',String(a.fs/16))}var t=localStorage.getItem('nartu-theme');d.setAttribute('data-theme',t==='dark'||t==='light'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}`}
         </Script>
         {children}
         <VisitTracker />

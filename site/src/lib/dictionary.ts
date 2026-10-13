@@ -25,6 +25,7 @@ const uk = {
   fontSmaller: 'Зменшити шрифт',
   fontBigger: 'Збільшити шрифт',
   contrast: 'Висококонтрастний режим',
+  darkTheme: 'Темна тема',
   menu: 'Меню',
   language: 'Мова сайту',
   // підвал
@@ -153,6 +154,7 @@ const en: typeof uk = {
   fontSmaller: 'Decrease font size',
   fontBigger: 'Increase font size',
   contrast: 'High contrast mode',
+  darkTheme: 'Dark theme',
   menu: 'Menu',
   language: 'Site language',
   schedule: 'Working hours',

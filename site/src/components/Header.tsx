@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { IconTheme, useTheme } from './theme'
 import { A11Y_KEY, LOCALE_COOKIE, type Dict, type Locale } from '@/lib/dictionary'
 import { LanguageSelect } from './LanguageSelect'
 import { MobileMenu, type MenuContacts } from './MobileMenu'
@@ -72,6 +73,7 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
   // null — ще не прочитали збережені налаштування (щоб не скинути їх при першому рендері)
   const [fs, setFs] = useState<number | null>(null)
   const [contrast, setContrast] = useState<boolean | null>(null)
+  const theme = useTheme()
   const [scrolled, setScrolled] = useState(false)
   // compact — назва біля логотипа сховалась (бракує місця); stacked — меню перенеслось на другий рядок
   const [fit, setFit] = useState<{ compact: boolean; stacked: boolean }>({ compact: false, stacked: false })
@@ -305,6 +307,9 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
           <button className="tool hide-sm" aria-label={t.fontBigger} onClick={() => setFs((v) => Math.min(24, (v || 16) + 2))}>
             <IconFont dir="up" />
           </button>
+          <button className="tool hide-sm theme-toggle" aria-label={t.darkTheme} title={t.darkTheme} aria-pressed={theme.dark} onClick={theme.toggle}>
+            <IconTheme />
+          </button>
           <button className="tool hide-sm" aria-label={t.contrast} aria-pressed={!!contrast} onClick={() => setContrast((v) => !v)}>
             <IconContrast />
           </button>
@@ -328,6 +333,8 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
         t={t}
         contrast={!!contrast}
         onContrast={() => setContrast((v) => !v)}
+        dark={theme.dark}
+        onTheme={theme.toggle}
         onFont={(d) => setFs((v) => Math.min(24, Math.max(14, (v || 16) + d * 2)))}
         onLang={setLang}
         contacts={contacts}

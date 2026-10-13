@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Dict, Locale } from '@/lib/dictionary'
 import type { MenuItem } from './Header'
+import { IconTheme } from './theme'
 import { safeHref } from '@/lib/safeHref'
 
 export type Social = { network?: string | null; label?: string | null; url?: string | null }
@@ -74,6 +75,8 @@ type Props = {
   t: Dict
   contrast: boolean
   onContrast: () => void
+  dark: boolean
+  onTheme: () => void
   onFont: (dir: 1 | -1) => void
   onLang: (code: Locale) => void
   contacts: MenuContacts
@@ -85,7 +88,7 @@ type Props = {
  * Пункти з розділювачами, підменю — акордеоном (відкрите лише одне), поточна сторінка підсвічена;
  * унизу — розмір тексту й мова, соцмережі та контакти.
  */
-export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, locale, t, contrast, onContrast, onFont, onLang, contacts, returnFocus }: Props) => {
+export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, locale, t, contrast, onContrast, dark, onTheme, onFont, onLang, contacts, returnFocus }: Props) => {
   const pathname = decode(usePathname() || '/')
   const [mounted, setMounted] = useState(false)
   const [expanded, setExpanded] = useState<number | null>(null)
@@ -158,6 +161,9 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
                 <path d="M6 6l12 12M18 6 6 18" />
               </svg>
+            </button>
+            <button type="button" className="mm-icon-btn theme-toggle" aria-label={t.darkTheme} aria-pressed={dark} onClick={onTheme}>
+              <IconTheme size={20} />
             </button>
             <button type="button" className="mm-icon-btn" aria-label={t.contrast} aria-pressed={contrast} onClick={onContrast}>
               <svg className="ti ti-contrast" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
