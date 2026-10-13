@@ -166,7 +166,7 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
             <button type="button" className="mm-icon-btn theme-toggle" aria-label={t.darkTheme} aria-pressed={dark} onClick={onTheme}>
               <IconTheme size={20} />
             </button>
-            <button type="button" className="mm-icon-btn" aria-label={t.a11yTitle} aria-haspopup="dialog" aria-pressed={a11yActive} onClick={onA11y}>
+            <button type="button" className="mm-icon-btn" aria-label={t.a11yTitle} aria-haspopup="dialog" data-a11y-toggle aria-pressed={a11yActive} onClick={onA11y}>
               <IconGlasses />
             </button>
           </div>

@@ -1622,13 +1622,13 @@ html.contrast footer p a, html.contrast a.foot-hot { color: var(--hc-link) !impo
 /* ===================== Версія для людей з порушенням зору: панель налаштувань =====================
    Кнопка з окулярами в шапці / мобільному меню → панель (компонент A11yPanel). */
 .tool-a11y[data-active] { background: var(--yellow); color: var(--on-yellow); border-color: var(--yellow); }
-.a11y-layer { position: fixed; inset: 0; z-index: 9000; }
-.a11y-overlay { position: absolute; inset: 0; background: rgba(6, 20, 36, .45); }
+/* без затемнення сторінки: зміни видно одразу, поки панель відкрита */
 .a11y-panel {
-  position: absolute; top: calc(var(--bar-h) + 8px); right: max(16px, calc((100vw - 1240px) / 2));
+  position: fixed; z-index: 9000; top: calc(var(--bar-h) + 8px); right: max(16px, calc((100vw - 1240px) / 2));
   width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--bar-h) - 24px); overflow-y: auto;
   background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 20px;
   box-shadow: 0 24px 60px rgba(6, 20, 36, .35); padding: 18px 20px 20px; display: grid; gap: 14px;
+  animation: a11y-in .18s ease-out;
 }
 .a11y-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .a11y-head h2 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 800; color: var(--navy-ink); line-height: 1.25; }
@@ -1652,11 +1652,16 @@ html.contrast footer p a, html.contrast a.foot-hot { color: var(--hc-link) !impo
 .a11y-opt.sc-dark[aria-pressed="true"], .a11y-opt.sc-light[aria-pressed="true"], .a11y-opt.sc-blue[aria-pressed="true"] { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .a11y-reset { justify-self: start; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--navy); font: inherit; font-weight: 700; cursor: pointer; }
 .a11y-reset:hover { background: var(--sky); }
+@keyframes a11y-in { from { opacity: 0; transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .a11y-panel { animation: none; } }
 @media (max-width: 640px) {
-  /* на телефоні — панель знизу на всю ширину */
-  .a11y-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 88vh; border-radius: 22px 22px 0 0; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+  /* на телефоні — панель знизу на всю ширину, компактніша, щоб над нею було видно сторінку */
+  .a11y-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 62vh; gap: 10px; padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+    border-radius: 22px 22px 0 0; box-shadow: 0 -12px 40px rgba(6, 20, 36, .3); }
+  .a11y-opt { min-height: 42px; padding: 6px 10px; font-size: .88rem; }
+  .a11y-group legend { margin-bottom: 4px; }
 }
-html.contrast .a11y-panel { border: 2px solid var(--hc-fg) !important; }
+html.contrast .a11y-panel { border: 3px solid var(--hc-fg) !important; outline: 3px solid var(--hc-bg); }
 html.contrast .a11y-opt[aria-pressed="true"]:not(.sc-dark):not(.sc-light):not(.sc-blue) { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
 html.contrast .tool-a11y[data-active] { background-color: var(--hc-link) !important; color: var(--hc-bg) !important; }
 

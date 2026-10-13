@@ -296,6 +296,7 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
             title={t.a11yTitle}
             aria-haspopup="dialog"
             aria-expanded={a11yOpen}
+            data-a11y-toggle
             data-active={a11y.active || undefined}
             onClick={() => setA11yOpen((v) => !v)}
           >
