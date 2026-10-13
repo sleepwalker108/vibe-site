@@ -319,7 +319,7 @@
   .dc-num { font-size: 1.5rem; font-weight: 800; color: var(--navy); font-variant-numeric: tabular-nums; }
   .dc-label { font-size: .8rem; color: var(--muted); font-weight: 600; }
   .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .legend li { display: grid; grid-template-columns: 12px 1fr auto; gap: 10px; align-items: center; font-size: .92rem; }
+  .legend li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: .92rem; }
   .sw { width: 12px; height: 12px; border-radius: 4px; }
   .lg-name { color: var(--ink); }
   .lg-val { font-weight: 800; color: var(--navy-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -1161,7 +1161,7 @@ html.contrast .bar-rank, html.contrast .bars-toggle { background: var(--hc-bg) !
   .tpk-bar { display: flex; gap: 2px; height: 10px; border-radius: 6px; overflow: hidden; background: var(--card); margin-bottom: 10px; }
   .tpk-bar span { min-width: 3px; transition: flex-grow .4s ease; }
   .tpk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-  .tpk-list li { display: grid; grid-template-columns: 12px 1fr auto 38px; align-items: center; gap: 8px; padding: 7px 8px; background: var(--card); border-radius: 10px; font-size: calc(.8rem * var(--fs-scale)); line-height: 1.3; }
+  .tpk-list li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto minmax(38px, auto); align-items: center; gap: 8px; padding: 7px 8px; background: var(--card); border-radius: 10px; font-size: calc(.8rem * var(--fs-scale)); line-height: 1.3; }
   .tpk-list li.is-zero { opacity: .5; }
   .tpk-list i { width: 12px; height: 12px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
   .tpk-label { color: var(--ink); }
@@ -1413,7 +1413,7 @@ html.contrast .hit-snip mark, html.contrast .hit-card mark { background: var(--h
 @media (scripting: none) { .filter-form .filter-apply { display: inline-block !important; } }
 html.contrast .topic-chips a, html.contrast .type-tabs a, html.contrast .filter-field select, html.contrast .filter-field input { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
 html.contrast .topic-chips a[aria-current], html.contrast .type-tabs a[aria-current], html.contrast .filter-apply { background: var(--hc-link) !important; color: var(--hc-bg) !important; border-color: var(--hc-link) !important; }
-html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria-current] span { color: var(--hc-bg) !important; }
+html.contrast .topic-chips a[aria-current] span, html.contrast .type-tabs a[aria-current] span { color: var(--hc-bg) !important; background-color: transparent !important; border: 1px solid var(--hc-bg) !important; }
 @media (max-width: 640px) {
   /* на телефоні теми гортаються вбік одним рядком */
   .topic-chips, .type-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
@@ -1560,7 +1560,7 @@ html.contrast footer p a, html.contrast a.foot-hot { color: var(--hc-link) !impo
   --muted: #a3b5c8;
   --navy: #8cc3ff; /* акцентний текст і значки — світло-блакитні */
   --navy-ink: #f1f5fa; /* заголовки */
-  --navy-bg: #17609f; /* сині кнопки й блоки */
+  --navy-bg: #145891; /* сині кнопки й блоки */
   --navy-deep: #07131f; /* підвал */
   --zebra: #142a42;
   --warm: #1a2c40;
@@ -1572,7 +1572,7 @@ html.contrast footer p a, html.contrast a.foot-hot { color: var(--hc-link) !impo
   :root:not([data-theme]):not(.contrast) {
     color-scheme: dark;
     --page: #0b1828; --card: #12243a; --sky: #15293f; --sky-2: #1f3a59; --line: #26405e;
-    --ink: #e6edf5; --muted: #a3b5c8; --navy: #8cc3ff; --navy-ink: #f1f5fa; --navy-bg: #17609f;
+    --ink: #e6edf5; --muted: #a3b5c8; --navy: #8cc3ff; --navy-ink: #f1f5fa; --navy-bg: #145891;
     --navy-deep: #07131f; --zebra: #142a42; --warm: #1a2c40; --warm-2: #0e1f33; --topbar: rgba(11, 24, 40, .92);
   }
 }
@@ -1675,3 +1675,12 @@ html.a11y-img-hide :is(main, footer) img:not(.brand img):not(.foot-brand img),
 html.a11y-img-hide :is(main video, #flag, .flag-video, .video-thumb img) { visibility: hidden !important; }
 /* лінії кнопки меню (☰) — кольору тексту схеми, а не тла */
 html.contrast .ti-burger span { background-color: var(--hc-fg) !important; }
+/* довгі слова, адреси пошти й посилання переносяться, коли не вміщуються в рядок
+   (особливо при великому тексті й збільшених інтервалах у версії для людей з порушенням зору) */
+body { overflow-wrap: break-word; }
+.hero-inner, .prose, .page-head, footer, .side-nav, .side-hot { overflow-wrap: anywhere; }
+html.a11y-spacing .hero h1 { letter-spacing: .02em; }
+/* великий текст (версія для людей з порушенням зору) на телефоні: блоки звіту й мапи не ширші за екран —
+   елементи сіток можуть стискатися, плашка періоду переноситься */
+.report-grid > *, .report-kpis > *, .rcol > *, .terr-grid > *, .terr-panel > * { min-width: 0; }
+@media (max-width: 640px) { .period { white-space: normal; max-width: 100%; } }
