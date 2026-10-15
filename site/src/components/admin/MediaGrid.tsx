@@ -1,5 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { MediaDrop } from './MediaDrop'
 
 // Медіатека «плитками», як у WordPress: перемикач «Плитки / Список» над таблицею,
 // фільтр за типом файлу, сортування й пошук за назвою. Вибір вигляду запам’ятовується в браузері.
@@ -113,6 +115,13 @@ export const MediaGrid = () => {
     if (view === 'grid') load(1)
   }, [view, load])
 
+  // після завантаження нових файлів — оновити і плитки, і стандартну таблицю
+  const router = useRouter()
+  const onUploaded = useCallback(() => {
+    if (view === 'grid') load(1)
+    router.refresh()
+  }, [view, load, router])
+
   return (
     <div className="mg">
       <style>{CSS}</style>
@@ -120,6 +129,7 @@ export const MediaGrid = () => {
       {view === 'grid' && (
         <style>{`.collection-list__tables, .collection-list .page-controls, .collection-list .list-controls { display: none !important; }`}</style>
       )}
+      <MediaDrop onUploaded={onUploaded} />
       <div className="mg-bar">
         <div className="mg-toggle" role="group" aria-label="Вигляд медіатеки">
           <button type="button" className={view === 'grid' ? 'on' : ''} aria-pressed={view === 'grid'} onClick={() => choose('grid')}>
