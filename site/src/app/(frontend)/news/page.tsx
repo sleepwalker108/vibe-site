@@ -5,8 +5,7 @@ import { ListNav } from '@/components/ListNav'
 import { NewsFilters } from '@/components/NewsFilters'
 import { Pager } from '@/components/Pager'
 import { SiteShell } from '@/components/SiteShell'
-import { getClient, isDraftMode, mediaUrl, publishedOnly } from '@/lib/payload'
-import { PrefetchImages } from '@/components/PrefetchImages'
+import { getClient, isDraftMode, publishedOnly } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
 import {
   newsSort,
@@ -54,12 +53,11 @@ export default async function NewsPage({ searchParams }: Props) {
     ...periodWhere(filter),
     ...(words.length ? [searchWhere(words)] : []),
   ]
-  const where: Where = { and: [...base, ...topicWhere(filter.topic)] }
-  const [news, counts, years, next] = await Promise.all([
+  const [news, counts, years] = await Promise.all([
     payload.find({
       collection: 'news',
       draft,
-      where,
+      where: { and: [...base, ...topicWhere(filter.topic)] },
       sort: newsSort(filter),
       limit: 12,
       page,
@@ -77,10 +75,7 @@ export default async function NewsPage({ searchParams }: Props) {
     }),
     topicCounts(payload, base, topics),
     newsYears(payload, [publishedOnly(draft) || {}]),
-    // обкладинки наступної сторінки — щоб браузер завантажив їх заздалегідь (PrefetchImages)
-    payload.find({ collection: 'news', draft, where, sort: newsSort(filter), limit: 12, page: page + 1, depth: 1, select: { cover: true }, pagination: true, ...localeQuery(locale) }),
   ])
-  const nextImages = next.docs.map((n) => mediaUrl(n.cover, 'card')).filter((u): u is string => !!u)
 
   return (
     <SiteShell draft={draft}>
@@ -119,7 +114,6 @@ export default async function NewsPage({ searchParams }: Props) {
             ) : (
               <p className="search-note">{t.newsNothing}</p>
             )}
-            <PrefetchImages urls={nextImages} />
             <Pager
               path="/news"
               sp={sp}
