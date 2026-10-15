@@ -7,6 +7,7 @@ import { safeHref } from '@/lib/safeHref'
 import { normalizeContent } from '@/fields/normalizeHeadings'
 import { DocCard, type DocLabels } from './DocCard'
 import { ResourceIcon } from './ResourceIcon'
+import { findLinkGroups, type LinkInfo, type LinkItem } from '@/lib/linkCards'
 
 const OLD_SITE = 'https://dp-reintegration.gov.ua'
 const FILE = /\.(pdf|docx?|xlsx?|pptx?|odt|ods|zip|rar)([?#]|$)/i
@@ -56,7 +57,7 @@ const PhoneText = ({ text }: { text: string }) => (
   </>
 )
 
-export type ProseLabels = DocLabels & { newTab: string }
+export type ProseLabels = DocLabels & { newTab: string; yearLatest: string; docsForms: string; docsNone: string; updatedOn: string }
 
 const DOC = /\.(pdf|docx?|xlsx?|pptx?|odt|ods)([?#]|$)/i
 const plain = (n: any): string => (n?.text || '') + (n?.children || []).map(plain).join('')
@@ -75,9 +76,56 @@ const docOf = (node: any): { url: string; title: string } | null => {
   return { url: url.replace(/^http:\/\/(www\.)?dp-reintegration\.gov\.ua/i, 'https://dp-reintegration.gov.ua'), title: plain(k).trim() || url.split('/').pop() || url }
 }
 
+// 1 документ, 2 документи, 5 документів
+const plural = (n: number, forms: string) => {
+  const [one, few, many] = forms.split('|')
+  const m10 = n % 10
+  const m100 = n % 100
+  return `${n} ${m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many}`
+}
+const yearOf = (s: string) => s.match(/\b(19|20)\d{2}\b/)?.[0]
+
+// Картки років: рядки-посилання на сторінки за роками («Звіт за 2025 рік», «2025 рік»)
+const LinkCards = ({ items, links, labels }: { items: LinkItem[]; links: LinkInfo; labels: ProseLabels }) => {
+  const withYear = items.map((it) => ({ ...it, year: yearOf(it.text) || yearOf(it.slug) }))
+  // якщо в усіх є рік — найновіший першим
+  const sorted = withYear.every((it) => it.year) ? [...withYear].sort((a, b) => Number(b.year) - Number(a.year)) : withYear
+  const latest = sorted[0]?.year && sorted.every((it) => it.year) ? sorted[0].href : null
+  return (
+    <ul className="year-cards">
+      {sorted.map((it) => {
+        const info = links[it.slug]
+        // «2025 рік» — замало; тоді показуємо назву сторінки («Закупівлі 2025 рік»)
+        const title = it.year && it.text.replace(it.year, '').replace(/рік|year/i, '').trim().length < 2 && info?.title ? info.title : it.text
+        const date = info?.updatedAt ? new Date(info.updatedAt).toLocaleDateString('uk-UA') : ''
+        return (
+          <li key={it.href}>
+            <a className={`year-card${latest === it.href ? ' is-latest' : ''}`} href={it.href}>
+              {latest === it.href && <span className="yc-badge">{labels.yearLatest}</span>}
+              <span className="yc-ico" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                </svg>
+              </span>
+              {it.year && <span className="yc-year">{it.year}</span>}
+              <span className="yc-title">{title}</span>
+              <span className="yc-meta">
+                {info ? (info.docs ? plural(info.docs, labels.docsForms) : labels.docsNone) : ''}
+                {info && date && latest === it.href ? ` · ${labels.updatedOn} ${date}` : ''}
+              </span>
+              <span className="yc-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 // Як показувати блоки з редактора на сайті
-const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaultConverters }) => ({
+const makeConverters = (labels: ProseLabels, links: LinkInfo = {}): JSXConvertersFunction => ({ defaultConverters }) => ({
   ...defaultConverters,
+  linkcards: ({ node }: { node: { items: LinkItem[] } }) => <LinkCards items={node.items} links={links} labels={labels} />,
   paragraph: (args: any) => {
     const doc = docOf(args.node)
     if (doc) return <DocCard url={doc.url} title={doc.title} labels={labels} />
@@ -161,8 +209,28 @@ const makeConverters = (labels: ProseLabels): JSXConvertersFunction => ({ defaul
 })
 
 // Текст сторінки чи новини, оформлений стилями .prose
-export const Prose = ({ data, labels }: { data: SerializedEditorState; labels: ProseLabels }) => (
+// Рядки-посилання на сторінки (2+ поспіль) — замінюємо одним вузлом «картки років»
+const withLinkCards = (data: SerializedEditorState): SerializedEditorState => {
+  const children = (data?.root?.children || []) as any[]
+  const groups = findLinkGroups(children)
+  if (!groups.length) return data
+  const out: any[] = []
+  let gi = 0
+  for (let i = 0; i < children.length; i++) {
+    const g = groups[gi]
+    if (g && i === g.start) {
+      out.push({ type: 'linkcards', version: 1, items: g.items })
+      i = g.end
+      gi++
+    } else out.push(children[i])
+  }
+  return { ...data, root: { ...data.root, children: out } } as SerializedEditorState
+}
+
+// Текст сторінки чи новини, оформлений стилями .prose
+// links — дані про сторінки, на які ведуть картки років (скільки документів, коли оновлено)
+export const Prose = ({ data, labels, links }: { data: SerializedEditorState; labels: ProseLabels; links?: LinkInfo }) => (
   <div className="prose">
-    <RichText data={normalizeContent(data)} converters={makeConverters(labels)} />
+    <RichText data={withLinkCards(normalizeContent(data))} converters={makeConverters(labels, links)} />
   </div>
 )

@@ -1684,3 +1684,37 @@ html.a11y-spacing .hero h1 { letter-spacing: .02em; }
    елементи сіток можуть стискатися, плашка періоду переноситься */
 .report-grid > *, .report-kpis > *, .rcol > *, .terr-grid > *, .terr-panel > * { min-width: 0; }
 @media (max-width: 640px) { .period { white-space: normal; max-width: 100%; } }
+
+/* ===================== Картки років на сторінках-розділах =====================
+   «Фінансова звітність», «Закупівлі», «Звіти діяльності»: рядки-посилання на сторінки за роками → картки
+   (Prose → LinkCards). Найновіший рік — першим і виділений синім. */
+.prose .year-cards { list-style: none; margin: 4px 0 28px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.prose .year-cards li { margin: 0; padding: 0; }
+.prose a.year-card {
+  position: relative; display: grid; align-content: start; gap: 6px; height: 100%; min-height: 190px; padding: 22px 22px 64px;
+  border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink);
+  font-weight: 400; text-decoration: none; transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.prose a.year-card:hover, .prose a.year-card:focus-visible { border-color: var(--navy); box-shadow: 0 14px 34px rgba(10, 36, 64, .12); transform: translateY(-3px); }
+.yc-ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--sky); color: var(--navy); margin-bottom: 6px; }
+.yc-year { font-size: 2.4rem; font-weight: 800; line-height: 1; color: var(--navy); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.yc-title { font-weight: 700; color: var(--navy-ink); line-height: 1.3; }
+.yc-meta { font-size: .85rem; color: var(--muted); }
+.yc-arrow { position: absolute; right: 20px; bottom: 18px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--sky); color: var(--navy); font-size: 1.1rem; font-weight: 700; transition: background-color .2s, color .2s, transform .2s; }
+.prose a.year-card:hover .yc-arrow { background: var(--navy-bg); color: #fff; transform: translateX(3px); }
+/* найновіший рік */
+.prose a.year-card.is-latest { background: linear-gradient(145deg, var(--navy-bg), var(--navy-deep)); border-color: transparent; color: #fff; }
+.year-card.is-latest .yc-ico { background: rgba(255, 255, 255, .14); color: #fff; }
+.year-card.is-latest .yc-year { color: var(--yellow); }
+.year-card.is-latest .yc-title { color: #fff; }
+.year-card.is-latest .yc-meta { color: rgba(255, 255, 255, .78); }
+.year-card.is-latest .yc-arrow { background: var(--yellow); color: var(--on-yellow); }
+.prose a.year-card.is-latest:hover .yc-arrow { background: #fff; color: var(--on-yellow); }
+.yc-badge { position: absolute; top: 18px; right: 18px; padding: 4px 10px; border-radius: 999px; background: var(--yellow); color: var(--on-yellow); font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) { .prose a.year-card, .yc-arrow { transition: none; } .prose a.year-card:hover { transform: none; } }
+@media (max-width: 640px) { .prose .year-cards { grid-template-columns: 1fr 1fr; gap: 10px; } .prose a.year-card { min-height: 160px; padding: 16px 16px 56px; } .yc-year { font-size: 1.9rem; } .yc-badge { top: 12px; right: 12px; } }
+@media (max-width: 380px) { .prose .year-cards { grid-template-columns: 1fr; } }
+html.contrast .prose a.year-card { border: 2px solid var(--hc-fg) !important; }
+html.contrast .year-card .yc-arrow, html.contrast .year-card .yc-ico { border: 2px solid var(--hc-fg) !important; }
+/* сторінка без вмісту */
+.page-empty { margin: 0; padding: 22px 24px; border-radius: 18px; background: var(--sky); color: var(--navy-ink); font-weight: 600; }
