@@ -51,20 +51,14 @@ export const MediaLinks = () => {
   const doc = (savedDocumentData || initialData || {}) as MediaDoc
   const [usage, setUsage] = useState<Usage[] | null>(null)
 
-  // Де використовується файл: обкладинки новин, відео (файл або обкладинка)
+  // Де використовується файл — уся база: поля-файли, файли й посилання в текстах, головна, меню (lib/mediaUsage.ts)
   useEffect(() => {
     if (!id) return
-    const q = (path: string) => fetch(path, { credentials: 'include' }).then((r) => (r.ok ? r.json() : { docs: [] }))
-    Promise.all([
-      q(`/api/news?where[cover][equals]=${id}&depth=0&limit=50&select[title]=true&trash=false`),
-      q(`/api/videos?where[or][0][file][equals]=${id}&where[or][1][poster][equals]=${id}&depth=0&limit=50&select[title]=true`),
-    ])
-      .then(([news, videos]) => {
-        setUsage([
-          ...news.docs.map((d: any) => ({ label: `Новина: ${d.title || '(без назви)'}`, href: `/admin/collections/news/${d.id}` })),
-          ...videos.docs.map((d: any) => ({ label: `Відео: ${d.title || '(без назви)'}`, href: `/admin/collections/videos/${d.id}` })),
-        ])
-      })
+    fetch(`/api/media-usage?ids=${id}`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((res: Record<string, { label: string; title?: string; href: string }[]>) =>
+        setUsage((res[String(id)] || []).map((u) => ({ label: u.title ? `${u.label}: ${u.title}` : u.label, href: u.href }))),
+      )
       .catch(() => setUsage([]))
   }, [id])
 
@@ -142,7 +136,7 @@ export const MediaLinks = () => {
           ))}
         </ul>
       ) : (
-        <p className="ml-note">Не знайдено серед обкладинок новин і відео. Файл може бути вставлено посиланням у текст сторінки.</p>
+        <p className="ml-note">Ніде на сайті не використовується — його можна безпечно видалити.</p>
       )}
     </div>
   )

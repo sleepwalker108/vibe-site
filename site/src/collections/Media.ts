@@ -5,6 +5,7 @@ import { enqueueVideo } from '../lib/videoOptimize'
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: 'Файл', plural: 'Медіатека' },
+  trash: true, // видалені файли потрапляють у кошик (на сайті їх уже немає), їх можна відновити
   admin: {
     // кнопка «Скасувати» біля збереження/публікації
     components: {
@@ -22,7 +23,8 @@ export const Media: CollectionConfig = {
     // Самі файли (/api/media/file/…) доступні всім — вони на сторінках сайту. А перелік медіатеки через API
     // бачать лише ті, хто увійшов: інакше можна було б знайти файли, завантажені для ще не опублікованих сторінок.
     // (Сайт отримує картинки напряму з бази, без цього переліку.)
-    read: ({ req }) => Boolean(req.user) || /\/api\/media\/file\//.test(req.url || ''),
+    // Файли з кошика відвідувачам не віддаються — видалений файл зникає з сайту (але його можна відновити).
+    read: ({ req }) => (req.user ? true : /\/api\/media\/file\//.test(req.url || '') ? { deletedAt: { exists: false } } : false),
     create: isLoggedIn,
     update: isLoggedIn,
     delete: isLoggedIn,

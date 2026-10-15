@@ -25,6 +25,7 @@ import * as migration_20261009_060641_visits_country from './20261009_060641_vis
 import * as migration_20261009_101538_stats_sheet from './20261009_101538_stats_sheet';
 import * as migration_20261009_111443_annual_report_sheet from './20261009_111443_annual_report_sheet';
 import * as migration_20261009_112310_territories_sheet from './20261009_112310_territories_sheet';
+import * as migration_20261015_105811_media_trash from './20261015_105811_media_trash';
 
 export const migrations = [
   {
@@ -160,6 +161,11 @@ export const migrations = [
   {
     up: migration_20261009_112310_territories_sheet.up,
     down: migration_20261009_112310_territories_sheet.down,
-    name: '20261009_112310_territories_sheet'
+    name: '20261009_112310_territories_sheet',
+  },
+  {
+    up: migration_20261015_105811_media_trash.up,
+    down: migration_20261015_105811_media_trash.down,
+    name: '20261015_105811_media_trash'
   },
 ];

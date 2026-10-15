@@ -43,6 +43,8 @@ const SORTS = [
   { value: '-filesize', label: 'Спершу великі' },
 ]
 
+type Usage = { label: string; title?: string; href: string }
+
 const PAGE = 60
 const KEY = 'nartu-media-view'
 
@@ -66,6 +68,10 @@ export const MediaGrid = () => {
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  // видалення: вибрані плитки, вікно підтвердження (з переліком, де файли використовуються), повідомлення
+  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [confirm, setConfirm] = useState<{ ids: number[]; usage: Record<string, Usage[]> | null; busy: boolean; error: string } | null>(null)
+  const [notice, setNotice] = useState('')
 
   // вигляд, вибраний минулого разу
   useEffect(() => {
@@ -117,6 +123,50 @@ export const MediaGrid = () => {
 
   // після завантаження нових файлів — оновити і плитки, і стандартну таблицю
   const router = useRouter()
+
+  const toggle = (id: number) =>
+    setSelected((cur) => {
+      const next = new Set(cur)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  // спершу дізнаємось, де файли використовуються, — і показуємо це в підтвердженні
+  const askDelete = async (ids: number[]) => {
+    setNotice('')
+    setConfirm({ ids, usage: null, busy: false, error: '' })
+    try {
+      const r = await fetch(`/api/media-usage?ids=${ids.join(',')}`, { credentials: 'include' })
+      const usage = r.ok ? ((await r.json()) as Record<string, Usage[]>) : {}
+      setConfirm((c) => (c ? { ...c, usage } : c))
+    } catch {
+      setConfirm((c) => (c ? { ...c, usage: {} } : c))
+    }
+  }
+  // у кошик (як кнопка «Видалити» в Payload): файл зникає з сайту, але його можна відновити
+  const doDelete = async () => {
+    if (!confirm) return
+    setConfirm({ ...confirm, busy: true, error: '' })
+    const where = confirm.ids.map((id, i) => `where[id][in][${i}]=${id}`).join('&')
+    try {
+      const r = await fetch(`/api/media?${where}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ deletedAt: new Date().toISOString() }),
+      })
+      if (!r.ok) throw new Error(`Помилка ${r.status}`)
+      const gone = new Set(confirm.ids)
+      setDocs((list) => list.filter((d) => !gone.has(d.id)))
+      setTotal((n) => Math.max(0, n - gone.size))
+      setSelected(new Set())
+      setConfirm(null)
+      setNotice(`Переміщено в кошик: ${gone.size}.`)
+      router.refresh()
+    } catch (e) {
+      setConfirm((c) => (c ? { ...c, busy: false, error: (e as Error).message } : c))
+    }
+  }
   const onUploaded = useCallback(() => {
     if (view === 'grid') load(1)
     router.refresh()
@@ -176,6 +226,25 @@ export const MediaGrid = () => {
       {view === 'grid' && (
         <>
           <p className="mg-count">{loading && !docs.length ? 'Завантаження…' : `Файлів: ${total}`}</p>
+          {notice && (
+            <p className="mg-notice">
+              {notice} Відновити можна в <a href="/admin/collections/media/trash">кошику медіатеки</a>.
+            </p>
+          )}
+          {!!selected.size && (
+            <div className="mg-selbar">
+              <b>Вибрано: {selected.size}</b>
+              <button type="button" className="mg-danger" onClick={() => askDelete([...selected])}>
+                Видалити вибрані
+              </button>
+              <button type="button" className="mg-plain" onClick={() => setSelected(new Set(docs.map((d) => d.id)))}>
+                Вибрати всі показані
+              </button>
+              <button type="button" className="mg-plain" onClick={() => setSelected(new Set())}>
+                Скасувати вибір
+              </button>
+            </div>
+          )}
           {error && <p className="mg-error">{error}</p>}
           {!loading && !docs.length && !error && <p className="mg-empty">Нічого не знайдено.</p>}
           <ul className="mg-grid">
@@ -183,8 +252,33 @@ export const MediaGrid = () => {
               const k = kind(d.mimeType)
               const thumb = k === 'image' ? d.sizes?.card?.url || d.url : null
               return (
-                <li key={d.id}>
-                  <a href={`/admin/collections/media/${d.id}`} className="mg-tile" title={d.filename || ''}>
+                <li key={d.id} className={`mg-item${selected.has(d.id) ? ' is-selected' : ''}${selected.size ? ' selecting' : ''}`}>
+                  <button
+                    type="button"
+                    className="mg-check"
+                    aria-label={`Вибрати ${d.filename}`}
+                    aria-pressed={selected.has(d.id)}
+                    onClick={() => toggle(d.id)}
+                  >
+                    {selected.has(d.id) ? '✓' : ''}
+                  </button>
+                  <button type="button" className="mg-del" aria-label={`Видалити ${d.filename}`} title="Видалити" onClick={() => askDelete([d.id])}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                    </svg>
+                  </button>
+                  <a
+                    href={`/admin/collections/media/${d.id}`}
+                    className="mg-tile"
+                    title={d.filename || ''}
+                    onClick={(e) => {
+                      // у режимі вибору клік по плитці вибирає її, а не відкриває
+                      if (selected.size) {
+                        e.preventDefault()
+                        toggle(d.id)
+                      }
+                    }}
+                  >
                     <span className={`mg-thumb mg-${k}`}>
                       {thumb ? (
                         <img src={thumb} alt={d.alt || ''} loading="lazy" />
@@ -211,6 +305,54 @@ export const MediaGrid = () => {
               )
             })}
           </ul>
+          {confirm && (
+            <div className="mg-modal" role="dialog" aria-modal="true" aria-labelledby="mg-del-title">
+              <div className="mg-modal-box">
+                <h3 id="mg-del-title">
+                  {confirm.ids.length === 1
+                    ? `Видалити «${docs.find((d) => d.id === confirm.ids[0])?.filename || 'файл'}»?`
+                    : `Видалити вибрані файли (${confirm.ids.length})?`}
+                </h3>
+                {confirm.usage === null ? (
+                  <p className="mg-muted">Перевіряю, де використовуються файли…</p>
+                ) : confirm.ids.some((id) => confirm.usage?.[String(id)]?.length) ? (
+                  <div className="mg-warn">
+                    <b>⚠ {confirm.ids.length === 1 ? 'Цей файл використовується' : 'Ці файли використовуються'} на сайті — після видалення там зникне картинка, відео чи документ:</b>
+                    <ul>
+                      {confirm.ids
+                        .filter((id) => confirm.usage?.[String(id)]?.length)
+                        .map((id) => (
+                          <li key={id}>
+                            <span className="mg-wname">{docs.find((d) => d.id === id)?.filename || `#${id}`}</span>
+                            {' — '}
+                            {confirm.usage![String(id)].map((u, i) => (
+                              <span key={u.href + i}>
+                                {i > 0 && ', '}
+                                <a href={u.href} target="_blank" rel="noopener noreferrer">
+                                  {u.title ? `${u.label} «${u.title}»` : u.label}
+                                </a>
+                              </span>
+                            ))}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="mg-muted">{confirm.ids.length === 1 ? 'Файл ніде на сайті не використовується.' : 'Жоден із файлів на сайті не використовується.'}</p>
+                )}
+                <p className="mg-muted">{confirm.ids.length === 1 ? 'Файл потрапить' : 'Файли потраплять'} у кошик медіатеки — звідти їх можна відновити.</p>
+                {confirm.error && <p className="mg-error">{confirm.error}</p>}
+                <div className="mg-modal-btns">
+                  <button type="button" className="mg-danger" disabled={confirm.busy || confirm.usage === null} onClick={doDelete}>
+                    {confirm.busy ? 'Видаляю…' : 'Перемістити в кошик'}
+                  </button>
+                  <button type="button" className="mg-plain" disabled={confirm.busy} onClick={() => setConfirm(null)}>
+                    Скасувати
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {hasMore && (
             <button type="button" className="mg-more" disabled={loading} onClick={() => load(page + 1)}>
               {loading ? 'Завантаження…' : `Показати ще (${total - docs.length})`}
@@ -223,6 +365,31 @@ export const MediaGrid = () => {
 }
 
 const CSS = `
+.mg-item { position: relative; }
+.mg-check, .mg-del { position: absolute; z-index: 2; top: 12px; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .15s; font: inherit; font-weight: 800; font-size: 14px; }
+.mg-check { left: 12px; border: 2px solid #fff; background: rgba(0,0,0,.35); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.mg-del { right: 12px; border: 0; background: rgba(0,0,0,.55); color: #fff; }
+.mg-del svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mg-del:hover { background: #c62828; }
+.mg-item:hover .mg-check, .mg-item:hover .mg-del, .mg-item:focus-within .mg-check, .mg-item:focus-within .mg-del, .mg-item.selecting .mg-check { opacity: 1; }
+.mg-item.is-selected .mg-check { background: #0057b8; border-color: #0057b8; opacity: 1; }
+.mg-item.is-selected .mg-tile { border-color: #0057b8; box-shadow: 0 0 0 2px #0057b8; }
+@media (hover: none) { .mg-check, .mg-del { opacity: 1; } }
+.mg-selbar { position: sticky; top: 60px; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; background: var(--theme-elevation-50); border: 1px solid var(--theme-elevation-150); font-size: 13px; }
+.mg-selbar b { margin-right: auto; }
+.mg-danger, .mg-plain { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+.mg-danger { border: 0; background: #c62828; color: #fff; }
+.mg-danger:disabled { opacity: .6; cursor: progress; }
+.mg-plain { border: 1px solid var(--theme-elevation-250); background: transparent; color: inherit; }
+.mg-notice { margin: 0 0 12px; padding: 10px 14px; border-radius: 10px; background: var(--theme-elevation-50); border-left: 3px solid #2f9e5f; font-size: 13px; }
+.mg-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: rgba(0,0,0,.45); }
+.mg-modal-box { width: min(560px, 100%); max-height: 85vh; overflow-y: auto; background: var(--theme-elevation-0); color: var(--theme-elevation-1000); border: 1px solid var(--theme-elevation-150); border-radius: 16px; padding: 20px 22px; box-shadow: 0 20px 60px rgba(0,0,0,.35); display: grid; gap: 12px; }
+.mg-modal-box h3 { margin: 0; font-size: 17px; overflow-wrap: anywhere; }
+.mg-muted { margin: 0; font-size: 13px; color: var(--theme-elevation-600); }
+.mg-warn { padding: 12px 14px; border-radius: 10px; background: rgba(224, 168, 0, .12); border-left: 3px solid #e0a800; font-size: 13px; }
+.mg-warn ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.mg-wname { font-weight: 600; overflow-wrap: anywhere; }
+.mg-modal-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 .mg { margin: 0 0 16px; }
 .mg-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
 .mg-toggle, .mg-types { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--theme-elevation-150); border-radius: 999px; padding: 3px; gap: 2px; }
