@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { MediaDrop } from './MediaDrop'
 
 // Медіатека «плитками», як у WordPress: перемикач «Плитки / Список» над таблицею,
@@ -57,6 +57,8 @@ const kind = (m?: string | null) =>
 const ext = (name?: string | null) => (name?.split('.').pop() || '').toUpperCase().slice(0, 4)
 
 export const MediaGrid = () => {
+  // на сторінці «Сміття» — стандартний кошик Payload (відновити / видалити назавжди), без плиток і завантаження
+  const isTrash = (usePathname() || '').replace(/\/+$/, '').endsWith('/trash')
   const [view, setView] = useState<'grid' | 'list'>('list')
   const [type, setType] = useState('all')
   const [sort, setSort] = useState('-createdAt')
@@ -118,8 +120,8 @@ export const MediaGrid = () => {
   )
 
   useEffect(() => {
-    if (view === 'grid') load(1)
-  }, [view, load])
+    if (view === 'grid' && !isTrash) load(1)
+  }, [view, load, isTrash])
 
   // після завантаження нових файлів — оновити і плитки, і стандартну таблицю
   const router = useRouter()
@@ -171,6 +173,8 @@ export const MediaGrid = () => {
     if (view === 'grid') load(1)
     router.refresh()
   }, [view, load, router])
+
+  if (isTrash) return null
 
   return (
     <div className="mg">
