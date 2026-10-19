@@ -40,6 +40,7 @@ import { SiteMap as SiteMap_e46f24e33f1b114ddb8ca8bfbddc12c0 } from '../../../co
 import { ViewSiteLink as ViewSiteLink_33f037dcb8950e7b5e6f0480c9cc4430 } from '../../../components/admin/ViewSiteLink'
 import { DashboardLink as DashboardLink_ce3821a7b35a5f1e86b97db3fb5d284d } from '../../../components/admin/DashboardLink'
 import { EditorHints as EditorHints_90b87dff240221382d5dbd62843cd442 } from '../../../components/admin/EditorHints'
+import { PreviewLinkOpener as PreviewLinkOpener_3310634ea2b1fe50012a0524115dc534 } from '../../../components/admin/PreviewLinkOpener'
 import { StatsView as StatsView_0b84f090b9d2570a8fedbffad015a4f7 } from '../../../components/admin/StatsView'
 import { StatusView as StatusView_07ed7e709040574f55761962f068859b } from '../../../components/admin/StatusView'
 import { BackupsView as BackupsView_d5c99d4ea27693ffc534b8cdb61a44e3 } from '../../../components/admin/BackupsView'
@@ -89,6 +90,7 @@ export const importMap = {
   "/components/admin/ViewSiteLink#ViewSiteLink": ViewSiteLink_33f037dcb8950e7b5e6f0480c9cc4430,
   "/components/admin/DashboardLink#DashboardLink": DashboardLink_ce3821a7b35a5f1e86b97db3fb5d284d,
   "/components/admin/EditorHints#EditorHints": EditorHints_90b87dff240221382d5dbd62843cd442,
+  "/components/admin/PreviewLinkOpener#PreviewLinkOpener": PreviewLinkOpener_3310634ea2b1fe50012a0524115dc534,
   "/components/admin/StatsView#StatsView": StatsView_0b84f090b9d2570a8fedbffad015a4f7,
   "/components/admin/StatusView#StatusView": StatusView_07ed7e709040574f55761962f068859b,
   "/components/admin/BackupsView#BackupsView": BackupsView_d5c99d4ea27693ffc534b8cdb61a44e3,

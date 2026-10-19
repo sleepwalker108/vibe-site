@@ -49,7 +49,7 @@ export default buildConfig({
       beforeDashboard: ['/components/admin/StatsSummary#StatsSummary', '/components/admin/SiteMap#SiteMap'],
       afterNavLinks: ['/components/admin/StatsNavLink#StatsNavLink', '/components/admin/AdminNavLinks#AdminNavLinks', '/components/admin/ThemeToggle#ThemeToggle'],
       // підказки й українські назви кнопок у панелі редактора тексту
-      providers: ['/components/admin/EditorHints#EditorHints'],
+      providers: ['/components/admin/EditorHints#EditorHints', '/components/admin/PreviewLinkOpener#PreviewLinkOpener'],
       views: {
         // Розділ «Статистика відвідувань»: /admin/stats
         stats: { Component: '/components/admin/StatsView#StatsView', path: '/stats', meta: { title: 'Статистика відвідувань' } },

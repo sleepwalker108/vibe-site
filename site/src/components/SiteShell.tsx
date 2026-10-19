@@ -3,6 +3,7 @@ import { getClient, mediaUrl } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
 import { Header, type MenuItem } from './Header'
 import { RefreshRouteOnSave } from './RefreshRouteOnSave'
+import { PreviewLinks } from './PreviewLinks'
 import { Linkify } from './Linkify'
 import { ToTop } from './ToTop'
 
@@ -115,6 +116,7 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
       {draft && (
         <>
           <RefreshRouteOnSave />
+          <PreviewLinks />
           <div className="preview-bar">{t.previewBar}</div>
         </>
       )}
