@@ -1,7 +1,7 @@
 'use client'
 import { useDocumentInfo } from '@payloadcms/ui'
 import { useEffect, useState } from 'react'
-import { absoluteUrl, copyText } from './copyText'
+import { absoluteUrl, copyText, useOrigin } from './copyText'
 
 type MediaDoc = {
   url?: string | null
@@ -50,6 +50,7 @@ export const MediaLinks = () => {
   const { id, initialData, savedDocumentData } = useDocumentInfo()
   const doc = (savedDocumentData || initialData || {}) as MediaDoc
   const [usage, setUsage] = useState<Usage[] | null>(null)
+  const origin = useOrigin()
 
   // Де використовується файл — уся база: поля-файли, файли й посилання в текстах, головна, меню (lib/mediaUsage.ts)
   useEffect(() => {
@@ -72,7 +73,7 @@ export const MediaLinks = () => {
     )
   }
 
-  const full = absoluteUrl(doc.url)
+  const full = absoluteUrl(doc.url, origin)
   const isImage = doc.mimeType?.startsWith('image/')
   const sizes = Object.entries(doc.sizes || {}).filter(([, s]) => s?.url)
   const snippet = isImage
@@ -96,7 +97,7 @@ export const MediaLinks = () => {
 
       {isImage &&
         sizes.map(([name, s]) => (
-          <CopyRow key={name} label={`${SIZE_NAMES[name] || name}${s?.width ? ` · ${s.width}×${s.height}` : ''}`} value={absoluteUrl(s!.url)} />
+          <CopyRow key={name} label={`${SIZE_NAMES[name] || name}${s?.width ? ` · ${s.width}×${s.height}` : ''}`} value={absoluteUrl(s!.url, origin)} />
         ))}
 
       <CopyRow label={isImage ? 'Код для вставки (HTML)' : 'Посилання для вставки (HTML)'} value={snippet} />
