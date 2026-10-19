@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn } from '../access'
+import { linkUrlHooks } from '../fields/linkUrl'
 import { enqueueVideo } from '../lib/videoOptimize'
 
 export const Videos: CollectionConfig = {
@@ -34,6 +35,7 @@ export const Videos: CollectionConfig = {
       name: 'url',
       type: 'text',
       label: 'Посилання на відео',
+      hooks: linkUrlHooks,
       admin: {
         condition: (_, s) => s?.source !== 'file',
         description: 'Напр.: https://www.youtube.com/watch?v=… або пряме посилання на .mp4',

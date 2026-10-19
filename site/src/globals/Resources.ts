@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
+import { linkUrlHooks } from '../fields/linkUrl'
 import { ICON_OPTIONS } from './Home'
 
 // Блок «Корисні ресурси» внизу головної сторінки (перед підвалом)
@@ -40,7 +41,7 @@ export const Resources: GlobalConfig = {
           type: 'row',
           fields: [
             { name: 'label', type: 'text', label: 'Назва', required: true, localized: true },
-            { name: 'url', type: 'text', label: 'Посилання', admin: { description: 'Повна адреса, напр. https://minre.gov.ua' } },
+            { name: 'url', type: 'text', label: 'Посилання', hooks: linkUrlHooks, admin: { description: 'Повна адреса, напр. https://minre.gov.ua' } },
           ],
         },
         {

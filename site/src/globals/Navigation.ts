@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
+import { linkUrlHooks } from '../fields/linkUrl'
 
 const linkFields = [
   { name: 'label', type: 'text' as const, label: 'Назва пункту', required: true, localized: true },
@@ -7,6 +8,7 @@ const linkFields = [
     name: 'url',
     type: 'text' as const,
     label: 'Посилання',
+    hooks: linkUrlHooks,
     admin: { description: 'Сторінка сайту: /diyalnist. Зовнішній сайт: https://… Порожньо — пункт лише відкриває підменю.' },
   },
 ]

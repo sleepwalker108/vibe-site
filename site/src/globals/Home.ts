@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isLoggedIn } from '../access'
+import { linkUrlHooks } from '../fields/linkUrl'
 
 // Іконки для карток і корисних ресурсів (малюються в components/ResourceIcon.tsx)
 export const ICON_OPTIONS = [
@@ -25,7 +26,13 @@ const link = (name: string, label: string) => ({
       type: 'row' as const,
       fields: [
         { name: 'label', type: 'text' as const, label: 'Текст кнопки', localized: true },
-        { name: 'url', type: 'text' as const, label: 'Посилання', admin: { description: 'Напр.: tel:1548 або /news' } },
+        {
+          name: 'url',
+          type: 'text' as const,
+          label: 'Посилання',
+          hooks: linkUrlHooks,
+          admin: { description: 'Напр.: tel:1548, /news або посилання на файл, скопійоване в медіатеці' },
+        },
       ],
     },
   ],
@@ -169,7 +176,7 @@ export const Home: GlobalConfig = {
                   type: 'row',
                   fields: [
                     { name: 'linkLabel', type: 'text', label: 'Текст посилання', localized: true },
-                    { name: 'url', type: 'text', label: 'Посилання' },
+                    { name: 'url', type: 'text', label: 'Посилання', hooks: linkUrlHooks },
                   ],
                 },
               ],
