@@ -65,7 +65,7 @@ else
   ok "Код уже є — оновлення робить команда nartu-update"
 fi
 chown -R "$APP_USER:$APP_USER" "$APP_DIR"
-ok "$(git -C "$APP_DIR" log -1 --format='Версія %h «%s»')"
+ok "$(sudo -u "$APP_USER" git -C "$APP_DIR" log -1 --format='Версія %h «%s»')"
 
 say "5/9 База даних і завантажені файли"
 if [ -f "$SITE_DIR/site.db" ]; then

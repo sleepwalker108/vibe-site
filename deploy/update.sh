@@ -77,7 +77,7 @@ command -v ffmpeg >/dev/null 2>&1 || { apt-get install -y -qq ffmpeg >/dev/null 
 command -v qpdf >/dev/null 2>&1 || { apt-get install -y -qq qpdf >/dev/null 2>&1 && ok "Встановлено qpdf (швидке відкриття PDF)"; } || true
 
 say "3/6 Бібліотеки"
-if [ "$BEFORE" = "$AFTER" ] || ! git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then
+if [ "$BEFORE" = "$AFTER" ] || ! sudo -u "$APP_USER" git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then
   as_app "npm ci --no-audit --no-fund" || {
     rollback_code deps
     fail "Не вдалося встановити бібліотеки. Код повернуто до попередньої версії, сайт працює як і раніше. Спробуйте ще раз: sudo nartu-update"
@@ -89,7 +89,7 @@ fi
 say "4/6 Структура бази (міграції)"
 if ! as_app "NODE_OPTIONS=--no-deprecation npx payload migrate"; then
   # бібліотеки повертаємо лише якщо вони змінювалися в цьому оновленні
-  git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json && rollback_code || rollback_code deps
+  sudo -u "$APP_USER" git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json && rollback_code || rollback_code deps
   fail "Помилка міграції бази (текст помилки — вище). Код повернуто до попередньої версії, сайт працює як і раніше; копія бази — у $APP_DIR/backups. Спробуйте ще раз: sudo nartu-update"
 fi
 
@@ -121,4 +121,4 @@ if [ "${code:-000}" != "200" ]; then
   fail "Оновлення скасовано, сайт працює на попередній версії. Журнал: journalctl -u $SERVICE -n 80"
 fi
 rm -rf "$SITE_DIR/.next-old"
-ok "Готово! Сайт оновлено до версії $(git -C "$APP_DIR" log -1 --format='%h «%s»')"
+ok "Готово! Сайт оновлено до версії $(sudo -u "$APP_USER" git -C "$APP_DIR" log -1 --format='%h «%s»')"
