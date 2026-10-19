@@ -4,6 +4,7 @@
 #   sudo nartu-task import-wp-news           — перенести всі новини зі старого сайту (з картинками, PDF, EN)
 #   sudo LIMIT=5 nartu-task import-wp-news   — лише 5 найновіших (для перевірки)
 #   sudo nartu-task check-links              — перевірити посилання в новинах і сторінках
+#   sudo nartu-task optimize-pdfs            — усі PDF: «швидкий веб-перегляд» (перша сторінка відкривається одразу)
 #
 # Перед завданням робиться резервна копія бази.
 set -euo pipefail

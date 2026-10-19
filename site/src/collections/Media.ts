@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isLoggedIn } from '../access'
 import { enqueueVideo } from '../lib/videoOptimize'
+import { enqueuePdf } from '../lib/pdfOptimize'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -18,6 +19,17 @@ export const Media: CollectionConfig = {
     defaultColumns: ['filename', 'alt', 'mimeType', 'copyLink', 'updatedAt'],
     listSearchableFields: ['filename', 'alt'],
     pagination: { defaultLimit: 50 },
+  },
+  hooks: {
+    afterChange: [
+      // новий PDF (або замінений файл) — «швидкий веб-перегляд» у фоні (див. lib/pdfOptimize.ts)
+      ({ doc, previousDoc, operation, req }) => {
+        if (doc?.mimeType === 'application/pdf' && (operation === 'create' || doc.filename !== previousDoc?.filename)) {
+          enqueuePdf(req.payload, doc.id)
+        }
+        return doc
+      },
+    ],
   },
   access: {
     // Самі файли (/api/media/file/…) доступні всім — вони на сторінках сайту. А перелік медіатеки через API
@@ -67,6 +79,13 @@ export const Media: CollectionConfig = {
     // Картинки (JPG, PNG…) під час завантаження автоматично перетворюються на WebP — у 2–5 разів легші,
     // сторінки вантажаться швидше. PDF, відео й SVG не змінюються.
     formatOptions: { format: 'webp', options: { quality: 82 } },
+    // Файли кешуються в браузері: повторне відкриття PDF чи картинки — без нового завантаження.
+    // private — лише в браузері відвідувача (не в проміжних кешах: видалений у кошик файл не «залипне» для інших);
+    // година свіжості + ще доба, коли браузер показує збережену копію одразу й тихо оновлює її у фоні.
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'private, max-age=3600, stale-while-revalidate=86400')
+      return headers
+    },
     imageSizes: [
       { name: 'card', width: 800, formatOptions: { format: 'webp', options: { quality: 80 } } },
       { name: 'wide', width: 1600, formatOptions: { format: 'webp', options: { quality: 82 } } },

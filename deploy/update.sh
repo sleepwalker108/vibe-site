@@ -73,6 +73,8 @@ fi
 
 # ffmpeg — для стиснення відео під веб (якщо немає системної, сайт використає вбудовану з пакета)
 command -v ffmpeg >/dev/null 2>&1 || { apt-get install -y -qq ffmpeg >/dev/null 2>&1 && ok "Встановлено ffmpeg (стиснення відео)"; } || true
+# qpdf — «швидкий веб-перегляд» PDF (перша сторінка відкривається одразу; без нього PDF віддаються як є)
+command -v qpdf >/dev/null 2>&1 || { apt-get install -y -qq qpdf >/dev/null 2>&1 && ok "Встановлено qpdf (швидке відкриття PDF)"; } || true
 
 say "3/6 Бібліотеки"
 if [ "$BEFORE" = "$AFTER" ] || ! git -C "$APP_DIR" diff --quiet "$BEFORE" "$AFTER" -- site/package-lock.json; then
