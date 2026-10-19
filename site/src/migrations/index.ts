@@ -27,6 +27,7 @@ import * as migration_20261009_111443_annual_report_sheet from './20261009_11144
 import * as migration_20261009_112310_territories_sheet from './20261009_112310_territories_sheet';
 import * as migration_20261015_105811_media_trash from './20261015_105811_media_trash';
 import * as migration_20261015_111116_image_sizes_webp from './20261015_111116_image_sizes_webp';
+import * as migration_20261019_152536_localized_home_links from './20261019_152536_localized_home_links';
 
 export const migrations = [
   {
@@ -172,6 +173,11 @@ export const migrations = [
   {
     up: migration_20261015_111116_image_sizes_webp.up,
     down: migration_20261015_111116_image_sizes_webp.down,
-    name: '20261015_111116_image_sizes_webp'
+    name: '20261015_111116_image_sizes_webp',
+  },
+  {
+    up: migration_20261019_152536_localized_home_links.up,
+    down: migration_20261019_152536_localized_home_links.down,
+    name: '20261019_152536_localized_home_links'
   },
 ];

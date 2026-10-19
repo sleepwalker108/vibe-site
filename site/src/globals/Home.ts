@@ -30,8 +30,13 @@ const link = (name: string, label: string) => ({
           name: 'url',
           type: 'text' as const,
           label: 'Посилання',
+          // окреме для кожної мови (напр. український і англійський PDF); порожнє в English — береться українське
+          localized: true,
           hooks: linkUrlHooks,
-          admin: { description: 'Напр.: tel:1548, /news або посилання на файл, скопійоване в медіатеці' },
+          admin: {
+            description:
+              'Напр.: tel:1548, /news або посилання на файл, скопійоване в медіатеці. Для кожної мови — своє; якщо в English порожньо, береться українське.',
+          },
         },
       ],
     },
@@ -176,7 +181,7 @@ export const Home: GlobalConfig = {
                   type: 'row',
                   fields: [
                     { name: 'linkLabel', type: 'text', label: 'Текст посилання', localized: true },
-                    { name: 'url', type: 'text', label: 'Посилання', hooks: linkUrlHooks },
+                    { name: 'url', type: 'text', label: 'Посилання', localized: true, hooks: linkUrlHooks },
                   ],
                 },
               ],
