@@ -7,6 +7,7 @@ import {
 } from '@payloadcms/richtext-lexical'
 import { HistoryFeature } from '../features/history/server'
 import { BlockToolbarFeature } from '../features/blockToolbar/server'
+import { PasteImagesFeature } from '../features/pasteImages/server'
 
 const safeDecode = (s: string) => {
   try {
@@ -67,6 +68,7 @@ export const editorFeatures =
     Link,
     HistoryFeature(),
     BlockToolbarFeature(),
+    PasteImagesFeature(),
     FixedToolbarFeature({
       customGroups: {
         text: { type: 'buttons', order: 5 },

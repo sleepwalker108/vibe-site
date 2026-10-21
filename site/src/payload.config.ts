@@ -29,6 +29,7 @@ import { backupEndpoints } from './endpoints/backups'
 import { statusEndpoints } from './endpoints/status'
 import { statsSheetEndpoints } from './endpoints/statsSheet'
 import { mediaUsageEndpoints } from './endpoints/mediaUsage'
+import { mediaImportEndpoints } from './endpoints/mediaImport'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -110,7 +111,7 @@ export default buildConfig({
   // GraphQL не використовується ні сайтом, ні адмінкою — вимкнено (менше точок доступу до даних)
   graphQL: { disable: true },
   // API розділів «Резервні копії» і «Стан сервера»
-  endpoints: [...backupEndpoints, ...statusEndpoints, ...statsSheetEndpoints, ...mediaUsageEndpoints],
+  endpoints: [...backupEndpoints, ...statusEndpoints, ...statsSheetEndpoints, ...mediaUsageEndpoints, ...mediaImportEndpoints],
   sharp,
   plugins: [],
 })

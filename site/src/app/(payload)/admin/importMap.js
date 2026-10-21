@@ -6,6 +6,7 @@ import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8c
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { PasteImagesFeatureClient as PasteImagesFeatureClient_521fd3f1b2ff8af60ee5bc50493f0106 } from '../../../features/pasteImages/client'
 import { BlockToolbarFeatureClient as BlockToolbarFeatureClient_d292b07360b1737abf3286459ea333f7 } from '../../../features/blockToolbar/client'
 import { HistoryFeatureClient as HistoryFeatureClient_fcf3383c9d775d5ce6fa0c6ba189bde0 } from '../../../features/history/client'
 import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -56,6 +57,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#TableFeatureClient": TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/features/pasteImages/client#PasteImagesFeatureClient": PasteImagesFeatureClient_521fd3f1b2ff8af60ee5bc50493f0106,
   "/features/blockToolbar/client#BlockToolbarFeatureClient": BlockToolbarFeatureClient_d292b07360b1737abf3286459ea333f7,
   "/features/history/client#HistoryFeatureClient": HistoryFeatureClient_fcf3383c9d775d5ce6fa0c6ba189bde0,
   "@payloadcms/richtext-lexical/client#LinkFeatureClient": LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
