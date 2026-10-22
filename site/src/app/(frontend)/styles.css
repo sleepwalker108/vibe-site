@@ -107,8 +107,12 @@
   .kpi .k-sub { color: rgba(255,255,255,.75); font-size: .9rem; }
   .kpi.main { background: var(--yellow); color: var(--on-yellow); border-color: var(--yellow); }
   .kpi.main .k-label, .kpi.main .k-sub { color: #4a4100; }
-  .kpi .msgr { display: flex; gap: 6px; margin-top: 10px; }
-  .kpi .msgr span { font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.14); }
+  /* логотипи месенджерів — круглі значки у фірмових кольорах */
+  .kpi .msgr { display: flex; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+  .msgr-ico { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.18), 0 4px 12px rgba(0,0,0,.18); transition: transform .15s; }
+  .msgr-ico:hover { transform: translateY(-2px); }
+  .msgr-ico svg { width: 19px; height: 19px; }
+  .msgr-wa { background: #25d366; } .msgr-vb { background: #7360f2; } .msgr-tg { background: #26a5e4; }
   .stats-note { position: relative; margin-top: 28px; font-size: .95rem; color: rgba(255,255,255,.8); }
   @media (max-width: 900px) {
     .stats-grid { grid-template-columns: 1fr; }
@@ -1101,7 +1105,7 @@ html.contrast .quick-ico { background: var(--hc-bg) !important; color: var(--hc-
   /* підсумки: велика жовта + дві поруч */
   .kpi { padding: 14px 16px !important; border-radius: 18px; }
   .kpi .k-label { font-size: .66rem; }
-  .kpi .msgr span { font-size: .68rem; padding: 3px 8px; }
+  .msgr-ico { width: 32px; height: 32px; } .msgr-ico svg { width: 17px; height: 17px; }
 }
 html.contrast .bar-rank, html.contrast .bars-toggle { background: var(--hc-bg) !important; color: var(--hc-fg) !important; border: 2px solid var(--hc-fg) !important; }
 
@@ -1718,3 +1722,5 @@ html.contrast .prose a.year-card { border: 2px solid var(--hc-fg) !important; }
 html.contrast .year-card .yc-arrow, html.contrast .year-card .yc-ico { border: 2px solid var(--hc-fg) !important; }
 /* сторінка без вмісту */
 .page-empty { margin: 0; padding: 22px 24px; border-radius: 18px; background: var(--sky); color: var(--navy-ink); font-weight: 600; }
+
+html.contrast .msgr-ico { border: 2px solid var(--hc-fg) !important; box-shadow: none !important; }
