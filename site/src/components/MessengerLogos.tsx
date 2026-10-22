@@ -1,13 +1,40 @@
-// Логотипи месенджерів (блок «Через месенджери» в статистиці): круглі значки у фірмових кольорах.
+// Логотипи месенджерів (блок «Через месенджери» в статистиці): квадратні значки із заокругленими кутами у фірмових кольорах.
 // Назва — у підказці при наведенні й прихованим текстом для програм екранного доступу.
+
+// трубка (однакова у WhatsApp і Viber), координати 0–24
+const HANDSET =
+  'M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z'
+
 const LOGOS = [
+  {
+    key: 'tg',
+    name: 'Telegram',
+    icon: (
+      <>
+        <defs>
+          <linearGradient id="msgr-tg-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#37aee2" />
+            <stop offset="1" stopColor="#1e93d2" />
+          </linearGradient>
+        </defs>
+        <rect width="100" height="100" fill="url(#msgr-tg-bg)" />
+        <g strokeLinejoin="round" strokeWidth="1.5">
+          <path d="M34.2 54 64.5 36 41.8 58.2 40.5 71.5z" fill="#c8daea" stroke="#c8daea" />
+          <path d="M41.8 58.2 40.5 71.5 48.2 64.5z" fill="#a9c9dd" stroke="#a9c9dd" />
+          <path d="M21 48 74.5 28.5 34.2 54z" fill="#fff" stroke="#fff" />
+          <path d="M74.5 28.5 64.2 72.2 41.8 58.2z" fill="#fff" stroke="#fff" />
+        </g>
+      </>
+    ),
+  },
   {
     key: 'wa',
     name: 'WhatsApp',
     icon: (
       <>
-        <path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-        <path d="M9.3 7.8c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.5-.3l-1.8-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.6-1.5-1.8-.2-.3 0-.4.1-.6l.4-.5.3-.4v-.5z" />
+        <rect width="100" height="100" fill="#00bd37" />
+        <path d="M22.5 77.5 27.7 62.9A25.8 25.8 0 1 1 39.1 73.4z" fill="none" stroke="#fff" strokeWidth="4.6" strokeLinejoin="round" />
+        <path d={HANDSET} fill="#fff" transform="translate(37.4 37.4) scale(1.05)" />
       </>
     ),
   },
@@ -15,14 +42,22 @@ const LOGOS = [
     key: 'vb',
     name: 'Viber',
     icon: (
-      <path d="M12 2.6c-5 0-8.2 2.4-8.2 7.5 0 2.7.8 4.6 2.4 5.8v3.6l3-2.4c.9.2 1.8.3 2.8.3 5 0 8.2-2.5 8.2-7.6S17 2.6 12 2.6zm4.2 11-.6.7c-.5.5-1.6.3-3.2-.8a11 11 0 0 1-2.9-3.2c-.7-1.4-.8-2.4-.3-2.8l.6-.6c.3-.3.6-.3.9 0l1 1.3c.2.3.2.6-.1.9l-.4.5c.4.9 1.1 1.6 2 2.1l.5-.5c.3-.3.6-.3.9-.1l1.3.9c.3.3.3.6.3.8z" />
-    ),
-  },
-  {
-    key: 'tg',
-    name: 'Telegram',
-    icon: (
-      <path d="M20.6 4.9 17.7 19c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.3-7.5c.4-.3-.1-.5-.6-.2L6.3 13.2l-4.4-1.4c-1-.3-1-1 .2-1.4L19.3 3.7c.8-.3 1.5.2 1.3 1.2z" />
+      <>
+        <rect width="100" height="100" fill="#7b3dae" />
+        <path
+          d="M50 18C30 18 21 24 21 44c0 14 4 21 13 25v15l11-13h5c20 0 29-7 29-27S70 18 50 18z"
+          fill="none"
+          stroke="#fff"
+          strokeWidth="5"
+          strokeLinejoin="round"
+        />
+        <path d={HANDSET} fill="#fff" transform="translate(28.5 26.5) scale(1.6)" />
+        <g fill="none" stroke="#fff" strokeWidth="2.8" strokeLinecap="round">
+          <path d="M51 29a15 15 0 0 1 15 15" />
+          <path d="M51 34.5a9.5 9.5 0 0 1 9.5 9.5" />
+          <path d="M51 40a4 4 0 0 1 4 4" />
+        </g>
+      </>
     ),
   },
 ]
@@ -30,8 +65,8 @@ const LOGOS = [
 export const MessengerLogos = ({ label }: { label?: string }) => (
   <ul className="msgr" aria-label={label}>
     {LOGOS.map((m) => (
-      <li key={m.key} className={`msgr-ico msgr-${m.key}`} title={m.name}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <li key={m.key} className="msgr-ico" title={m.name}>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
           {m.icon}
         </svg>
         <span className="sr-only">{m.name}</span>
