@@ -20,6 +20,23 @@ const TOKEN = new RegExp(
 const digits = (s: string) => s.replace(/[^\d+]/g, '')
 const ext = { target: '_blank', rel: 'noopener noreferrer' } as const
 
+export type Messenger = 'Viber' | 'WhatsApp' | 'Telegram'
+const messengerHref = (name: Messenger, intl: string) =>
+  name === 'Viber' ? `viber://chat?number=%2B${intl}` : name === 'WhatsApp' ? `https://wa.me/${intl}` : `https://t.me/+${intl}`
+
+// посилання на месенджери з рядків контактів (той самий номер, що й у підвалі) — для значків у статистиці
+export const messengerLinks = (lines: string[]) => {
+  const links: Partial<Record<Messenger, string>> = {}
+  for (const text of lines) {
+    const phone = text.match(PHONE)?.[0]
+    if (!phone) continue
+    const intl = digits(phone).replace(/^\+?/, '')
+    for (const name of ['Viber', 'WhatsApp', 'Telegram'] as const)
+      if (!links[name] && text.includes(name)) links[name] = messengerHref(name, intl)
+  }
+  return links
+}
+
 export const Linkify = ({ text, shortNumbers = false }: { text: string; shortNumbers?: boolean }) => {
   // номер у рядку — для посилань «Viber / WhatsApp / Telegram»
   const phone = text.match(PHONE)?.[0]
@@ -39,13 +56,7 @@ export const Linkify = ({ text, shortNumbers = false }: { text: string; shortNum
         </a>
       )
     else if (/^(Viber|WhatsApp|Telegram)$/.test(s)) {
-      const href = !intl
-        ? null
-        : s === 'Viber'
-          ? `viber://chat?number=%2B${intl}`
-          : s === 'WhatsApp'
-            ? `https://wa.me/${intl}`
-            : `https://t.me/+${intl}`
+      const href = intl ? messengerHref(s as Messenger, intl) : null
       node = href ? (
         <a href={href} {...(s === 'Viber' ? {} : ext)}>
           {s}

@@ -112,6 +112,8 @@
   .msgr-ico { width: 38px; height: 38px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,.22); transition: transform .15s; }
   .msgr-ico:hover { transform: translateY(-2px); }
   .msgr-ico svg { display: block; width: 100%; height: 100%; }
+  .msgr-ico a { display: block; width: 100%; height: 100%; }
+  .msgr-ico a:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
   .stats-note { position: relative; margin-top: 28px; font-size: .95rem; color: rgba(255,255,255,.8); }
   @media (max-width: 900px) {
     .stats-grid { grid-template-columns: 1fr; }

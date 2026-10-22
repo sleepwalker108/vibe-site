@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { AnnualReportSection } from '@/components/AnnualReportSection'
 import { Evacuation } from '@/components/Evacuation'
 import { MessengerLogos } from '@/components/MessengerLogos'
+import { messengerLinks } from '@/components/Linkify'
 import { Flag } from '@/components/Flag'
 import { ResourceIcon } from '@/components/ResourceIcon'
 import { NewsCard } from '@/components/NewsCard'
@@ -246,7 +247,10 @@ export default async function HomePage({ searchParams }: Props) {
                     <div className="k-label">{t.viaMessengers}</div>
                     <div className="k-num" data-target={stats.messengers}>{fmt(stats.messengers)}</div>
                     <div className="k-sub">{t.requests}</div>
-                    <MessengerLogos label={t.viaMessengers} />
+                    <MessengerLogos
+                      label={t.viaMessengers}
+                      links={messengerLinks([...(contacts.hotline?.lines || []), ...(contacts.phones || [])].map((l) => l.text || ''))}
+                    />
                   </div>
                 )}
               </div>

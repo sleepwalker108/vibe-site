@@ -1,5 +1,6 @@
 // Логотипи месенджерів (блок «Через месенджери» в статистиці): квадратні значки із заокругленими кутами у фірмових кольорах.
 // Назва — у підказці при наведенні й прихованим текстом для програм екранного доступу.
+import type { Messenger } from './Linkify'
 
 // трубка Viber, координати 0–24
 const HANDSET =
@@ -12,7 +13,7 @@ const WHATSAPP =
 const LOGOS = [
   {
     key: 'tg',
-    name: 'Telegram',
+    name: 'Telegram' as Messenger,
     icon: (
       <>
         <defs>
@@ -33,7 +34,7 @@ const LOGOS = [
   },
   {
     key: 'wa',
-    name: 'WhatsApp',
+    name: 'WhatsApp' as Messenger,
     icon: (
       <>
         <rect width="100" height="100" fill="#00bd37" />
@@ -43,7 +44,7 @@ const LOGOS = [
   },
   {
     key: 'vb',
-    name: 'Viber',
+    name: 'Viber' as Messenger,
     icon: (
       <>
         <rect width="100" height="100" fill="#7b3dae" />
@@ -65,15 +66,30 @@ const LOGOS = [
   },
 ]
 
-export const MessengerLogos = ({ label }: { label?: string }) => (
+// links — посилання з контактів у підвалі (messengerLinks); значок без посилання показується просто картинкою
+export const MessengerLogos = ({ label, links = {} }: { label?: string; links?: Partial<Record<Messenger, string>> }) => (
   <ul className="msgr" aria-label={label}>
-    {LOGOS.map((m) => (
-      <li key={m.key} className="msgr-ico" title={m.name}>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          {m.icon}
-        </svg>
-        <span className="sr-only">{m.name}</span>
-      </li>
-    ))}
+    {LOGOS.map((m) => {
+      const href = links[m.name]
+      const body = (
+        <>
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            {m.icon}
+          </svg>
+          <span className="sr-only">{m.name}</span>
+        </>
+      )
+      return (
+        <li key={m.key} className="msgr-ico" title={m.name}>
+          {href ? (
+            <a href={href} {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              {body}
+            </a>
+          ) : (
+            body
+          )}
+        </li>
+      )
+    })}
   </ul>
 )
