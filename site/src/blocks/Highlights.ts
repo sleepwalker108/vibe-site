@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { linkUrlHooks } from '../fields/linkUrl'
 
 // Іконки для карток (малюються в components/ResourceIcon.tsx)
 const ICONS = [
@@ -10,6 +11,7 @@ const ICONS = [
   { label: 'Пошук людини', value: 'search' },
   { label: 'Документ', value: 'document' },
   { label: 'Мапа', value: 'map' },
+  { label: 'Графік (інвестиції, розвиток)', value: 'chart' },
   { label: 'Інформація', value: 'info' },
   { label: 'Попередження', value: 'warning' },
   { label: 'Глобус', value: 'globe' },
@@ -38,6 +40,13 @@ export const CardsBlock: Block = {
           ],
         },
         { name: 'text', type: 'textarea', label: 'Текст' },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'Посилання (необов’язково)',
+          hooks: linkUrlHooks,
+          admin: { description: 'Якщо вказати — уся картка стане посиланням (напр. https://gisrr.gov.ua/ або /news).' },
+        },
       ],
     },
   ],

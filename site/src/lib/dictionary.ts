@@ -52,6 +52,7 @@ const uk = {
   // головна
   scrollHint: '↓ гортайте',
   quickLinks: 'Швидкі дії',
+  heroLinks: 'Корисні портали',
   search: 'Пошук',
   searchPlaceholder: 'Пошук по сайту: житло, евакуація, виплати…',
   searchButton: 'Знайти',
@@ -199,6 +200,7 @@ const en: typeof uk = {
   previewBar: 'Preview — showing a draft',
   scrollHint: '↓ scroll',
   quickLinks: 'Quick actions',
+  heroLinks: 'Useful portals',
   search: 'Search',
   searchPlaceholder: 'Search the site: housing, evacuation, payments…',
   searchButton: 'Search',

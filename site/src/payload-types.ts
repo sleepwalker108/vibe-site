@@ -860,6 +860,33 @@ export interface Home {
        */
       url?: string | null;
     };
+    /**
+     * Невеликий рядок посилань під кнопками першого екрана (напр. ГІС РР, DREAM). Порожньо — рядка немає.
+     */
+    links?:
+      | {
+          label: string;
+          url: string;
+          icon?:
+            | (
+                | 'building'
+                | 'search'
+                | 'phone'
+                | 'heart'
+                | 'warning'
+                | 'scales'
+                | 'home'
+                | 'map'
+                | 'document'
+                | 'info'
+                | 'chart'
+                | 'pin'
+                | 'globe'
+              )
+            | null;
+          id?: string | null;
+        }[]
+      | null;
     flagMode?: ('animated' | 'video') | null;
     /**
      * Найкраще — 1920×1080 або 3840×2160 (4K), до 15 МБ, без звуку, із безшовним повтором.
@@ -898,6 +925,8 @@ export interface Home {
               | 'map'
               | 'document'
               | 'info'
+              | 'chart'
+              | 'pin'
               | 'globe'
             )
           | null;
@@ -916,6 +945,8 @@ export interface Home {
           | null;
         linkLabel?: string | null;
         url?: string | null;
+        link2Label?: string | null;
+        link2Url?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1155,6 +1186,8 @@ export interface Resource {
               | 'map'
               | 'document'
               | 'info'
+              | 'chart'
+              | 'pin'
               | 'globe'
             )
           | null;
@@ -1289,6 +1322,14 @@ export interface HomeSelect<T extends boolean = true> {
               label?: T;
               url?: T;
             };
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              icon?: T;
+              id?: T;
+            };
         flagMode?: T;
         flagVideo?: T;
         videoSpeed?: T;
@@ -1319,6 +1360,8 @@ export interface HomeSelect<T extends boolean = true> {
             };
         linkLabel?: T;
         url?: T;
+        link2Label?: T;
+        link2Url?: T;
         id?: T;
       };
   evacuation?:
@@ -1626,6 +1669,7 @@ export interface CardsBlock {
               | 'search'
               | 'document'
               | 'map'
+              | 'chart'
               | 'info'
               | 'warning'
               | 'globe'
@@ -1633,6 +1677,10 @@ export interface CardsBlock {
           | null;
         title: string;
         text?: string | null;
+        /**
+         * Якщо вказати — уся картка стане посиланням (напр. https://gisrr.gov.ua/ або /news).
+         */
+        url?: string | null;
         id?: string | null;
       }[]
     | null;

@@ -178,19 +178,43 @@ const makeConverters = (labels: ProseLabels, links: LinkInfo = {}): JSXConverter
     // «Картки з іконками»
     cards: ({ node }: { node: { fields: CardsBlock } }) => (
       <div className="prose-cards">
-        {node.fields.items?.map((item, i) => (
-          <div key={item.id || i} className="prose-card">
-            <span className="prose-card-ico">
-              <ResourceIcon name={item.icon} />
-            </span>
-            <div className="prose-card-title">{item.title}</div>
-            {item.text && (
-              <p>
-                <PhoneText text={item.text} />
-              </p>
-            )}
-          </div>
-        ))}
+        {node.fields.items?.map((item, i) => {
+          const inner = (
+            <>
+              <span className="prose-card-ico">
+                <ResourceIcon name={item.icon} />
+              </span>
+              <div className="prose-card-title">{item.title}</div>
+              {item.text && (
+                <p>
+                  {/* у картці-посиланні телефони — простим текстом (посилання в посиланні не можна) */}
+                  {item.url ? item.text : <PhoneText text={item.text} />}
+                </p>
+              )}
+            </>
+          )
+          if (!item.url) return <div key={item.id || i} className="prose-card">{inner}</div>
+          // уся картка — посилання; зовнішній сайт — у новій вкладці, внизу його адреса зі стрілкою
+          const external = /^https?:\/\//i.test(item.url)
+          let host = ''
+          try {
+            host = external ? new URL(item.url).hostname.replace(/^www\./, '') : ''
+          } catch {}
+          return (
+            <a
+              key={item.id || i}
+              className="prose-card is-link"
+              href={safeHref(item.url)}
+              {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {inner}
+              <span className="prose-card-more">
+                {host || '→'}
+                {external && <span aria-hidden="true"> ↗</span>}
+              </span>
+            </a>
+          )
+        })}
       </div>
     ),
     // «Виділена цифра»

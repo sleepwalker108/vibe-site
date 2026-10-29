@@ -26,6 +26,12 @@ const TOP_BARS = 5
 const sizeClass = { big: 'c-2x2', wide: 'c-2', normal: '' } as const
 const colorClass = { navy: 'navy', yellow: 'yellow', sky: 'sky', white: '' } as const
 
+// Зовнішній сайт (https://…) або документ — у новій вкладці, щоб не губити головну; зовнішній позначаємо ↗
+const isExternal = (url?: string | null) => !!url && /^https?:\/\//i.test(url)
+const newTab = (url?: string | null) =>
+  isExternal(url) || /\.(pdf|docx?|xlsx?)([?#]|$)/i.test(url || '') ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+const arrow = (url?: string | null) => (isExternal(url) ? '↗' : '→')
+
 const domainOf = (url?: string | null) => {
   try {
     return url ? new URL(url).hostname.replace(/^www\./, '') : ''
@@ -116,6 +122,21 @@ export default async function HomePage({ searchParams }: Props) {
               </a>
             )}
           </div>
+          {!!hero?.links?.length && (
+            <nav className="hero-links" aria-label={t.heroLinks}>
+              {hero.links.map((l) => (
+                <a key={l.id} href={safeHref(l.url)} {...newTab(l.url)}>
+                  <span className="hl-ico">
+                    <ResourceIcon name={l.icon} />
+                  </span>
+                  {l.label}
+                  <span className="hl-arrow" aria-hidden="true">
+                    {arrow(l.url)}
+                  </span>
+                </a>
+              ))}
+            </nav>
+          )}
         </div>
         <div className="scroll-hint">{t.scrollHint}</div>
       </section>
@@ -150,16 +171,14 @@ export default async function HomePage({ searchParams }: Props) {
         <section className="bento-sec wrap">
           <div className="bento">
             {home.cards.map((c, i) => {
-              const cls = ['card', colorClass[c.color || 'white'], sizeClass[c.size || 'normal']].filter(Boolean).join(' ')
-              const Tag = c.url ? 'a' : 'div'
+              // два посилання: картка — не одне велике посилання, а блок із двома (перше «розтягнуте» на всю картку)
+              const two = !!(c.url && c.link2Url && c.link2Label)
+              const cls = ['card', colorClass[c.color || 'white'], sizeClass[c.size || 'normal'], two && 'has-links']
+                .filter(Boolean)
+                .join(' ')
+              const Tag = c.url && !two ? 'a' : 'div'
               const card = (
-                <Tag
-                  key={c.id}
-                  className={cls}
-                  {...(c.url ? { href: safeHref(c.url) } : {})}
-                  // документ (PDF тощо) — у новій вкладці, щоб не губити головну
-                  {...(/\.(pdf|docx?|xlsx?)([?#]|$)/i.test(c.url || '') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                >
+                <Tag key={c.id} className={cls} {...(c.url && !two ? { href: safeHref(c.url), ...newTab(c.url) } : {})}>
                   {(c.label || c.icon) && (
                     <div className="card-head">
                       {c.label ? <div className={`label${c.live ? ' live' : ''}`}>{c.label}</div> : <span />}
@@ -188,7 +207,22 @@ export default async function HomePage({ searchParams }: Props) {
                       ))}
                     </div>
                   )}
-                  {c.linkLabel && <span className="more">{c.linkLabel} →</span>}
+                  {two ? (
+                    <div className="card-links">
+                      <a className="more stretched" href={safeHref(c.url)} {...newTab(c.url)}>
+                        {c.linkLabel || c.title} {arrow(c.url)}
+                      </a>
+                      <a className="more more-2" href={safeHref(c.link2Url)} {...newTab(c.link2Url)}>
+                        {c.link2Label} {arrow(c.link2Url)}
+                      </a>
+                    </div>
+                  ) : (
+                    c.linkLabel && (
+                      <span className="more">
+                        {c.linkLabel} {arrow(c.url)}
+                      </span>
+                    )
+                  )}
                 </Tag>
               )
               // Блок евакуації стоїть одразу після першої (великої) картки — праворуч від неї

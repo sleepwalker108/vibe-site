@@ -28,6 +28,9 @@ import * as migration_20261009_112310_territories_sheet from './20261009_112310_
 import * as migration_20261015_105811_media_trash from './20261015_105811_media_trash';
 import * as migration_20261015_111116_image_sizes_webp from './20261015_111116_image_sizes_webp';
 import * as migration_20261019_152536_localized_home_links from './20261019_152536_localized_home_links';
+import * as migration_20261029_094413_home_cards_more from './20261029_094413_home_cards_more';
+import * as migration_20261029_100157_home_hero_links from './20261029_100157_home_hero_links';
+import * as migration_20261029_101500_diyalnist_digital_systems from './20261029_101500_diyalnist_digital_systems';
 
 export const migrations = [
   {
@@ -178,6 +181,21 @@ export const migrations = [
   {
     up: migration_20261019_152536_localized_home_links.up,
     down: migration_20261019_152536_localized_home_links.down,
-    name: '20261019_152536_localized_home_links'
+    name: '20261019_152536_localized_home_links',
+  },
+  {
+    up: migration_20261029_094413_home_cards_more.up,
+    down: migration_20261029_094413_home_cards_more.down,
+    name: '20261029_094413_home_cards_more',
+  },
+  {
+    up: migration_20261029_100157_home_hero_links.up,
+    down: migration_20261029_100157_home_hero_links.down,
+    name: '20261029_100157_home_hero_links'
+  },
+  {
+    up: migration_20261029_101500_diyalnist_digital_systems.up,
+    down: migration_20261029_101500_diyalnist_digital_systems.down,
+    name: '20261029_101500_diyalnist_digital_systems',
   },
 ];

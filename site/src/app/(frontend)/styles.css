@@ -134,6 +134,17 @@
   .btn-yellow { background: var(--yellow); color: var(--on-yellow); }
   .btn-ghost { border: 1.5px solid rgba(255,255,255,.7); color: #fff; }
   .btn-ghost:hover { background: rgba(255,255,255,.12); }
+  /* рядок посилань під кнопками першого екрана (ГІС РР · DREAM · …): прозорі «таблетки», як кнопка «Перелік», з жовтою іконкою */
+  .hero-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
+  .hero-links a {
+    display: inline-flex; align-items: center; gap: 9px; padding: 6px 14px 6px 6px; border-radius: 999px;
+    background: transparent; border: 1.5px solid rgba(255,255,255,.7); color: #fff;
+    font-size: .92rem; font-weight: 700; transition: background .2s, transform .2s;
+  }
+  .hero-links a:hover, .hero-links a:focus-visible { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+  .hero-links .hl-ico { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--yellow); color: var(--on-yellow); }
+  .hero-links .hl-ico svg { width: 16px; height: 16px; }
+  .hero-links .hl-arrow { opacity: .7; font-weight: 600; }
   .scroll-hint { position: absolute; bottom: 22px; left: 50%; translate: -50% 0; font-size: .8rem; opacity: .8; }
 
   /* ---------- statement ---------- */
@@ -169,6 +180,13 @@
   .chip.light { background: var(--sky); color: var(--navy); }
   .live { display: inline-flex; align-items: center; gap: 8px; }
   .live::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 4px rgba(61,220,132,.25); }
+  /* Картка з двома посиланнями: перше «розтягнуте» на всю картку (клік будь-де), друге — поверх нього */
+  .card.has-links { position: relative; }
+  .card.has-links:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(16,77,130,.14); }
+  .card-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
+  .card .stretched::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .card .more-2 { position: relative; z-index: 1; }
+  .card .card-links a.more:hover, .card .card-links a.more:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ---------- section head ---------- */
   .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
@@ -571,7 +589,7 @@
   .prose strong { color: var(--navy-ink); font-weight: 700; }
   .prose a { color: var(--navy); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(16,77,130,.35); text-underline-offset: 3px; transition: text-decoration-color .2s; }
   .prose a:hover { text-decoration-color: currentColor; }
-  .prose a[href^="http"]:not([href*="localhost"]):not([href*="dp-reintegration.gov.ua/wp-content"])::after { content: " ↗"; font-size: .8em; }
+  .prose a[href^="http"]:not([href*="localhost"]):not([href*="dp-reintegration.gov.ua/wp-content"]):not(.prose-card)::after { content: " ↗"; font-size: .8em; }
   .prose a[href^="mailto:"]::before { content: "✉ "; }
   .prose ul, .prose ol { margin: 0 0 1.2em; padding-left: 1.4em; }
   .prose li { margin: .35em 0; padding-left: .2em; }
@@ -844,6 +862,11 @@
   .prose-card-ico { width: 46px; height: 46px; border-radius: 14px; background: var(--sky); color: var(--navy); display: grid; place-items: center; margin-bottom: 12px; }
   .prose-card-title { font-weight: 800; color: var(--navy-ink); font-size: 1.05rem; line-height: 1.3; margin-bottom: 6px; }
   .prose-card p { margin: 0; font-size: .95rem; line-height: 1.55; color: var(--muted); }
+  /* картка-посилання: уся картка клікабельна, внизу — адреса сайту */
+  a.prose-card.is-link { display: flex; flex-direction: column; color: inherit; text-decoration: none; transition: border-color .2s, box-shadow .2s, transform .2s; }
+  a.prose-card.is-link:hover, a.prose-card.is-link:focus-visible { transform: translateY(-3px); }
+  .prose-card-more { margin-top: auto; padding-top: 14px; font-weight: 700; font-size: .9rem; color: var(--navy); }
+  a.prose-card.is-link:hover .prose-card-more { text-decoration: underline; text-underline-offset: 3px; }
   .prose-stat { position: relative; overflow: hidden; margin: 1.6em 0 2em; padding: 28px 30px; border-radius: 22px; background: var(--navy-bg); color: #fff; }
   .prose-stat::after { content: ""; position: absolute; right: -60px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(255,213,0,.25), transparent 70%); }
   .prose-stat-num { position: relative; font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 800; line-height: 1; color: var(--yellow); font-variant-numeric: tabular-nums; }
@@ -1043,6 +1066,10 @@ html.contrast .mm-row.is-active, html.contrast .mm-sub-link.is-active, html.cont
   .hero p { font-size: calc(.95rem * var(--fs-scale)); margin: 0; max-width: none; line-height: 1.45; }
   .hero .cta { justify-content: flex-start; gap: 10px; margin-top: 18px; }
   .hero .cta .btn { padding: 11px 18px; font-size: .9rem; }
+  .hero-links { justify-content: flex-start; gap: 8px; margin-top: 14px; }
+  .hero-links a { font-size: .82rem; padding: 5px 12px 5px 5px; gap: 7px; }
+  .hero-links .hl-ico { width: 24px; height: 24px; }
+  .hero-links .hl-ico svg { width: 14px; height: 14px; }
   .scroll-hint { display: none; }
   .flag-toggle { width: 36px; height: 36px; right: 12px; bottom: auto; top: 12px; }
   .hero::before { background: linear-gradient(180deg, rgba(8,32,60,.55), rgba(8,32,60,.72)); }

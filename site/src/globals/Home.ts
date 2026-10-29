@@ -14,6 +14,8 @@ export const ICON_OPTIONS = [
   { label: 'Мапа (території)', value: 'map' },
   { label: 'Документ', value: 'document' },
   { label: 'Інформація', value: 'info' },
+  { label: 'Графік (інвестиції, розвиток)', value: 'chart' },
+  { label: 'Мітка на мапі (місце, адреса)', value: 'pin' },
   { label: 'Глобус (інше)', value: 'globe' },
 ]
 
@@ -68,6 +70,25 @@ export const Home: GlobalConfig = {
             link('primary', 'Жовта кнопка'),
             link('call2', 'Друга кнопка дзвінка (напр. гаряча лінія 1648)'),
             link('secondary', 'Прозора кнопка'),
+            {
+              name: 'links',
+              type: 'array',
+              label: 'Посилання під кнопками',
+              labels: { singular: 'Посилання', plural: 'Посилання' },
+              admin: {
+                description: 'Невеликий рядок посилань під кнопками першого екрана (напр. ГІС РР, DREAM). Порожньо — рядка немає.',
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'label', type: 'text', label: 'Текст', required: true, localized: true },
+                    { name: 'url', type: 'text', label: 'Посилання', required: true, localized: true, hooks: linkUrlHooks },
+                    { name: 'icon', type: 'select', label: 'Іконка', defaultValue: 'globe', options: ICON_OPTIONS },
+                  ],
+                },
+              ],
+            },
             {
               name: 'flagMode',
               type: 'radio',
@@ -182,6 +203,14 @@ export const Home: GlobalConfig = {
                   fields: [
                     { name: 'linkLabel', type: 'text', label: 'Текст посилання', localized: true },
                     { name: 'url', type: 'text', label: 'Посилання', localized: true, hooks: linkUrlHooks },
+                  ],
+                },
+                // друге посилання в картці (напр. «Переглянути перелік» + «Інтерактивна мапа»)
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'link2Label', type: 'text', label: 'Друге посилання: текст (необов’язково)', localized: true },
+                    { name: 'link2Url', type: 'text', label: 'Друге посилання', localized: true, hooks: linkUrlHooks },
                   ],
                 },
               ],

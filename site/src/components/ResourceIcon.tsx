@@ -57,6 +57,19 @@ const paths: Record<string, React.ReactNode> = {
       <path d="M12 11v6M12 7.5h.01" />
     </>
   ),
+  pin: (
+    <>
+      <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" />
+      <circle cx="12" cy="10" r="2.4" />
+    </>
+  ),
+  chart: (
+    <>
+      <path d="M4 20h16" />
+      <path d="M7 16v-3M12 16v-5M17 16V9" />
+      <path d="m5 9 5-4 4 3 5-4" />
+    </>
+  ),
   globe: (
     <>
       <circle cx="12" cy="12" r="9" />
