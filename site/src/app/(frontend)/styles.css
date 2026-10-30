@@ -1770,7 +1770,7 @@ html.contrast .msgr-ico { border: 2px solid var(--hc-fg) !important; box-shadow:
 /* DREAM — фіолетова (інвестиції, проєкти) */
 .side-sys-dream { background: #4a3fb0; }
 .side-sys-dream:hover { background: #41379c; }
-.side-sys-dream b { color: #ffbfdc; } /* рожевий на фіолетовому */
+.side-sys-dream b { color: #8ef5d4; } /* м'ятний на фіолетовому */
 @media (prefers-reduced-motion: reduce) { .side-sys:hover, .side-sys:active { transform: none; } }
 html.contrast .side-sys { background: var(--hc-bg) !important; border: 2px solid var(--hc-link) !important; box-shadow: none !important; text-decoration: none !important; }
 html.contrast .side-sys * { color: var(--hc-fg) !important; }
