@@ -63,11 +63,6 @@ export const PageSidebar = async ({ path, locale, t, draft = false, children }: 
                 <path d={s.icon} />
               </svg>
             </span>
-            <span className="side-sys-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M7 17 17 7M9 7h8v8" />
-              </svg>
-            </span>
           </span>
           <b>{s.title}</b>
           <span className="side-sys-text">{t[s.text]}</span>
