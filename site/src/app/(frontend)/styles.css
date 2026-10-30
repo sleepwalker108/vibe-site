@@ -1753,20 +1753,29 @@ html.contrast .year-card .yc-arrow, html.contrast .year-card .yc-ico { border: 2
 
 html.contrast .msgr-ico { border: 2px solid var(--hc-fg) !important; box-shadow: none !important; }
 
-/* Бічна колонка: ГІС РР і DREAM — у стилі меню розділу */
-.side-sys { border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: var(--card); }
-.side-sys ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.side-sys a { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background-color .3s cubic-bezier(.22,1,.36,1); }
-.side-sys a:hover { background: var(--sky); }
-.side-sys a:active { transform: translateY(1px); }
-.side-sys a:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
-.side-sys-ico { width: 40px; height: 40px; flex: none; border-radius: 10px; display: grid; place-items: center; background: var(--sky); color: var(--navy); transition: background-color .3s cubic-bezier(.22,1,.36,1), color .3s cubic-bezier(.22,1,.36,1); }
-.side-sys a:hover .side-sys-ico { background: var(--navy-bg); color: #fff; }
-.side-sys-body { display: grid; gap: 2px; min-width: 0; flex: 1; }
-.side-sys-body b { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
-.side-sys-body span { font-size: .8125rem; line-height: 1.15rem; color: var(--muted); text-wrap: pretty; }
-.side-sys-arrow { flex: none; color: var(--muted); transition: transform .3s cubic-bezier(.22,1,.36,1), color .3s; }
-.side-sys a:hover .side-sys-arrow { transform: translate(2px, -2px); color: var(--navy); }
-@media (prefers-reduced-motion: reduce) { .side-sys a:hover .side-sys-arrow, .side-sys a:active { transform: none; } }
-html.contrast .side-sys { border: 2px solid var(--hc-fg) !important; }
-html.contrast .side-sys a { text-decoration: none !important; }
+/* Бічна колонка: ГІС РР і DREAM — дві картки (смарагдова й фіолетова), суцільний фон, у парі з картками гарячих ліній */
+.side-sys { display: grid; gap: 4px; padding: 20px; border-radius: 18px; color: #fff; text-decoration: none; transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s cubic-bezier(.22,1,.36,1), background-color .3s; }
+.side-sys:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(4, 20, 40, .22); }
+.side-sys:active { transform: scale(.98); }
+.side-sys:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.side-sys-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.side-sys-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.14); }
+.side-sys-arrow { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #fff; transition: transform .3s cubic-bezier(.22,1,.36,1); }
+.side-sys:hover .side-sys-arrow { transform: rotate(45deg); }
+.side-sys b { font-size: 1.875rem; line-height: 2.25rem; font-weight: 800; letter-spacing: -.01em; }
+.side-sys-text { font-size: .875rem; line-height: 1.25rem; opacity: .9; text-wrap: pretty; }
+.side-sys-domain { margin-top: 8px; font-size: .75rem; line-height: 1rem; font-weight: 600; opacity: .7; }
+/* ГІС РР — смарагдова (мапа, територія) */
+.side-sys-gis { background: #0d6b5e; }
+.side-sys-gis:hover { background: #0b5f53; }
+.side-sys-gis b { color: #8ff0cf; }
+.side-sys-gis .side-sys-arrow { color: #0d6b5e; }
+/* DREAM — фіолетова (інвестиції, проєкти) */
+.side-sys-dream { background: #4a3fb0; }
+.side-sys-dream:hover { background: #41379c; }
+.side-sys-dream b { color: #d4ceff; }
+.side-sys-dream .side-sys-arrow { color: #4a3fb0; }
+@media (prefers-reduced-motion: reduce) { .side-sys:hover, .side-sys:active, .side-sys:hover .side-sys-arrow { transform: none; } }
+html.contrast .side-sys { background: var(--hc-bg) !important; border: 2px solid var(--hc-link) !important; box-shadow: none !important; text-decoration: none !important; }
+html.contrast .side-sys * { color: var(--hc-fg) !important; }
+html.contrast .side-sys :is(.side-sys-ico, .side-sys-arrow) { background: var(--hc-bg2) !important; }

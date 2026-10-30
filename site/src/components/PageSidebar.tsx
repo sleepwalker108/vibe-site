@@ -13,10 +13,10 @@ const decode = (s: string) => {
   }
 }
 
-// Державні цифрові системи, роботу яких забезпечує Товариство (у стилі меню розділу)
+// Державні цифрові системи, роботу яких забезпечує Товариство — дві окремі картки
 const SYSTEMS = [
-  { key: 'gis', title: 'ГІС РР', icon: 'M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20', text: 'sideGisText', url: { uk: 'https://gisrr.gov.ua/', en: 'https://gisrr.gov.ua/' } },
-  { key: 'dream', title: 'DREAM', icon: 'M4 20h16M7 16v-5M12 16V6M17 16v-8', text: 'sideDreamText', url: { uk: 'https://dream.gov.ua/', en: 'https://dream.gov.ua/en' } },
+  { key: 'gis', title: 'ГІС РР', domain: 'gisrr.gov.ua', icon: 'M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20', text: 'sideGisText', url: { uk: 'https://gisrr.gov.ua/', en: 'https://gisrr.gov.ua/' } },
+  { key: 'dream', title: 'DREAM', domain: 'dream.gov.ua', icon: 'M4 20h16M7 16v-5M12 16V6M17 16v-8', text: 'sideDreamText', url: { uk: 'https://dream.gov.ua/', en: 'https://dream.gov.ua/en' } },
 ] as const
 
 type Props = { path: string; locale: Locale; t: Dict; draft?: boolean; children?: React.ReactNode }
@@ -55,30 +55,28 @@ export const PageSidebar = async ({ path, locale, t, draft = false, children }: 
         </nav>
       )}
       {children}
-      <nav className="side-sys" aria-label={t.sideSystems}>
-        <div className="side-title">{t.sideSystems}</div>
-        <ul>
-          {SYSTEMS.map((s) => (
-            <li key={s.key}>
-              <a href={s.url[locale]} target="_blank" rel="noopener noreferrer">
-                <span className="side-sys-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={s.icon} />
-                  </svg>
-                </span>
-                <span className="side-sys-body">
-                  <b>{s.title}</b>
-                  <span>{t[s.text]}</span>
-                </span>
-                <svg className="side-sys-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M7 17 17 7M9 7h8v8" />
-                </svg>
-                <span className="sr-only">{t.newTab}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {SYSTEMS.map((s) => (
+        <a key={s.key} className={`side-sys side-sys-${s.key}`} href={s.url[locale]} target="_blank" rel="noopener noreferrer">
+          <span className="side-sys-top">
+            <span className="side-sys-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d={s.icon} />
+              </svg>
+            </span>
+            <span className="side-sys-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 17 17 7M9 7h8v8" />
+              </svg>
+            </span>
+          </span>
+          <b>{s.title}</b>
+          <span className="side-sys-text">{t[s.text]}</span>
+          <span className="side-sys-domain">
+            {s.domain}
+            <span className="sr-only"> {t.newTab}</span>
+          </span>
+        </a>
+      ))}
       <a className="side-hot" href="tel:1548">
         <span className="side-hot-label">{t.hotline}</span>
         <b>1548</b>
