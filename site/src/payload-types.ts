@@ -940,6 +940,10 @@ export interface Home {
         chips?:
           | {
               text: string;
+              /**
+               * Якщо вказати — плашка стане посиланням (напр. https://1548.gov.ua/).
+               */
+              url?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -1356,6 +1360,7 @@ export interface HomeSelect<T extends boolean = true> {
           | T
           | {
               text?: T;
+              url?: T;
               id?: T;
             };
         linkLabel?: T;

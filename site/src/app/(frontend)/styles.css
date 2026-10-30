@@ -1783,3 +1783,9 @@ html.contrast .side-sys .side-sys-ico { background: var(--hc-bg2) !important; }
 .topbar .brand img { flex: none; }
 .topbar .brand-text { min-width: 0; }
 .topbar:not(.stacked) .main-nav { flex-shrink: 0; }
+
+/* плашка-посилання на картці головної (напр. «Портал 1548») — над «розтягнутим» посиланням картки */
+.card .chip-link { position: relative; z-index: 1; text-decoration: none; transition: background-color .2s; }
+.card .chip-link:hover { background: rgba(255,255,255,.26); }
+.card .chip-link.light:hover { filter: brightness(.95); }
+.card .chip-link:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }

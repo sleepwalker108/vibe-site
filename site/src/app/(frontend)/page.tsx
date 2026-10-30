@@ -173,12 +173,14 @@ export default async function HomePage({ searchParams }: Props) {
             {home.cards.map((c, i) => {
               // два посилання: картка — не одне велике посилання, а блок із двома (перше «розтягнуте» на всю картку)
               const two = !!(c.url && c.link2Url && c.link2Label)
-              const cls = ['card', colorClass[c.color || 'white'], sizeClass[c.size || 'normal'], two && 'has-links']
+              // плашка-посилання всередині картки-посилання: так само — картка блок, а її посилання «розтягнуте»
+              const stretched = !!c.url && (two || !!c.chips?.some((ch) => ch.url))
+              const cls = ['card', colorClass[c.color || 'white'], sizeClass[c.size || 'normal'], stretched && 'has-links']
                 .filter(Boolean)
                 .join(' ')
-              const Tag = c.url && !two ? 'a' : 'div'
+              const Tag = c.url && !stretched ? 'a' : 'div'
               const card = (
-                <Tag key={c.id} className={cls} {...(c.url && !two ? { href: safeHref(c.url), ...newTab(c.url) } : {})}>
+                <Tag key={c.id} className={cls} {...(c.url && !stretched ? { href: safeHref(c.url), ...newTab(c.url) } : {})}>
                   {(c.label || c.icon) && (
                     <div className="card-head">
                       {c.label ? <div className={`label${c.live ? ' live' : ''}`}>{c.label}</div> : <span />}
@@ -200,11 +202,17 @@ export default async function HomePage({ searchParams }: Props) {
                   </div>
                   {!!c.chips?.length && (
                     <div className="phone-row">
-                      {c.chips.map((ch) => (
-                        <span key={ch.id} className={c.color === 'navy' ? 'chip' : 'chip light'}>
-                          {ch.text}
-                        </span>
-                      ))}
+                      {c.chips.map((ch) =>
+                        ch.url ? (
+                          <a key={ch.id} className={`chip chip-link${c.color === 'navy' ? '' : ' light'}`} href={safeHref(ch.url)} {...newTab(ch.url)}>
+                            {ch.text} {arrow(ch.url)}
+                          </a>
+                        ) : (
+                          <span key={ch.id} className={c.color === 'navy' ? 'chip' : 'chip light'}>
+                            {ch.text}
+                          </span>
+                        ),
+                      )}
                     </div>
                   )}
                   {two ? (
@@ -216,6 +224,10 @@ export default async function HomePage({ searchParams }: Props) {
                         {c.link2Label} {arrow(c.link2Url)}
                       </a>
                     </div>
+                  ) : stretched ? (
+                    <a className="more stretched" href={safeHref(c.url)} {...newTab(c.url)}>
+                      {c.linkLabel || c.title} {arrow(c.url)}
+                    </a>
                   ) : (
                     c.linkLabel && (
                       <span className="more">

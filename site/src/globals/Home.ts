@@ -195,8 +195,22 @@ export const Home: GlobalConfig = {
                 {
                   name: 'chips',
                   type: 'array',
-                  label: 'Плашки (телефони, боти)',
-                  fields: [{ name: 'text', type: 'text', label: 'Текст', required: true, localized: true }],
+                  label: 'Плашки (телефони, боти, посилання)',
+                  fields: [
+                    {
+                      type: 'row',
+                      fields: [
+                        { name: 'text', type: 'text', label: 'Текст', required: true, localized: true },
+                        {
+                          name: 'url',
+                          type: 'text',
+                          label: 'Посилання (необов’язково)',
+                          hooks: linkUrlHooks,
+                          admin: { description: 'Якщо вказати — плашка стане посиланням (напр. https://1548.gov.ua/).' },
+                        },
+                      ],
+                    },
+                  ],
                 },
                 {
                   type: 'row',
