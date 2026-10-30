@@ -34,6 +34,7 @@ import * as migration_20261029_101500_diyalnist_digital_systems from './20261029
 import * as migration_20261030_120000_nav_vacancies_about from './20261030_120000_nav_vacancies_about';
 import * as migration_20261030_130000_diyalnist_systems_up from './20261030_130000_diyalnist_systems_up';
 import * as migration_20261030_140000_nav_digital_recovery from './20261030_140000_nav_digital_recovery';
+import * as migration_20261030_150000_nav_digital_systems_name from './20261030_150000_nav_digital_systems_name';
 
 export const migrations = [
   {
@@ -215,5 +216,10 @@ export const migrations = [
     up: migration_20261030_140000_nav_digital_recovery.up,
     down: migration_20261030_140000_nav_digital_recovery.down,
     name: '20261030_140000_nav_digital_recovery',
+  },
+  {
+    up: migration_20261030_150000_nav_digital_systems_name.up,
+    down: migration_20261030_150000_nav_digital_systems_name.down,
+    name: '20261030_150000_nav_digital_systems_name',
   },
 ];

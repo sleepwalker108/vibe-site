@@ -48,24 +48,6 @@ const IconFont = ({ dir }: { dir: 'up' | 'down' }) => (
     <span className="ti-sign">{dir === 'up' ? '+' : '−'}</span>
   </span>
 )
-// довгий пункт меню (3+ слова, напр. «Цифрові системи відновлення») — у два рядки, щоб меню вміщувалось
-const twoLines = (label: string) => label.length >= 22 && label.trim().split(/\s+/).length >= 3
-
-// ділить назву на два рядки приблизно порівну за словами («Цифрові системи» / «відновлення»)
-const TwoLines = ({ label }: { label: string }) => {
-  const words = label.trim().split(/\s+/)
-  let best = 1
-  for (let i = 1; i < words.length; i++) {
-    const diff = (k: number) => Math.abs(words.slice(0, k).join(' ').length - words.slice(k).join(' ').length)
-    if (diff(i) < diff(best)) best = i
-  }
-  return (
-    <span className="nav-2l-text">
-      <span>{words.slice(0, best).join(' ')}</span> <span>{words.slice(best).join(' ')}</span>
-    </span>
-  )
-}
-
 // Стрілочка підменю: повертається догори, коли підменю відкрите
 const Caret = () => (
   <svg className="nav-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -207,7 +189,7 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
         return (
           <li
             key={m.id || m.label}
-            className={[hasSub && 'has-sub', isOpen && 'sub-open', twoLines(m.label) && 'nav-2l'].filter(Boolean).join(' ') || undefined}
+            className={hasSub ? `has-sub${isOpen ? ' sub-open' : ''}` : undefined}
             onMouseEnter={
               hasSub
                 ? () => {
@@ -262,7 +244,7 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
                   })
                 }
               >
-                {twoLines(m.label) ? <TwoLines label={m.label} /> : m.label}
+                {m.label}
                 <Caret />
               </button>
             )}

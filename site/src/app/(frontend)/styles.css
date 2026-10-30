@@ -1776,6 +1776,3 @@ html.contrast .side-sys { background: var(--hc-bg) !important; border: 2px solid
 html.contrast .side-sys * { color: var(--hc-fg) !important; }
 html.contrast .side-sys .side-sys-ico { background: var(--hc-bg2) !important; }
 
-/* довгий пункт верхнього меню — у два рядки (лише в рядку меню, не в мобільному) */
-.nav:not(.open) > li.nav-2l > :is(a, .nav-parent) { line-height: 1.15; text-align: left; padding-top: 4px; padding-bottom: 4px; }
-.nav:not(.open) .nav-2l-text > span { display: block; }
