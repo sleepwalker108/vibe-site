@@ -3,6 +3,7 @@ import type { Dict, Locale } from '@/lib/dictionary'
 import { getClient } from '@/lib/payload'
 import { localeQuery } from '@/lib/i18n'
 import { safeHref } from '@/lib/safeHref'
+import { SideStick } from './SideStick'
 
 const decode = (s: string) => {
   try {
@@ -11,6 +12,12 @@ const decode = (s: string) => {
     return s
   }
 }
+
+// Картки державних цифрових систем, роботу яких забезпечує Товариство, — у фірмових кольорах цих сайтів
+const SYSTEMS = [
+  { key: 'gis', title: 'ГІС РР', domain: 'gisrr.gov.ua', text: 'sideGisText', url: { uk: 'https://gisrr.gov.ua/', en: 'https://gisrr.gov.ua/' } },
+  { key: 'dream', title: 'DREAM', domain: 'dream.gov.ua', text: 'sideDreamText', url: { uk: 'https://dream.gov.ua/', en: 'https://dream.gov.ua/en' } },
+] as const
 
 type Props = { path: string; locale: Locale; t: Dict; draft?: boolean; children?: React.ReactNode }
 
@@ -29,6 +36,7 @@ export const PageSidebar = async ({ path, locale, t, draft = false, children }: 
 
   return (
     <aside className="page-side">
+      <SideStick />
       {links && (
         <nav className="side-nav" aria-label={section!.label}>
           <div className="side-title">{section!.label}</div>
@@ -57,6 +65,25 @@ export const PageSidebar = async ({ path, locale, t, draft = false, children }: 
         <b>1648</b>
         <span>{t.sideHot2Text}</span>
       </a>
+      <nav className="side-sys" aria-label={t.sideSystems}>
+        {SYSTEMS.map((s) => (
+          <a key={s.key} className={`side-sys-card side-sys-${s.key}`} href={s.url[locale]} target="_blank" rel="noopener noreferrer">
+            <span className="side-sys-top">
+              <span className="side-sys-kicker">{t.sideSysKicker}</span>
+              <span className="side-sys-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17 17 7M9 7h8v8" />
+                </svg>
+              </span>
+            </span>
+            <b>{s.title}</b>
+            <span className="side-sys-text">{t[s.text]}</span>
+            <span className="side-sys-domain">
+              {s.domain} <span className="sr-only">{t.newTab}</span>
+            </span>
+          </a>
+        ))}
+      </nav>
     </aside>
   )
 }

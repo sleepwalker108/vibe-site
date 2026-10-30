@@ -1752,3 +1752,31 @@ html.contrast .year-card .yc-arrow, html.contrast .year-card .yc-ico { border: 2
 .page-empty { margin: 0; padding: 22px 24px; border-radius: 18px; background: var(--sky); color: var(--navy-ink); font-weight: 600; }
 
 html.contrast .msgr-ico { border: 2px solid var(--hc-fg) !important; box-shadow: none !important; }
+
+/* Бічна колонка: картки ГІС РР і DREAM у фірмових кольорах їхніх сайтів (суцільний фон, без градієнтів) */
+.side-sys { display: grid; gap: 12px; margin-top: 12px; }
+.side-sys-card { display: grid; gap: 8px; padding: 20px; border-radius: 18px; border: 1px solid transparent; text-decoration: none; transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s cubic-bezier(.22,1,.36,1); }
+.side-sys-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,.18); }
+.side-sys-card:active { transform: scale(.98); }
+.side-sys-card:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.side-sys-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.side-sys-kicker { font-size: .75rem; line-height: 1rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.side-sys-arrow { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; transition: transform .3s cubic-bezier(.22,1,.36,1); }
+.side-sys-card:hover .side-sys-arrow { transform: rotate(45deg); }
+.side-sys-card b { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -.01em; }
+.side-sys-text { font-size: .875rem; line-height: 1.25rem; text-wrap: pretty; opacity: .85; }
+.side-sys-domain { font-size: .75rem; line-height: 1rem; font-weight: 600; opacity: .6; }
+/* ГІС РР: чорний і салатовий, як на gisrr.gov.ua */
+.side-sys-gis { background: #181818; border-color: #313131; color: #fff; }
+.side-sys-gis .side-sys-arrow { background: #d4ff00; color: #000; }
+.side-sys-gis b { color: #d4ff00; }
+/* DREAM: білий, чорний і жовтий, як на dream.gov.ua */
+.side-sys-dream { background: #fff; border-color: #e6e6e6; color: #000; }
+.side-sys-dream .side-sys-arrow { background: #ffd500; color: #000; }
+@media (prefers-reduced-motion: reduce) {
+  .side-sys-card, .side-sys-arrow { transition: opacity .3s; }
+  .side-sys-card:hover, .side-sys-card:active, .side-sys-card:hover .side-sys-arrow { transform: none; }
+}
+html.contrast .side-sys-card { background: var(--hc-bg) !important; border: 2px solid var(--hc-link) !important; box-shadow: none !important; }
+html.contrast .side-sys-card * { color: var(--hc-fg) !important; }
+html.contrast .side-sys-arrow { background: var(--hc-bg2) !important; }
