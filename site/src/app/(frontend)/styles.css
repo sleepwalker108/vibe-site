@@ -488,7 +488,7 @@
 
 
   /* ---------- один рядок шапки: вміщуємо всі розділи оригінального меню ---------- */
-  .topbar .wrap { width: min(1400px, 100% - 32px); gap: 10px; }
+  .topbar .wrap { width: min(1460px, 100% - 32px); gap: 10px; }
   .nav { gap: 0; }
   .nav > li > a, .nav > li > .nav-parent { font-size: .84rem; padding: 8px 4px; }
   .nav > li:nth-last-child(-n+2) .sub { left: auto; right: 0; } /* крайні праві підменю не виходять за екран */
@@ -1775,3 +1775,7 @@ html.contrast .msgr-ico { border: 2px solid var(--hc-fg) !important; box-shadow:
 html.contrast .side-sys { background: var(--hc-bg) !important; border: 2px solid var(--hc-link) !important; box-shadow: none !important; text-decoration: none !important; }
 html.contrast .side-sys * { color: var(--hc-fg) !important; }
 html.contrast .side-sys .side-sys-ico { background: var(--hc-bg2) !important; }
+
+/* довгий пункт верхнього меню — у два рядки (лише в рядку меню, не в мобільному) */
+.nav:not(.open) > li.nav-2l > :is(a, .nav-parent) { line-height: 1.15; text-align: left; padding-top: 4px; padding-bottom: 4px; }
+.nav:not(.open) .nav-2l-text > span { display: block; }
