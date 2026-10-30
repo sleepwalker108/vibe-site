@@ -33,6 +33,7 @@ import * as migration_20261029_100157_home_hero_links from './20261029_100157_ho
 import * as migration_20261029_101500_diyalnist_digital_systems from './20261029_101500_diyalnist_digital_systems';
 import * as migration_20261030_120000_nav_vacancies_about from './20261030_120000_nav_vacancies_about';
 import * as migration_20261030_180000_home_chip_links from './20261030_180000_home_chip_links';
+import * as migration_20261030_190000_nav_digital_after_hotline from './20261030_190000_nav_digital_after_hotline';
 import * as migration_20261030_130000_diyalnist_systems_up from './20261030_130000_diyalnist_systems_up';
 import * as migration_20261030_140000_nav_digital_recovery from './20261030_140000_nav_digital_recovery';
 import * as migration_20261030_150000_nav_digital_systems_name from './20261030_150000_nav_digital_systems_name';
@@ -239,5 +240,10 @@ export const migrations = [
     up: migration_20261030_170000_home_hero_no_text.up,
     down: migration_20261030_170000_home_hero_no_text.down,
     name: '20261030_170000_home_hero_no_text'
+  },
+  {
+    up: migration_20261030_190000_nav_digital_after_hotline.up,
+    down: migration_20261030_190000_nav_digital_after_hotline.down,
+    name: '20261030_190000_nav_digital_after_hotline',
   },
 ];
