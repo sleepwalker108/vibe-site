@@ -36,6 +36,7 @@ import * as migration_20261030_130000_diyalnist_systems_up from './20261030_1300
 import * as migration_20261030_140000_nav_digital_recovery from './20261030_140000_nav_digital_recovery';
 import * as migration_20261030_150000_nav_digital_systems_name from './20261030_150000_nav_digital_systems_name';
 import * as migration_20261030_160000_digital_systems_pages from './20261030_160000_digital_systems_pages';
+import * as migration_20261030_170000_home_hero_no_text from './20261030_170000_home_hero_no_text';
 
 export const migrations = [
   {
@@ -227,5 +228,10 @@ export const migrations = [
     up: migration_20261030_160000_digital_systems_pages.up,
     down: migration_20261030_160000_digital_systems_pages.down,
     name: '20261030_160000_digital_systems_pages',
+  },
+  {
+    up: migration_20261030_170000_home_hero_no_text.up,
+    down: migration_20261030_170000_home_hero_no_text.down,
+    name: '20261030_170000_home_hero_no_text',
   },
 ];

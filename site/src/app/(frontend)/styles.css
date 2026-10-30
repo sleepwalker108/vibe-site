@@ -1776,3 +1776,10 @@ html.contrast .side-sys { background: var(--hc-bg) !important; border: 2px solid
 html.contrast .side-sys * { color: var(--hc-fg) !important; }
 html.contrast .side-sys .side-sys-ico { background: var(--hc-bg2) !important; }
 
+
+/* Поки шапка ще не виміряла місце (перша мить завантаження), меню не наїжджає на кнопки:
+   стискається назва біля логотипа, а не меню */
+.topbar .brand { flex-shrink: 1; min-width: 0; }
+.topbar .brand img { flex: none; }
+.topbar .brand-text { min-width: 0; }
+.topbar:not(.stacked) .main-nav { flex-shrink: 0; }
