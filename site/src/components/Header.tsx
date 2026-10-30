@@ -153,13 +153,18 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
       const navW = burgerMode
         ? 0
         : Array.from(navEl.children).reduce((sum, li) => sum + (li as HTMLElement).offsetWidth, 0)
-      const gaps = 2 * parseFloat(getComputedStyle(wrap).columnGap || '0') + 8
-      const full = img.offsetWidth + 12 + text.scrollWidth + 14 + navW + tools.offsetWidth + gaps
+      // проміжки рядка: логотип | меню | кнопки; коли меню сховане під ☰ — лише один проміжок
+      const gaps = (burgerMode ? 1 : 2) * parseFloat(getComputedStyle(wrap).columnGap || '0') + 4
+      // ширина самого тексту назви (без відступу, який змінюється під час анімації) + відступ 12 і риска 2
+      const textW = Math.max(...Array.from(text.children, (c) => (c as HTMLElement).scrollWidth)) + 14
+      const full = img.offsetWidth + 12 + textW + navW + tools.offsetWidth + gaps
       const compact = img.offsetWidth + navW + tools.offsetWidth + gaps
       const room = wrap.clientWidth
       setFit({ compact: full > room, stacked: !burgerMode && compact > room })
     }
     measure()
+    // до завантаження шрифту назва ширша — після завантаження міряємо ще раз
+    document.fonts?.ready.then(measure)
     const ro = new ResizeObserver(measure)
     ro.observe(header)
     return () => ro.disconnect()

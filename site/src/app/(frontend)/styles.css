@@ -650,7 +650,7 @@
   .side-hot b { font-size: 2.6rem; line-height: 1; font-weight: 800; color: var(--yellow); }
   .side-hot-label { font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
   .side-hot span:last-child { font-size: .88rem; opacity: .85; }
-  .side-hot:hover { background: var(--navy-deep); }
+  .side-hot:hover { background: color-mix(in srgb, var(--navy-bg) 85%, #000); } /* трохи темніший синій (у темній темі navy-deep — майже чорний) */
   @media (max-width: 1080px) { .page-side { position: static; } }
 
   /* контрастний режим для нових елементів */
