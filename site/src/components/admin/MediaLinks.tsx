@@ -1,6 +1,7 @@
 'use client'
 import { useDocumentInfo } from '@payloadcms/ui'
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { absoluteUrl, copyText, useOrigin } from './copyText'
 
 type MediaDoc = {
@@ -45,6 +46,42 @@ const CopyRow = ({ label, value, mono = true }: { label: string; value: string; 
   )
 }
 
+// Відео: у верхньому блоці файлу Payload показує лише значок — ставимо туди плеєр, щоб відео можна було
+// запустити прямо на сторінці (без нової вкладки). Блок належить Payload, тому вставляємо плеєр порталом.
+const TopVideoPreview = ({ src }: { src: string }) => {
+  const [box, setBox] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    const find = () => {
+      const el = document.querySelector<HTMLElement>('.file-details .file-details__thumbnail')
+      if (el) setBox(el)
+      return Boolean(el)
+    }
+    if (find()) return
+    const obs = new MutationObserver(() => find() && obs.disconnect())
+    obs.observe(document.body, { childList: true, subtree: true })
+    return () => obs.disconnect()
+  }, [])
+  useEffect(() => {
+    if (!box) return
+    box.classList.add('has-video')
+    return () => box.classList.remove('has-video')
+  }, [box])
+  if (!box) return null
+  return createPortal(
+    <>
+      <style>{TOP_VIDEO_CSS}</style>
+      <video className="top-video" src={src} controls playsInline preload="metadata" />
+    </>,
+    box,
+  )
+}
+
+const TOP_VIDEO_CSS = `
+.file-details__thumbnail.has-video { position: relative; width: min(560px, 100%); max-width: none; height: auto; min-height: 0; max-height: none; align-self: flex-start; aspect-ratio: 16 / 9; padding: 0; background: #000; }
+.file-details__thumbnail.has-video > :not(video):not(style) { display: none; }
+.file-details__thumbnail.has-video .top-video { position: static; display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+`
+
 // Блок «Посилання на файл» у правій колонці сторінки файлу медіатеки
 export const MediaLinks = () => {
   const { id, initialData, savedDocumentData } = useDocumentInfo()
@@ -83,12 +120,14 @@ export const MediaLinks = () => {
   return (
     <div className="media-links">
       <style>{CSS}</style>
+      {/* відео: плеєр у верхньому блоці файлу (замість значка Payload) */}
+      {doc.mimeType?.startsWith('video/') && <TopVideoPreview src={doc.url} />}
       <div className="ml-title">Посилання на файл</div>
 
       <CopyRow label="Повна адреса" value={full} />
       <div className="ml-actions">
         <a className="ml-btn" href={full} target="_blank" rel="noopener noreferrer">
-          Відкрити ↗
+          Відкрити в новій вкладці ↗
         </a>
         <a className="ml-btn" href={full} download={doc.filename || true}>
           Завантажити ↓
