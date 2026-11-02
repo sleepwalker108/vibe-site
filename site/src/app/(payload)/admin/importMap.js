@@ -29,6 +29,7 @@ import { SeoPreview as SeoPreview_752ed51552c58b98feed87d2595b772d } from '../..
 import { CancelButton as CancelButton_58ecd380c666df0ee516070d5bd30407 } from '../../../components/admin/CancelButton'
 import { MediaLinks as MediaLinks_a0f5ff356e417ae5c213fc0e217bee73 } from '../../../components/admin/MediaLinks'
 import { MediaCopyCell as MediaCopyCell_6d76666deabf00faf1496015be4b4c07 } from '../../../components/admin/MediaCopyCell'
+import { MediaFilenameCell as MediaFilenameCell_1bad600b518cfaf82fafdda7be916132 } from '../../../components/admin/MediaFilenameCell'
 import { MediaGrid as MediaGrid_497a71e43c82ad88f73f560e1c49eea7 } from '../../../components/admin/MediaGrid'
 import { NavRowLabel as NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0 } from '../../../components/admin/NavRowLabel'
 import { SheetSyncPanel as SheetSyncPanel_7d22a07fc4fcea33e7c25c6624c49506 } from '../../../components/admin/SheetSyncPanel'
@@ -80,6 +81,7 @@ export const importMap = {
   "/components/admin/CancelButton#CancelButton": CancelButton_58ecd380c666df0ee516070d5bd30407,
   "/components/admin/MediaLinks#MediaLinks": MediaLinks_a0f5ff356e417ae5c213fc0e217bee73,
   "/components/admin/MediaCopyCell#MediaCopyCell": MediaCopyCell_6d76666deabf00faf1496015be4b4c07,
+  "/components/admin/MediaFilenameCell#MediaFilenameCell": MediaFilenameCell_1bad600b518cfaf82fafdda7be916132,
   "/components/admin/MediaGrid#MediaGrid": MediaGrid_497a71e43c82ad88f73f560e1c49eea7,
   "/components/admin/NavRowLabel#NavRowLabel": NavRowLabel_ff2149b169c3e2e2237fd2ce141e51c0,
   "/components/admin/SheetSyncPanel#SheetSyncPanel": SheetSyncPanel_7d22a07fc4fcea33e7c25c6624c49506,

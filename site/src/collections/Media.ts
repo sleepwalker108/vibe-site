@@ -58,6 +58,12 @@ export const Media: CollectionConfig = {
     },
     // вбудоване поле типу файлу — лише українська назва колонки (за нею можна сортувати список)
     { name: 'mimeType', type: 'text', label: 'Тип файлу', admin: { readOnly: true, hidden: true } },
+    // вбудоване поле назви файлу — лише вигляд у списку: для відео кадр замість значка
+    {
+      name: 'filename',
+      type: 'text',
+      admin: { readOnly: true, hidden: true, components: { Cell: '/components/admin/MediaFilenameCell#MediaFilenameCell' } },
+    },
     {
       name: 'alt',
       type: 'text',

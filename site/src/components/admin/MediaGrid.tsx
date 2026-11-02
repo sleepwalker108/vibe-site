@@ -288,6 +288,16 @@ export const MediaGrid = () => {
                     <span className={`mg-thumb mg-${k}`}>
                       {thumb ? (
                         <img src={thumb} alt={d.alt || ''} loading="lazy" />
+                      ) : k === 'video' && d.url ? (
+                        // кадр із відео (браузер вантажить лише початок файлу) + значок «відтворити»
+                        <>
+                          <video className="mg-frame" src={`${d.url}#t=0.5`} preload="metadata" muted playsInline tabIndex={-1} />
+                          <span className="mg-play" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                              <path d="M8 5.5v13l10.5-6.5z" />
+                            </svg>
+                          </span>
+                        </>
                       ) : (
                         <span className="mg-icon">
                           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -413,6 +423,11 @@ const CSS = `
 .mg-tile:hover, .mg-tile:focus-visible { border-color: var(--theme-elevation-400); box-shadow: 0 4px 14px rgba(0,0,0,.1); outline: none; }
 .mg-thumb { display: grid; place-items: center; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: var(--theme-elevation-50); }
 .mg-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.mg-thumb { position: relative; }
+.mg-frame { width: 100%; height: 100%; object-fit: cover; pointer-events: none; background: #000; }
+.mg-play { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.mg-play svg { width: 44px; height: 44px; padding: 10px 8px 10px 12px; border-radius: 50%; fill: #fff; background: rgba(0,0,0,.55); box-shadow: 0 4px 14px rgba(0,0,0,.35); transition: transform .15s; }
+.mg-tile:hover .mg-play svg { transform: scale(1.1); }
 .mg-icon { display: grid; justify-items: center; gap: 4px; }
 .mg-icon svg { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
 .mg-video .mg-icon svg { fill: currentColor; stroke: none; }
