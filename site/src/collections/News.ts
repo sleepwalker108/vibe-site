@@ -66,6 +66,17 @@ export const News: CollectionConfig = {
     },
     { name: 'cover', type: 'upload', relationTo: 'media', label: 'Обкладинка' },
     {
+      name: 'video',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Відео',
+      // у виборі з медіатеки — лише відеофайли
+      filterOptions: { mimeType: { contains: 'video/' } },
+      admin: {
+        description: 'MP4 або WebM, бажано до 100 МБ. Показується на початку новини замість обкладинки; обкладинка стає заставкою відео. Відео можна вставити й у сам текст: «Вставити» → «Картинка або файл».',
+      },
+    },
+    {
       name: 'excerpt',
       type: 'textarea',
       label: 'Короткий опис',

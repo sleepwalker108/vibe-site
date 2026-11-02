@@ -63,6 +63,7 @@ export default async function NewsItemPage({ params, searchParams }: Props) {
   const item = await getNews((await params).slug, draft, locale)
   if (!item) notFound()
   const cover = mediaUrl(item.cover, 'wide')
+  const video = mediaUrl(item.video)
   const payload = await getClient()
   const latest = (
     await payload.find({
@@ -119,7 +120,12 @@ export default async function NewsItemPage({ params, searchParams }: Props) {
       <div className="article wrap page-layout">
         <article className="page-main">
           {!item.translated && <p className="not-translated">{t.notTranslated}</p>}
-          {cover && (
+          {video ? (
+            // відео замість обкладинки; обкладинка — заставка до запуску
+            <div className="cover">
+              <video src={video} controls preload="metadata" playsInline poster={cover || undefined} />
+            </div>
+          ) : cover && (
             <div className="cover">
               <img src={cover} alt={typeof item.cover === 'object' ? item.cover?.alt || '' : ''} />
             </div>

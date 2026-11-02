@@ -159,6 +159,10 @@ const makeConverters = (labels: ProseLabels, links: LinkInfo = {}): JSXConverter
       const title = (args.node.fields?.alt || file.alt || '').trim() || String(file.filename).replace(/\.[a-z0-9]+$/i, '')
       return <DocCard url={file.url} title={title} labels={labels} />
     }
+    // відеофайл з медіатеки — плеєр (а не посилання на файл)
+    if (file && typeof file === 'object' && file.url && String(file.mimeType || '').startsWith('video/')) {
+      return <video src={file.url} controls preload="metadata" playsInline aria-label={(args.node.fields?.alt || file.alt || '').trim() || undefined} />
+    }
     return (defaultConverters.upload as any)(args)
   },
   link: smartLink(labels.newTab, defaultConverters.link),

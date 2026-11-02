@@ -172,6 +172,10 @@ export interface News {
   topics?: (number | Topic)[] | null;
   cover?: (number | null) | Media;
   /**
+   * MP4 або WebM, бажано до 100 МБ. Показується на початку новини замість обкладинки; обкладинка стає заставкою відео. Відео можна вставити й у сам текст: «Вставити» → «Картинка або файл».
+   */
+  video?: (number | null) | Media;
+  /**
    * Показується в списку новин. 1–2 речення.
    */
   excerpt?: string | null;
@@ -606,6 +610,7 @@ export interface NewsSelect<T extends boolean = true> {
   publishedAt?: T;
   topics?: T;
   cover?: T;
+  video?: T;
   excerpt?: T;
   content?: T;
   slug?: T;
