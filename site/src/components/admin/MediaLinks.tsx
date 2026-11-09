@@ -105,17 +105,39 @@ const PdfPreview = ({ src, name }: { src: string; name: string }) => {
       holder?.remove()
     }
   }, [])
+  // згорнуто чи ні — запам'ятовується в браузері для всіх PDF; згорнутий перегляд файл не вантажить
+  const [open, setOpen] = useState(true)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('pdf-preview-collapsed') === '1') setOpen(false)
+    } catch {}
+  }, [])
+  const toggle = () =>
+    setOpen((v) => {
+      try {
+        localStorage.setItem('pdf-preview-collapsed', v ? '1' : '0')
+      } catch {}
+      return !v
+    })
   if (!box) return null
   return createPortal(
-    <div className="pdf-preview">
+    <div className={`pdf-preview${open ? '' : ' is-collapsed'}`}>
       <style>{PDF_CSS}</style>
       <div className="pdf-preview__bar">
-        <span>Перегляд документа</span>
-        <a href={src} target="_blank" rel="noopener noreferrer">
-          Відкрити в новій вкладці ↗
-        </a>
+        <button type="button" className="pdf-preview__toggle" onClick={toggle} aria-expanded={open}>
+          <span className="pdf-preview__caret" aria-hidden="true">▾</span>
+          Перегляд документа
+        </button>
+        <span className="pdf-preview__actions">
+          <button type="button" onClick={toggle}>
+            {open ? 'Згорнути' : 'Розгорнути'}
+          </button>
+          <a href={src} target="_blank" rel="noopener noreferrer">
+            Відкрити в новій вкладці ↗
+          </a>
+        </span>
       </div>
-      <iframe src={src} title={`Перегляд: ${name}`} />
+      {open && <iframe src={src} title={`Перегляд: ${name}`} />}
     </div>,
     box,
   )
@@ -124,8 +146,13 @@ const PdfPreview = ({ src, name }: { src: string; name: string }) => {
 const PDF_CSS = `
 .pdf-preview { margin: 16px 0 24px; border: 1px solid var(--theme-elevation-150); border-radius: 10px; overflow: hidden; background: var(--theme-elevation-50); }
 .pdf-preview__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--theme-elevation-150); }
-.pdf-preview__bar a { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--theme-elevation-250); text-decoration: none; color: inherit; }
-.pdf-preview__bar a:hover { border-color: var(--theme-elevation-500); }
+.pdf-preview.is-collapsed .pdf-preview__bar { border-bottom: 0; }
+.pdf-preview__toggle { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.pdf-preview__caret { display: inline-block; font-size: 11px; transition: transform .2s; }
+.pdf-preview.is-collapsed .pdf-preview__caret { transform: rotate(-90deg); }
+.pdf-preview__actions { display: flex; gap: 6px; }
+.pdf-preview__actions a, .pdf-preview__actions button { font: inherit; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--theme-elevation-250); background: none; text-decoration: none; color: inherit; cursor: pointer; }
+.pdf-preview__actions a:hover, .pdf-preview__actions button:hover { border-color: var(--theme-elevation-500); }
 .pdf-preview iframe { display: block; width: 100%; height: min(78vh, 900px); border: 0; background: #525659; }
 `
 
