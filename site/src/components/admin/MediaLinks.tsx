@@ -82,6 +82,53 @@ const TOP_VIDEO_CSS = `
 .file-details__thumbnail.has-video .top-video { position: static; display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
 `
 
+// PDF: перегляд документа прямо на сторінці файлу — великим вікном одразу під верхнім блоком файлу
+// (вбудований переглядач браузера: гортання, масштаб, пошук). Блок належить Payload, тому вставляємо порталом.
+const PdfPreview = ({ src, name }: { src: string; name: string }) => {
+  const [box, setBox] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    let holder: HTMLElement | null = null
+    const find = () => {
+      const top = document.querySelector<HTMLElement>('.file-details')
+      if (!top) return false
+      holder = document.createElement('div')
+      holder.className = 'pdf-preview-holder'
+      top.insertAdjacentElement('afterend', holder)
+      setBox(holder)
+      return true
+    }
+    if (find()) return () => holder?.remove()
+    const obs = new MutationObserver(() => find() && obs.disconnect())
+    obs.observe(document.body, { childList: true, subtree: true })
+    return () => {
+      obs.disconnect()
+      holder?.remove()
+    }
+  }, [])
+  if (!box) return null
+  return createPortal(
+    <div className="pdf-preview">
+      <style>{PDF_CSS}</style>
+      <div className="pdf-preview__bar">
+        <span>Перегляд документа</span>
+        <a href={src} target="_blank" rel="noopener noreferrer">
+          Відкрити в новій вкладці ↗
+        </a>
+      </div>
+      <iframe src={src} title={`Перегляд: ${name}`} />
+    </div>,
+    box,
+  )
+}
+
+const PDF_CSS = `
+.pdf-preview { margin: 16px 0 24px; border: 1px solid var(--theme-elevation-150); border-radius: 10px; overflow: hidden; background: var(--theme-elevation-50); }
+.pdf-preview__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--theme-elevation-150); }
+.pdf-preview__bar a { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--theme-elevation-250); text-decoration: none; color: inherit; }
+.pdf-preview__bar a:hover { border-color: var(--theme-elevation-500); }
+.pdf-preview iframe { display: block; width: 100%; height: min(78vh, 900px); border: 0; background: #525659; }
+`
+
 // Блок «Посилання на файл» у правій колонці сторінки файлу медіатеки
 export const MediaLinks = () => {
   const { id, initialData, savedDocumentData } = useDocumentInfo()
@@ -122,6 +169,8 @@ export const MediaLinks = () => {
       <style>{CSS}</style>
       {/* відео: плеєр у верхньому блоці файлу (замість значка Payload) */}
       {doc.mimeType?.startsWith('video/') && <TopVideoPreview src={doc.url} />}
+      {/* PDF: перегляд документа під верхнім блоком файлу */}
+      {doc.mimeType === 'application/pdf' && <PdfPreview src={doc.url} name={doc.filename || 'PDF'} />}
       <div className="ml-title">Посилання на файл</div>
 
       <CopyRow label="Повна адреса" value={full} />
