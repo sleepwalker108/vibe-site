@@ -16,6 +16,16 @@ const nextConfig: NextConfig = {
   // Захисні заголовки для всіх сторінок і файлів
   async headers() {
     return [
+      // Картинки оформлення (емблема, герб, фон шапки, логотипи) браузер зберігає на тиждень і ще добу показує
+      // збережену копію, тихо оновлюючи її у фоні, — без запиту до сервера на кожному переході між сторінками
+      {
+        source: '/img/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
+      },
+      {
+        source: '/favicon.ico',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
+      },
       {
         source: '/:path*',
         headers: [

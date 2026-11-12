@@ -131,8 +131,23 @@ export default buildConfig({
   // Порожні чернетки без назви, що лишились після «Створити» без введення (lib/cleanupEmptyDrafts.ts):
   // перша перевірка — за 2 хвилини після старту, далі кожні 6 годин. unref — таймер не тримає процес
   // (скрипти й міграції завершуються як звичайно).
-  onInit: (payload) => {
+  onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
+    // База в режимі WAL: читання й запис не блокують одне одного. У звичайному режимі кожен запис (а це кожен
+    // перегляд сторінки — для статистики — і кожне збереження в адмінці) на мить зупиняв усі читання, і під
+    // напливом відвідувачів сторінки могли підвисати або падати з «database is locked». Режим записується в сам
+    // файл бази, тож діє і для міграцій та резервних копій (вони роблять знімок через .backup / VACUUM INTO).
+    // busy_timeout — зачекати до 5 с, якщо база зайнята, а не падати одразу; synchronous=NORMAL — звичайна пара до WAL.
+    try {
+      const db = (payload.db as unknown as { client?: { execute: (sql: string) => Promise<unknown> } }).client
+      if (db) {
+        await db.execute('PRAGMA journal_mode = WAL')
+        await db.execute('PRAGMA synchronous = NORMAL')
+        await db.execute('PRAGMA busy_timeout = 5000')
+      }
+    } catch (e) {
+      payload.logger.warn(`Режим WAL для бази не ввімкнено: ${(e as Error).message}`)
+    }
     const run = () => cleanupEmptyDrafts(payload).catch((e) => payload.logger.warn(`Прибирання порожніх чернеток: ${(e as Error).message}`))
     setTimeout(run, 2 * 60_000).unref()
     setInterval(run, 6 * 3600_000).unref()

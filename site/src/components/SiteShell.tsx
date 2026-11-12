@@ -29,7 +29,7 @@ export const SiteShell = async ({ children, draft }: { children: ReactNode; draf
     payload.findGlobal({ slug: 'contacts', draft, depth: 1, ...localeQuery(locale) }),
     payload.findGlobal({ slug: 'navigation', draft, depth: 0, ...localeQuery(locale) }),
   ])
-  const logo = mediaUrl(c.logo, 'card') || '/img/emblem.png'
+  const logo = mediaUrl(c.logo, 'card') || '/img/emblem-128.webp' // легка емблема (11 КБ) для шапки й підвалу; повна emblem.png — лише для Google
 
   return (
     // Один спільний блок: Next.js після переходу прокручує саме його початок (а не кожен блок по черзі — тоді сторінку кидало донизу)

@@ -269,7 +269,7 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
     >
       <div className="wrap">
         <Link className="brand" href="/" aria-label={t.home}>
-          <img src={logoUrl || '/img/emblem.png'} alt={t.logoAlt} />
+          <img src={logoUrl || '/img/emblem-128.webp'} alt={t.logoAlt} />
           <span className="brand-text">
             <span className="brand-kicker">{kicker || t.kicker}</span>
             <span className="brand-name">{shortName || t.orgShort}</span>

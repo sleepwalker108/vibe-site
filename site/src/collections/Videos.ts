@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isLoggedIn } from '../access'
+import { isAdmin, isLoggedIn, notTrashedOrLoggedIn } from '../access'
 import { linkUrlHooks } from '../fields/linkUrl'
 import { enqueueVideo } from '../lib/videoOptimize'
 import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
@@ -20,7 +20,7 @@ export const Videos: CollectionConfig = {
     description: 'Сторінка «Відеоматеріали». Відео можна завантажити файлом або вставити посилання (MP4 чи YouTube).',
     livePreview: { url: '/video?preview=1' },
   },
-  access: { read: () => true, create: isLoggedIn, update: isLoggedIn, delete: isAdmin },
+  access: { read: notTrashedOrLoggedIn, create: isLoggedIn, update: isLoggedIn, delete: isAdmin },
   // пошук в адмінці без різниці великих і малих літер
   hooks: {
     beforeOperation: [caseInsensitiveSearch()],

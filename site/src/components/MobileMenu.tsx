@@ -150,7 +150,7 @@ export const MobileMenu = ({ open, onClose, menu, logoUrl, shortName, kicker, lo
       <div ref={panel} className="mm-panel" role="dialog" aria-modal="true" aria-label={t.mainMenu} onKeyDown={trap}>
         <div className="mm-head">
           <Link href="/" className="mm-brand" onClick={close} aria-label={t.home}>
-            <img src={logoUrl || '/img/emblem.png'} alt="" />
+            <img src={logoUrl || '/img/emblem-128.webp'} alt="" />
             <span>
               <small>{kicker || t.kicker}</small>
               <strong>{(shortName || t.orgShort).replace(/\s*\n\s*/g, ' ')}</strong>
