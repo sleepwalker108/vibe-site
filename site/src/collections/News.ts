@@ -14,6 +14,8 @@ export const News: CollectionConfig = {
   defaultSort: '-publishedAt',
   trash: true,
   admin: {
+    // список бере з бази лише видимі колонки, а не повні документи (з усім текстом) — розділ відкривається швидше
+    enableListViewSelectAPI: true,
     // кнопка «Скасувати» біля збереження/публікації
     components: { edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] } },
     useAsTitle: 'title',

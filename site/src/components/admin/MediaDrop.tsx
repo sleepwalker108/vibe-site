@@ -1,5 +1,6 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 
 // Медіатека: файли можна просто перетягнути на сторінку (один чи багато одразу) або вибрати кілька
 // кнопкою «Додати файли» — вони завантажуються самі, по кілька паралельно, з прогресом для кожного.
@@ -176,7 +177,7 @@ export const MediaDrop = ({ onUploaded }: { onUploaded: () => void }) => {
               {items.map((it) => (
                 <li key={it.id} className={`md-${it.status}`}>
                   <span className="md-name" title={it.file.name}>
-                    {it.status === 'ok' && it.docId !== undefined ? <a href={`/admin/collections/media/${it.docId}`}>{it.file.name}</a> : it.file.name}
+                    {it.status === 'ok' && it.docId !== undefined ? <Link href={`/admin/collections/media/${it.docId}`}>{it.file.name}</Link> : it.file.name}
                   </span>
                   <span className="md-size">{size(it.file.size)}</span>
                   <span className="md-state">

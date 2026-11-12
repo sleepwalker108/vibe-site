@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 
 type Props = { cellData?: boolean | null; rowData?: { id?: string | number }; collection?: string }
 
@@ -7,7 +8,7 @@ export const EnglishCell = ({ cellData, rowData, collection }: Props) => {
   if (!rowData?.id || !collection) return null
   const href = `/admin/collections/${collection}/${rowData.id}?locale=en`
   return (
-    <a
+    <Link
       href={href}
       onClick={(e) => e.stopPropagation()}
       title={cellData ? 'Відкрити англійську версію' : 'Додати англійську версію'}
@@ -27,6 +28,6 @@ export const EnglishCell = ({ cellData, rowData, collection }: Props) => {
       }}
     >
       {cellData ? 'EN ✓' : '+ EN'}
-    </a>
+    </Link>
   )
 }

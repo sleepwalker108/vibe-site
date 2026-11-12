@@ -4,6 +4,7 @@ import { kyivTime, plural } from '@/lib/adminFormat'
 import type { LinkIssue, LinkIssueKind, LinkReport } from '@/lib/linkCheck'
 import type { UpdatesInfo } from '@/lib/serverStatus'
 import { OldFilesMigrator } from './OldFilesMigrator'
+import Link from 'next/link'
 
 // Ці дві частини «Стану сервера» вантажаться окремо (звернення до GitHub і перевірка всіх текстів),
 // щоб сама сторінка відкривалася миттєво
@@ -81,9 +82,9 @@ const IssueList = ({ items }: { items: LinkIssue[] }) => {
       <ul className="ss-list">
         {shown.map((l, i) => (
           <li key={i}>
-            <a className="ss-doc" href={`/admin/collections/${l.collection}/${l.id}`}>
+            <Link className="ss-doc" href={`/admin/collections/${l.collection}/${l.id}`}>
               {l.collection === 'news' ? 'Новина' : 'Сторінка'}: {l.title}
-            </a>
+            </Link>
             {l.locale === 'en' && <span className="ss-chip small">EN</span>}
             <span className="ss-msg">
               {l.text && <>«{l.text}» → </>}

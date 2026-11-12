@@ -9,6 +9,8 @@ export const Media: CollectionConfig = {
   labels: { singular: 'Файл', plural: 'Медіатека' },
   trash: true, // видалені файли потрапляють у кошик (на сайті їх уже немає), їх можна відновити
   admin: {
+    // список бере з бази лише видимі колонки, а не повні документи (з усім текстом) — розділ відкривається швидше
+    enableListViewSelectAPI: true,
     // кнопка «Скасувати» біля збереження/публікації
     components: {
       edit: { beforeDocumentControls: ['/components/admin/CancelButton#CancelButton'] },
@@ -21,6 +23,8 @@ export const Media: CollectionConfig = {
     listSearchableFields: ['filename', 'alt'],
     pagination: { defaultLimit: 50 },
   },
+  // тип файлу потрібен списку завжди (кадр для відео в колонці «Назва файлу»), навіть коли колонку сховано
+  forceSelect: { mimeType: true },
   hooks: {
     // пошук в адмінці без різниці великих і малих літер
     beforeOperation: [caseInsensitiveSearch()],
