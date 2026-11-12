@@ -28,8 +28,10 @@ export const resolveLink = (raw?: string | null) => {
 
 // Посилання: правильна адреса + нова вкладка для документів і інших сайтів,
 // про що незрячий користувач чує (схована для очей примітка)
+// (функція-перетворювач для редактора, а не компонент — тож назва для React DevTools не потрібна)
 const smartLink =
   (label: string, fallback: any) =>
+  // eslint-disable-next-line react/display-name
   ({ node, nodesToJSX, ...rest }: any) => {
     if (node.fields?.linkType === 'internal') return fallback({ node, nodesToJSX, ...rest })
     const { url, auto } = resolveLink(node.fields?.url)

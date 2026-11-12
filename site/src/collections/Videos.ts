@@ -20,7 +20,20 @@ export const Videos: CollectionConfig = {
   },
   access: { read: () => true, create: isLoggedIn, update: isLoggedIn, delete: isAdmin },
   // пошук в адмінці без різниці великих і малих літер
-  hooks: { beforeOperation: [caseInsensitiveSearch()] },
+  hooks: {
+    beforeOperation: [caseInsensitiveSearch()],
+    afterChange: [
+      // вибрали відеофайл без обкладинки — обкладинка з кадру (і стиснення, якщо треба) у фоні (lib/videoOptimize.ts)
+      ({ doc, previousDoc, operation, req }) => {
+        const file = typeof doc?.file === 'object' ? doc.file?.id : doc?.file
+        const prev = typeof previousDoc?.file === 'object' ? previousDoc.file?.id : previousDoc?.file
+        if (doc?.source === 'file' && file && !doc.poster && (operation === 'create' || file !== prev)) {
+          enqueueVideo(req.payload, Number(file))
+        }
+        return doc
+      },
+    ],
+  },
   fields: [
     { name: 'title', type: 'text', label: 'Назва', required: true, localized: true },
     { name: 'description', type: 'textarea', label: 'Короткий опис (необов’язково)', localized: true },

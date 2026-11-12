@@ -7,6 +7,7 @@ import { getServerStatus } from '@/lib/serverStatus'
 import { LinksSection, UpdatesSection } from './StatusSections'
 import { VideosSection } from './VideoOptimizer'
 import { STATUS_CSS } from './statusStyles'
+import Link from 'next/link'
 
 const MONTHS = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня']
 // дата резервної копії записана часом сервера — показуємо як є
@@ -76,6 +77,8 @@ export const StatusView = async ({ initPageResult, params, searchParams }: Admin
             {s.host} · дані на {kyivTime(new Date())}
           </p>
         </div>
+        {/* звичайне посилання навмисно: повне перезавантаження заново збирає свіжий стан сервера */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a className="ss-btn" href="/admin/status">
           Оновити
         </a>
@@ -182,22 +185,22 @@ export const StatusView = async ({ initPageResult, params, searchParams }: Admin
           <h2>Вміст сайту</h2>
           <dl className="ss-counts">
             <dt>
-              <a href="/admin/collections/news">Новини</a>
+              <Link href="/admin/collections/news">Новини</Link>
             </dt>
             <dd>
               {s.counts.news.toLocaleString('uk-UA')}
               {!!s.counts.newsDraft && <small> + {plural(s.counts.newsDraft, ['чернетка', 'чернетки', 'чернеток'])}</small>}
             </dd>
             <dt>
-              <a href="/admin/collections/pages">Сторінки</a>
+              <Link href="/admin/collections/pages">Сторінки</Link>
             </dt>
             <dd>{s.counts.pages}</dd>
             <dt>
-              <a href="/admin/collections/media">Файли в медіатеці</a>
+              <Link href="/admin/collections/media">Файли в медіатеці</Link>
             </dt>
             <dd>{s.counts.media.toLocaleString('uk-UA')}</dd>
             <dt>
-              <a href="/admin/collections/users">Користувачі</a>
+              <Link href="/admin/collections/users">Користувачі</Link>
             </dt>
             <dd>{s.counts.users}</dd>
           </dl>
@@ -213,9 +216,9 @@ export const StatusView = async ({ initPageResult, params, searchParams }: Admin
             <dt>Усього копій</dt>
             <dd>{s.backups.total}</dd>
           </dl>
-          <a className="ss-more" href="/admin/backups">
+          <Link className="ss-more" href="/admin/backups">
             Резервні копії →
-          </a>
+          </Link>
         </section>
       </div>
 

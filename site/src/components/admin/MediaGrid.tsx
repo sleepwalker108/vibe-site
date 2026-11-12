@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { MediaDrop } from './MediaDrop'
+import Link from 'next/link'
 
 // Медіатека «плитками», як у WordPress: перемикач «Плитки / Список» над таблицею,
 // фільтр за типом файлу, сортування й пошук за назвою. Вибір вигляду запам’ятовується в браузері.
@@ -234,7 +235,7 @@ export const MediaGrid = () => {
           <p className="mg-count">{loading && !docs.length ? 'Завантаження…' : `Файлів: ${total}`}</p>
           {notice && (
             <p className="mg-notice">
-              {notice} Відновити можна в <a href="/admin/collections/media/trash">кошику медіатеки</a>.
+              {notice} Відновити можна в <Link href="/admin/collections/media/trash">кошику медіатеки</Link>.
             </p>
           )}
           {!!selected.size && (

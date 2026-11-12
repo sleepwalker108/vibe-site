@@ -30,6 +30,10 @@ export const Media: CollectionConfig = {
         if (doc?.mimeType === 'application/pdf' && (operation === 'create' || doc.filename !== previousDoc?.filename)) {
           enqueuePdf(req.payload, doc.id)
         }
+        // нове відео (або замінений файл) — стиснення під веб і «швидкий старт» у фоні (див. lib/videoOptimize.ts)
+        if (doc?.mimeType?.startsWith('video/') && (operation === 'create' || doc.filename !== previousDoc?.filename)) {
+          enqueueVideo(req.payload, doc.id)
+        }
         return doc
       },
     ],

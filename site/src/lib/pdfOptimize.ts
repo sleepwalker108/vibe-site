@@ -34,7 +34,8 @@ const run = (args: string[]) =>
     p.on('close', (code) => {
       clearTimeout(timer)
       // 0 — успіх, 3 — успіх із попередженнями (типово для PDF, зроблених у Word тощо)
-      code === 0 || code === 3 ? resolve() : reject(new Error(err.trim().split('\n').pop() || `qpdf завершився з кодом ${code}`))
+      if (code === 0 || code === 3) resolve()
+      else reject(new Error(err.trim().split('\n').pop() || `qpdf завершився з кодом ${code}`))
     })
   })
 

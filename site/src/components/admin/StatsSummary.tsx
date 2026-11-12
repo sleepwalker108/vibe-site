@@ -1,4 +1,5 @@
 import type { Payload } from 'payload'
+import Link from 'next/link'
 import { getSummary } from '@/lib/visitStats'
 import { STATS_CSS } from './statsStyles'
 
@@ -29,9 +30,9 @@ export const StatsSummary = async ({ payload }: { payload: Payload }) => {
         <b>{fmt(s.week.views)}</b>
         <span>переглядів за 7 днів</span>
       </div>
-      <a className="st-more" href="/admin/stats">
+      <Link className="st-more" href="/admin/stats">
         Детальна статистика →
-      </a>
+      </Link>
     </div>
   )
 }

@@ -134,7 +134,7 @@ const EN: Record<string, string> = {
   '+38 (066) 813-62-39 — гаряча лінія Уповноваженого з питань ВПО': '+38 (066) 813-62-39 — IDP Commissioner hotline',
 }
 
-let missing = new Set<string>()
+const missing = new Set<string>()
 // Рекурсивно замінює значення перекладених полів; решту (числа, посилання, id) лишає як є
 const tr = (v: unknown, key?: string): unknown => {
   if (typeof v === 'string') {

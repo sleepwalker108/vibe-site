@@ -17,7 +17,6 @@ import {
   KEY_DOWN_COMMAND,
   SELECTION_CHANGE_COMMAND,
   type ElementFormatType,
-  type LexicalEditor,
   type LexicalNode,
   type RangeSelection,
   type TextFormatType,

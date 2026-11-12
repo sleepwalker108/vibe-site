@@ -1,4 +1,5 @@
 import type { Payload } from 'payload'
+import Link from 'next/link'
 
 const decode = (s: string) => {
   try {
@@ -9,6 +10,26 @@ const decode = (s: string) => {
 }
 
 type Row = { label: string; url?: string | null; edit?: string; hint?: string }
+
+// Рядок «Структури сайту»: назва, підказка, «Редагувати» (в адмінці — без перезавантаження) і «На сайті»
+const RowView = ({ r }: { r: Row }) => (
+  <li className="sm-row">
+    <span className="sm-label">{r.label}</span>
+    {r.hint && <span className="sm-hint">{r.hint}</span>}
+    <span className="sm-actions">
+      {r.edit && (
+        <Link className="sm-btn sm-edit" href={r.edit}>
+          Редагувати
+        </Link>
+      )}
+      {r.url && (
+        <a className="sm-btn" href={r.url} target="_blank" rel="noopener noreferrer">
+          На сайті ↗
+        </a>
+      )}
+    </span>
+  </li>
+)
 
 // Головна сторінка адмінки: «Структура сайту» — меню сайту з кнопками «Редагувати» для кожного розділу
 export const SiteMap = async ({ payload }: { payload: Payload }) => {
@@ -42,24 +63,6 @@ export const SiteMap = async ({ payload }: { payload: Payload }) => {
   // Сторінки, на які меню не веде (напр. «Фінансова звітність 2025» — на них ведуть посилання з тексту розділу)
   const others = pages.docs.filter((p) => p.slug && !used.has(p.slug))
 
-  const RowView = ({ r }: { r: Row }) => (
-    <li className="sm-row">
-      <span className="sm-label">{r.label}</span>
-      {r.hint && <span className="sm-hint">{r.hint}</span>}
-      <span className="sm-actions">
-        {r.edit && (
-          <a className="sm-btn sm-edit" href={r.edit}>
-            Редагувати
-          </a>
-        )}
-        {r.url && (
-          <a className="sm-btn" href={r.url} target="_blank" rel="noopener noreferrer">
-            На сайті ↗
-          </a>
-        )}
-      </span>
-    </li>
-  )
 
   return (
     <section className="sitemap">

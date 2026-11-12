@@ -55,7 +55,8 @@ const run = (args: string[]) =>
     })
     p.on('close', (code) => {
       clearTimeout(timer)
-      code === 0 ? resolve() : reject(new Error(err.trim().split('\n').pop() || `ffmpeg завершився з кодом ${code}`))
+      if (code === 0) resolve()
+      else reject(new Error(err.trim().split('\n').pop() || `ffmpeg завершився з кодом ${code}`))
     })
   })
 
