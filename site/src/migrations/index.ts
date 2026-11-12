@@ -32,17 +32,18 @@ import * as migration_20261029_094413_home_cards_more from './20261029_094413_ho
 import * as migration_20261029_100157_home_hero_links from './20261029_100157_home_hero_links';
 import * as migration_20261029_101500_diyalnist_digital_systems from './20261029_101500_diyalnist_digital_systems';
 import * as migration_20261030_120000_nav_vacancies_about from './20261030_120000_nav_vacancies_about';
+import * as migration_20261030_130000_diyalnist_systems_up from './20261030_130000_diyalnist_systems_up';
+import * as migration_20261030_140000_nav_digital_recovery from './20261030_140000_nav_digital_recovery';
+import * as migration_20261030_150000_nav_digital_systems_name from './20261030_150000_nav_digital_systems_name';
+import * as migration_20261030_160000_digital_systems_pages from './20261030_160000_digital_systems_pages';
+import * as migration_20261030_170000_home_hero_no_text from './20261030_170000_home_hero_no_text';
 import * as migration_20261030_180000_home_chip_links from './20261030_180000_home_chip_links';
 import * as migration_20261030_190000_nav_digital_after_hotline from './20261030_190000_nav_digital_after_hotline';
 import * as migration_20261030_200000_home_chips_restore from './20261030_200000_home_chips_restore';
 import * as migration_20261030_210000_home_hero_no_text_again from './20261030_210000_home_hero_no_text_again';
 import * as migration_20261030_220000_map_service_page from './20261030_220000_map_service_page';
 import * as migration_20261102_100000_news_video from './20261102_100000_news_video';
-import * as migration_20261030_130000_diyalnist_systems_up from './20261030_130000_diyalnist_systems_up';
-import * as migration_20261030_140000_nav_digital_recovery from './20261030_140000_nav_digital_recovery';
-import * as migration_20261030_150000_nav_digital_systems_name from './20261030_150000_nav_digital_systems_name';
-import * as migration_20261030_160000_digital_systems_pages from './20261030_160000_digital_systems_pages';
-import * as migration_20261030_170000_home_hero_no_text from './20261030_170000_home_hero_no_text';
+import * as migration_20261112_131527_locales_parent_indexes from './20261112_131527_locales_parent_indexes';
 
 export const migrations = [
   {
@@ -216,11 +217,6 @@ export const migrations = [
     name: '20261030_120000_nav_vacancies_about',
   },
   {
-    up: migration_20261030_180000_home_chip_links.up,
-    down: migration_20261030_180000_home_chip_links.down,
-    name: '20261030_180000_home_chip_links',
-  },
-  {
     up: migration_20261030_130000_diyalnist_systems_up.up,
     down: migration_20261030_130000_diyalnist_systems_up.down,
     name: '20261030_130000_diyalnist_systems_up',
@@ -243,7 +239,12 @@ export const migrations = [
   {
     up: migration_20261030_170000_home_hero_no_text.up,
     down: migration_20261030_170000_home_hero_no_text.down,
-    name: '20261030_170000_home_hero_no_text'
+    name: '20261030_170000_home_hero_no_text',
+  },
+  {
+    up: migration_20261030_180000_home_chip_links.up,
+    down: migration_20261030_180000_home_chip_links.down,
+    name: '20261030_180000_home_chip_links',
   },
   {
     up: migration_20261030_190000_nav_digital_after_hotline.up,
@@ -269,5 +270,10 @@ export const migrations = [
     up: migration_20261102_100000_news_video.up,
     down: migration_20261102_100000_news_video.down,
     name: '20261102_100000_news_video',
+  },
+  {
+    up: migration_20261112_131527_locales_parent_indexes.up,
+    down: migration_20261112_131527_locales_parent_indexes.down,
+    name: '20261112_131527_locales_parent_indexes'
   },
 ];

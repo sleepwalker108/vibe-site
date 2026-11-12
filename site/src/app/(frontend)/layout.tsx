@@ -22,12 +22,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
+        {/* Шрифт Manrope — зі свого сервера (public/fonts, @font-face у styles.css): без запитів до Google.
+            Кирилицю й латиницю підвантажуємо заздалегідь, щоб текст одразу показувався своїм шрифтом. */}
+        <link rel="preload" href="/fonts/manrope-v23-cyrillic.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/manrope-v23-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
       <body>
         {/* Вмикаємо збережені налаштування доступності ще до показу сторінки — без блимання.

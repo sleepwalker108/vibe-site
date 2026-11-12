@@ -4,6 +4,9 @@ import { StatsAnimator } from './StatsAnimator'
 import { REGION_NAMES_EN, type Dict, type Locale } from '@/lib/dictionary'
 import { TerrPicker } from './TerrPicker'
 
+// Контури областей — окремий файл (src/scripts/gen-ukraine-map-svg.ts); на сторінці лише посилання <use>
+const REGIONS_SVG = '/img/ukraine-regions-v1.svg'
+
 // Від «можливих бойових дій» до «окуповано» — одна шкала від світлого до темного
 // (перевірено: сусідні кольори розрізняються і при нормальному зорі, і при дальтонізмі)
 const STATUSES = [
@@ -204,14 +207,15 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
             <svg viewBox={UA_MAP_VIEWBOX} role="img" aria-label={d.mapAria}>
               <g className="ua-regions">
                 {UA_REGIONS.map((g) => (
-                  <path
+                  // контур області — з окремого файлу (браузер кешує його), а не вбудований у сторінку
+                  <use
                     key={g.id}
-                    d={g.d}
+                    href={`${REGIONS_SVG}#${g.id}`}
                     className={withData.has(g.id) ? 'has-data' : undefined}
                     data-geo={g.id === 'UA-40' ? 'UA-43' : g.id === 'UA-30' ? 'UA-32' : g.id}
                   >
                     <title>{g.name}</title>
-                  </path>
+                  </use>
                 ))}
               </g>
               {regions.map((r, ri) => {
