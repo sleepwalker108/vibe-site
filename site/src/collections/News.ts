@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
-import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 import { normalizeHeadings } from '../fields/normalizeHeadings'
 import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
+import { autoSlug } from '../fields/autoSlug'
+import { requireUkrainianTitle } from '../hooks/requireUkrainianTitle'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -44,11 +45,12 @@ export const News: CollectionConfig = {
     beforeOperation: [caseInsensitiveSearch(true)],
     // заголовки зі старого сайту (h1, h5, h6) — до дозволених h2–h4, інакше новину не зберегти
     beforeValidate: [normalizeHeadings(['content'])],
-    beforeChange: [markEnglish, fillSearchText(['title', 'excerpt', 'content'])],
+    beforeChange: [requireUkrainianTitle('news'), markEnglish, fillSearchText(['title', 'excerpt', 'content'])],
   },
   fields: [
   ...translationFields('news'),
-    { name: 'title', type: 'text', label: 'Заголовок', required: true, localized: true },
+    // зайві пробіли на початку й у кінці заголовка прибираємо
+    { name: 'title', type: 'text', label: 'Заголовок', required: true, localized: true, hooks: { beforeValidate: [({ value }) => (typeof value === 'string' ? value.trim() : value)] } },
     {
       name: 'publishedAt',
       type: 'date',
@@ -67,7 +69,8 @@ export const News: CollectionConfig = {
         description: 'За категоріями відвідувачі фільтрують новини на сайті й у пошуку. Можна вибрати кілька або створити нову (кнопка «+»). Список категорій — у розділі «Категорії новин».',
       },
     },
-    { name: 'cover', type: 'upload', relationTo: 'media', label: 'Обкладинка' },
+    // у виборі з медіатеки — лише картинки (відео як обкладинка не показалось би в картці новини)
+    { name: 'cover', type: 'upload', relationTo: 'media', label: 'Обкладинка', filterOptions: { mimeType: { contains: 'image/' } } },
     {
       name: 'video',
       type: 'upload',
@@ -95,7 +98,7 @@ export const News: CollectionConfig = {
       unique: true,
       admin: { position: 'sidebar', description: 'Заповнюється автоматично із заголовка.' },
       hooks: {
-        beforeValidate: [({ value, data }) => (value ? value : data?.title ? slugify(data.title) : value)],
+        beforeValidate: [autoSlug('news')],
       },
     },
     {

@@ -69,6 +69,8 @@ export const Videos: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       label: 'Обкладинка (необов’язково)',
+      // у виборі з медіатеки — лише картинки
+      filterOptions: { mimeType: { contains: 'image/' } },
       admin: { description: 'Якщо не вибрати — покажемо кадр із самого відео (для YouTube — його обкладинку).' },
     },
     {

@@ -14,4 +14,6 @@ export const slugify = (text: string): string =>
     .replace(/['’ʼ`"]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+    // не довше 90 знаків — і по межі слова, а не посередині
+    .replace(/^(.{0,90})(-.*)?$/, (_, head: string, rest?: string) => (rest ? head.replace(/-[^-]*$/, '') || head : head))
     .slice(0, 90)

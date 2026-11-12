@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn, publishedOrLoggedIn } from '../access'
-import { slugify } from '../utils/slugify'
 import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 import { normalizeHeadings } from '../fields/normalizeHeadings'
 import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
+import { autoSlug } from '../fields/autoSlug'
+import { requireUkrainianTitle } from '../hooks/requireUkrainianTitle'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -38,11 +39,12 @@ export const Pages: CollectionConfig = {
     beforeOperation: [caseInsensitiveSearch(true)],
     // заголовки зі старого сайту (h1, h5, h6) — до дозволених h2–h4, інакше сторінку не зберегти
     beforeValidate: [normalizeHeadings(['content'])],
-    beforeChange: [markEnglish, fillSearchText(['title', 'content'])],
+    beforeChange: [requireUkrainianTitle('pages'), markEnglish, fillSearchText(['title', 'content'])],
   },
   fields: [
   ...translationFields('pages'),
-    { name: 'title', type: 'text', label: 'Назва', required: true, localized: true },
+    // зайві пробіли на початку й у кінці назви прибираємо
+    { name: 'title', type: 'text', label: 'Назва', required: true, localized: true, hooks: { beforeValidate: [({ value }) => (typeof value === 'string' ? value.trim() : value)] } },
     { name: 'content', type: 'richText', label: 'Вміст', localized: true },
     {
       name: 'slug',
@@ -55,7 +57,7 @@ export const Pages: CollectionConfig = {
         description: 'Частина адреси після домену. Не змінюйте без потреби — старі посилання перестануть працювати.',
       },
       hooks: {
-        beforeValidate: [({ value, data }) => (value ? value : data?.title ? slugify(data.title) : value)],
+        beforeValidate: [autoSlug('pages')],
       },
     },
     seoFields(),
