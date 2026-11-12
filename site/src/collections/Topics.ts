@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn } from '../access'
 import { slugify } from '../utils/slugify'
+import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
 
 // Категорії (мітки) новин — за ними відвідувачі фільтрують новини на сайті й у пошуку
 export const Topics: CollectionConfig = {
@@ -22,6 +23,8 @@ export const Topics: CollectionConfig = {
     update: isLoggedIn,
     delete: isAdmin,
   },
+  // пошук в адмінці без різниці великих і малих літер
+  hooks: { beforeOperation: [caseInsensitiveSearch()] },
   fields: [
     {
       type: 'row',

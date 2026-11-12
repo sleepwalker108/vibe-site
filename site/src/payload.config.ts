@@ -30,6 +30,7 @@ import { statusEndpoints } from './endpoints/status'
 import { statsSheetEndpoints } from './endpoints/statsSheet'
 import { mediaUsageEndpoints } from './endpoints/mediaUsage'
 import { mediaImportEndpoints } from './endpoints/mediaImport'
+import { cleanupEmptyDrafts } from './lib/cleanupEmptyDrafts'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -43,6 +44,8 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: ' — Адмінка НАРТУ',
+      // значок вкладки браузера — герб сайту, а не логотип Payload
+      icons: [{ rel: 'icon', type: 'image/png', url: '/img/emblem-96.png' }],
     },
     components: {
       beforeNavLinks: ['/components/admin/ViewSiteLink#ViewSiteLink', '/components/admin/DashboardLink#DashboardLink'],
@@ -71,6 +74,23 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { uk, en },
     fallbackLanguage: 'uk',
+    // Українські написи Payload про кошик: скрізь «кошик» (не «смітник» / «Сміття») і без неправильного відмінка
+    // («перемістити Новина у смітник» → «перемістити «…» у кошик»)
+    translations: {
+      uk: {
+        general: {
+          // рядок пошуку над списками: «Пошук: Заголовок або Адреса» (замість «Шукати по Заголовок…»)
+          searchBy: 'Пошук: {{label}}',
+          trash: 'Кошик',
+          aboutToTrash: 'Ви збираєтеся перемістити <1>{{title}}</1> у кошик. Звідти його можна буде відновити. Ви впевнені?',
+          aboutToTrashCount: 'Ви збираєтеся перемістити в кошик: {{count}} ({{label}})',
+          aboutToPermanentlyDeleteTrash: 'Ви збираєтеся назавжди видалити з кошика: <0>{{count}}</0> (<1>{{label}}</1>). Ви впевнені?',
+          noTrashResults: 'Кошик порожній.',
+          titleTrashed: '«{{title}}» переміщено в кошик.',
+          trashedCountSuccessfully: 'Переміщено в кошик: {{count}} ({{label}}).',
+        },
+      },
+    },
   },
   localization: {
     locales: [
@@ -107,6 +127,15 @@ export default buildConfig({
   jobs: {
     // потрібно для публікації новин за розкладом
     autoRun: [{ cron: '* * * * *', queue: 'default' }],
+  },
+  // Порожні чернетки без назви, що лишились після «Створити» без введення (lib/cleanupEmptyDrafts.ts):
+  // перша перевірка — за 2 хвилини після старту, далі кожні 6 годин. unref — таймер не тримає процес
+  // (скрипти й міграції завершуються як звичайно).
+  onInit: (payload) => {
+    if (process.env.NEXT_PHASE === 'phase-production-build') return
+    const run = () => cleanupEmptyDrafts(payload).catch((e) => payload.logger.warn(`Прибирання порожніх чернеток: ${(e as Error).message}`))
+    setTimeout(run, 2 * 60_000).unref()
+    setInterval(run, 6 * 3600_000).unref()
   },
   // GraphQL не використовується ні сайтом, ні адмінкою — вимкнено (менше точок доступу до даних)
   graphQL: { disable: true },

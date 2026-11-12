@@ -5,6 +5,7 @@ import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 import { normalizeHeadings } from '../fields/normalizeHeadings'
+import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -33,6 +34,8 @@ export const Pages: CollectionConfig = {
   },
   // текст для пошуку по сайту оновлюється під час кожного збереження
   hooks: {
+    // пошук в адмінці без різниці великих і малих літер, також по тексту сторінки
+    beforeOperation: [caseInsensitiveSearch(true)],
     // заголовки зі старого сайту (h1, h5, h6) — до дозволених h2–h4, інакше сторінку не зберегти
     beforeValidate: [normalizeHeadings(['content'])],
     beforeChange: [markEnglish, fillSearchText(['title', 'content'])],

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isAdminField } from '../access'
 import { authAfterError, authBeforeOperation } from '../lib/authSecurity'
+import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -31,7 +32,7 @@ export const Users: CollectionConfig = {
   },
   hooks: {
     // надійний пароль + однаковий час відповіді при вході (див. src/lib/authSecurity.ts)
-    beforeOperation: [authBeforeOperation],
+    beforeOperation: [authBeforeOperation, caseInsensitiveSearch()],
     afterError: [authAfterError],
     beforeChange: [
       // Перший зареєстрований користувач автоматично стає адміністратором

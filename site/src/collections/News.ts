@@ -5,6 +5,7 @@ import { markEnglish, translationFields } from '../fields/translations'
 import { seoFields } from '../fields/seo'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 import { normalizeHeadings } from '../fields/normalizeHeadings'
+import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -39,6 +40,8 @@ export const News: CollectionConfig = {
   },
   // текст для пошуку по сайту оновлюється під час кожного збереження
   hooks: {
+    // пошук в адмінці без різниці великих і малих літер, також по тексту новини
+    beforeOperation: [caseInsensitiveSearch(true)],
     // заголовки зі старого сайту (h1, h5, h6) — до дозволених h2–h4, інакше новину не зберегти
     beforeValidate: [normalizeHeadings(['content'])],
     beforeChange: [markEnglish, fillSearchText(['title', 'excerpt', 'content'])],

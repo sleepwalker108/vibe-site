@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdmin, isLoggedIn } from '../access'
 import { linkUrlHooks } from '../fields/linkUrl'
 import { enqueueVideo } from '../lib/videoOptimize'
+import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
 
 export const Videos: CollectionConfig = {
   slug: 'videos',
@@ -18,6 +19,8 @@ export const Videos: CollectionConfig = {
     livePreview: { url: '/video?preview=1' },
   },
   access: { read: () => true, create: isLoggedIn, update: isLoggedIn, delete: isAdmin },
+  // пошук в адмінці без різниці великих і малих літер
+  hooks: { beforeOperation: [caseInsensitiveSearch()] },
   fields: [
     { name: 'title', type: 'text', label: 'Назва', required: true, localized: true },
     { name: 'description', type: 'textarea', label: 'Короткий опис (необов’язково)', localized: true },

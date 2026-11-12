@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isLoggedIn } from '../access'
 import { enqueueVideo } from '../lib/videoOptimize'
 import { enqueuePdf } from '../lib/pdfOptimize'
+import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -21,6 +22,8 @@ export const Media: CollectionConfig = {
     pagination: { defaultLimit: 50 },
   },
   hooks: {
+    // пошук в адмінці без різниці великих і малих літер
+    beforeOperation: [caseInsensitiveSearch()],
     afterChange: [
       // новий PDF (або замінений файл) — «швидкий веб-перегляд» у фоні (див. lib/pdfOptimize.ts)
       ({ doc, previousDoc, operation, req }) => {
@@ -58,10 +61,11 @@ export const Media: CollectionConfig = {
     },
     // вбудоване поле типу файлу — лише українська назва колонки (за нею можна сортувати список)
     { name: 'mimeType', type: 'text', label: 'Тип файлу', admin: { readOnly: true, hidden: true } },
-    // вбудоване поле назви файлу — лише вигляд у списку: для відео кадр замість значка
+    // вбудоване поле назви файлу — лише вигляд у списку: для відео кадр замість значка; українська назва колонки
     {
       name: 'filename',
       type: 'text',
+      label: 'Назва файлу',
       admin: { readOnly: true, hidden: true, components: { Cell: '/components/admin/MediaFilenameCell#MediaFilenameCell' } },
     },
     {
