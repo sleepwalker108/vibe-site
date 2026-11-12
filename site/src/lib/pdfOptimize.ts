@@ -7,6 +7,7 @@
 // Якщо qpdf на сервері немає — нічого не робить (файли віддаються як є).
 import { spawn, spawnSync } from 'child_process'
 import fs from 'fs'
+import os from 'os'
 import path from 'path'
 import type { Payload } from 'payload'
 import { SITE_DIR } from './backups'
@@ -24,6 +25,10 @@ export const qpdf = (): string | null => {
 const run = (args: string[]) =>
   new Promise<void>((resolve, reject) => {
     const p = spawn(qpdf()!, args, { windowsHide: true })
+    // найнижчий пріоритет: обробка PDF не забирає процесор у сайту
+    try {
+      if (p.pid) os.setPriority(p.pid, os.constants.priority.PRIORITY_LOW)
+    } catch {}
     let err = ''
     p.stderr.on('data', (d) => (err = (err + d).slice(-2000)))
     const timer = setTimeout(() => p.kill('SIGKILL'), 10 * 60_000)

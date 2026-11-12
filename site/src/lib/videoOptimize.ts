@@ -14,6 +14,7 @@ import { SITE_DIR } from './backups'
 const MEDIA_DIR = path.join(SITE_DIR, 'media')
 const MAX_MBPS = 5 // вище — перестискаємо
 const MAX_HEIGHT = 1080
+const THREADS = Math.max(1, Math.floor(os.cpus().length / 2))
 
 export type VideoItem = { name: string; before: number; after: number; action: string }
 export type VideoState = {
@@ -45,7 +46,12 @@ const ffmpeg = (): string => {
 
 const run = (args: string[]) =>
   new Promise<void>((resolve, reject) => {
-    const p = spawn(ffmpeg(), ['-hide_banner', '-loglevel', 'error', ...args], { windowsHide: true })
+    // Стиснення не має гальмувати сайт: ffmpeg бере не більше половини ядер і працює з найнижчим пріоритетом —
+    // система дає йому процесор лише тоді, коли він не потрібен сайту (без цього адмінка «підвисала» на час стиснення)
+    const p = spawn(ffmpeg(), ['-hide_banner', '-loglevel', 'error', '-threads', String(THREADS), ...args], { windowsHide: true })
+    try {
+      if (p.pid) os.setPriority(p.pid, os.constants.priority.PRIORITY_LOW)
+    } catch {}
     let err = ''
     p.stderr.on('data', (d) => (err = (err + d).slice(-2000)))
     const timer = setTimeout(() => p.kill('SIGKILL'), 60 * 60_000)
@@ -118,7 +124,7 @@ const optimizeFile = async (payload: Payload, doc: { id: number; filename: strin
       await run([
         '-y', '-i', file,
         '-map', '0:v:0', '-map', '0:a:0?',
-        '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', '-maxrate', '4000k', '-bufsize', '8000k',
+        '-c:v', 'libx264', '-threads', String(THREADS), '-preset', 'fast', '-crf', '23', '-maxrate', '4000k', '-bufsize', '8000k',
         '-vf', `scale='min(1920,iw)':-2`, '-pix_fmt', 'yuv420p',
         '-c:a', 'aac', '-b:a', '128k',
         '-movflags', '+faststart', tmp,

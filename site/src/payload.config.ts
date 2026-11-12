@@ -152,6 +152,14 @@ export default buildConfig({
     setTimeout(run, 2 * 60_000).unref()
     setInterval(run, 6 * 3600_000).unref()
   },
+  // Завантаження файлів: до 300 МБ (стільки ж пропускає nginx — client_max_body_size). Без цього діяв типовий
+  // ліміт Payload — 20 МБ на файл і 50 МБ на запит, і відео чи великий PDF через адмінку не завантажувались
+  // («File size limit has been reached»), хоча підказка в полі обіцяла «до 100 МБ».
+  upload: {
+    limits: { fileSize: 300 * 1024 * 1024 },
+    requestSizeLimit: 320 * 1024 * 1024,
+    responseOnLimit: 'Файл завеликий: можна завантажити до 300 МБ.',
+  },
   // GraphQL не використовується ні сайтом, ні адмінкою — вимкнено (менше точок доступу до даних)
   graphQL: { disable: true },
   // API розділів «Резервні копії» і «Стан сервера»
