@@ -23,13 +23,14 @@ const COL_KEY = { possible: 'colPossible', eres: 'colEres', active: 'colActive',
 //   at   — зсув кружечка від центру області, щоб сусідні не налазили;
 //   rot  — поворот кружечка (частка кола), щоб дрібні сегменти з підписами дивились у вільне місце;
 //   name — де стоїть назва області відносно кружечка: [dx, dy, вирівнювання]
-type Layout = { at?: [number, number]; rot?: number; name?: [number, number, 'start' | 'middle' | 'end'] }
+//   wrap — назва у два рядки («Луганська» / «обл.»), коли збоку мало місця
+type Layout = { at?: [number, number]; rot?: number; name?: [number, number, 'start' | 'middle' | 'end']; wrap?: boolean }
 const LAYOUT: Record<string, Layout> = {
   'UA-74': { name: [0, -56, 'middle'] }, // Чернігівська
   'UA-59': { at: [6, 0], name: [56, 4, 'start'] }, // Сумська
   'UA-63': { at: [-4, -6], rot: 0.25, name: [-52, 2, 'end'] }, // Харківська
-  'UA-09': { at: [0, -10], name: [-50, 22, 'end'] }, // Луганська
-  'UA-14': { at: [6, 10], rot: 0.358, name: [52, 0, 'start'] }, // Донецька: дрібні сегменти — донизу
+  'UA-09': { at: [-22, -10], name: [46, 0, 'start'], wrap: true }, // Луганська: назва праворуч у два рядки (справа мало місця)
+  'UA-14': { at: [6, 10], rot: 0.358, name: [-46, -16, 'end'] }, // Донецька: назва ліворуч, трохи вище (нижче — цифри Дніпропетровської); дрібні сегменти — донизу
   'UA-12': { at: [-22, -10], rot: 0.25, name: [-52, 0, 'end'] }, // Дніпропетровська
   'UA-23': { at: [-8, 8], rot: 0.25, name: [0, 74, 'middle'] }, // Запорізька
   'UA-48': { at: [-6, -8], name: [-52, 0, 'end'] }, // Миколаївська
@@ -42,6 +43,12 @@ const LAYOUT: Record<string, Layout> = {
 const shortName = (id: string, name: string, locale: Locale, d: Dict) => {
   if (locale === 'en') return id === 'UA-43' ? 'AR Crimea' : `${REGION_NAMES_EN[id] || name} ${d.oblastSuffix}`
   return name === 'Автономна Республіка Крим' ? 'АР Крим' : name.startsWith('м.') ? name : `${name} ${d.oblastSuffix}`
+}
+
+// назва в один рядок або у два — по останньому пробілу
+const nameLines = (name: string, wrap?: boolean) => {
+  const i = name.lastIndexOf(' ')
+  return wrap && i > 0 ? [name.slice(0, i), name.slice(i + 1)] : [name]
 }
 
 const fmt = (n?: number | null) => (n || 0).toLocaleString('uk-UA')
@@ -296,7 +303,11 @@ export const TerritoriesSection = ({ t, d, locale }: { t: Territory; d: Dict; lo
                       textAnchor={r.name[2]}
                       dominantBaseline="middle"
                     >
-                      {shortName(r.geo.id, r.geo.name, locale, d)}
+                      {nameLines(shortName(r.geo.id, r.geo.name, locale, d), LAYOUT[r.geo.id]?.wrap).map((line, i, all) => (
+                        <tspan key={i} x={r.x + r.name[0]} dy={i === 0 ? (all.length - 1) * -6.5 : 13}>
+                          {line}
+                        </tspan>
+                      ))}
                     </text>
                   </g>
                 )
