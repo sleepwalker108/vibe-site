@@ -45,6 +45,7 @@ import * as migration_20261030_220000_map_service_page from './20261030_220000_m
 import * as migration_20261102_100000_news_video from './20261102_100000_news_video';
 import * as migration_20261112_131527_locales_parent_indexes from './20261112_131527_locales_parent_indexes';
 import * as migration_20261116_120216_audit_log from './20261116_120216_audit_log';
+import * as migration_20261116_122142_infografika_uk_restore from './20261116_122142_infografika_uk_restore';
 
 export const migrations = [
   {
@@ -280,6 +281,11 @@ export const migrations = [
   {
     up: migration_20261116_120216_audit_log.up,
     down: migration_20261116_120216_audit_log.down,
-    name: '20261116_120216_audit_log'
+    name: '20261116_120216_audit_log',
+  },
+  {
+    up: migration_20261116_122142_infografika_uk_restore.up,
+    down: migration_20261116_122142_infografika_uk_restore.down,
+    name: '20261116_122142_infografika_uk_restore'
   },
 ];

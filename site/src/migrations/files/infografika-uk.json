@@ -1,0 +1,1948 @@
+{
+ "title": "Корисна інформація",
+ "content": {
+  "root": {
+   "type": "root",
+   "version": 1,
+   "direction": "ltr",
+   "format": "",
+   "indent": 0,
+   "children": [
+    {
+     "children": [
+      {
+       "detail": 0,
+       "format": 0,
+       "mode": "normal",
+       "style": "",
+       "text": "Корисна інформація гарячих ліній 1548 та 1648",
+       "type": "text",
+       "version": 1
+      }
+     ],
+     "direction": null,
+     "format": "",
+     "indent": 0,
+     "type": "heading",
+     "version": 1,
+     "tag": "h4"
+    },
+    {
+     "type": "heading",
+     "tag": "h2",
+     "version": 1,
+     "direction": "ltr",
+     "format": "",
+     "indent": 0,
+     "children": [
+      {
+       "type": "text",
+       "text": "Корисна інформація для ВПО",
+       "version": 1,
+       "detail": 0,
+       "format": 0,
+       "mode": "normal",
+       "style": ""
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "tag": "h3",
+     "version": 1,
+     "direction": "ltr",
+     "format": "",
+     "indent": 0,
+     "children": [
+      {
+       "type": "text",
+       "text": "Найпоширеніші питання ВПО",
+       "version": 1,
+       "detail": 0,
+       "format": 0,
+       "mode": "normal",
+       "style": ""
+      }
+     ]
+    },
+    {
+     "type": "block",
+     "version": 2,
+     "format": "",
+     "fields": {
+      "id": "faqmuqqa5rq0",
+      "blockName": "",
+      "blockType": "faq",
+      "items": [
+       {
+        "question": "Коли відбувається фінансування виплат допомоги на проживання внутрішньо переміщеним особам?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Мінсоцполітики перераховує щомісяця до 15 і 28 числа бюджетні кошти АТ “Ощадбанк” на підставі переліку внутрішньо переміщених осіб для виплати допомоги на проживання, сформованого державним підприємством “Інформаційно-обчислювальний центр Міністерства соціальної політики України”.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea492c"
+       },
+       {
+        "question": "Які документи необхідні подати для призначення/подовження виплат?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Потрібно подати паспорт, ідентифікаційний код, довідку МСЕК (для осіб з інвалідністю). Також може виникнути необхідність подати довідку про доходи, довідку з місця роботи або з центру зайнятості, довідку про склад сім’ї, довідку з місця навчання дітей про те, що у садочках відсутні місця або навчання проводиться он-лайн, дистанційно (повністю або частково) тощо.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea492d"
+       },
+       {
+        "question": "На який термін призначаються виплати?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "З 1 листопада 2023 року допомога призначається на шість місяців з можливістю продовжити ще на півроку для соціально вразливих сімей (автоматично або за заявою).",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea492e"
+       },
+       {
+        "question": "Куди звернутися якщо не отримую виплати або виплата надходить не в повному обсязі?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Для вирішення питання щодо призначення/скасування  або нарахування/затримки нарахування виплат ВПО необхідно звернутися до Управління соціального захисту населення району де  перебуваєте на обліку як ВПО, оскільки саме Управління соціального захисту населення ведуть реєстри ВПО та здійснюють нарахування даного виду допомоги.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea492f"
+       },
+       {
+        "question": "Мій чоловік – працівник правоохоронних органів (військовослужбовець, працівник Національної гвардії, СБУ, МВС, Держспецзв’язку, інших військових формувань, утворених відповідно до закону). Чи будуть враховуватися його доходи під час обчислення середньомісячного сукупного доходу сім’ї (домогосподарства)?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "До середньомісячного сукупного доходу осіб, які беруть (брали) безпосередню участь у здійсненні заходів із забезпечення національної безпеки і оборони, відсічі і стримування збройної агресії Російської Федерації, не враховуються отримані ними у період безпосередньої участі у зазначених заходах грошове забезпечення та інші виплати і види соціальної допомоги, передбачені законодавством для працівників правоохоронних органів (військовослужбовців, працівників Національної гвардії, СБУ, МВС, Держспецзв’язку, інших військових формувань, утворених відповідно до закону).",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4930"
+       },
+       {
+        "question": "Кому буде призначена виплата автоматично?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Передбачено, що виплата продовжується на другий шестимісячний період автоматично:",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "дітям-сиротам та дітям, позбавленим батьківського піклування, та особам з їх числа віком до 23 років, у тому числі таким, які перебувають у дитячих будинках сімейного типу та прийомних сім’ях, а також батькам-вихователям, прийомним батькам та опікунам (піклувальникам).",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "отримувачам пенсії, розмір якої не перевищує чотирьох розмірів прожиткового мінімуму для осіб, які втратили працездатність, на 1 січня року, в якому приймається рішення про призначення допомоги;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 2
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "особам з інвалідністю I чи II групи, дитині з інвалідністю віком до 18 років, тяжкохворій дитині.",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 3
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "list",
+            "version": 1,
+            "listType": "bullet",
+            "start": 1,
+            "tag": "ul"
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4931"
+       },
+       {
+        "question": "Якщо людина виїхала за кордон або повернулась до покинутого постійного місця проживання чи може вона дистанційно повідомити про це відповідний уповноважений орган соціального захисту населення, ЦНАП або уповноважену особу територіальної громади за місцем обліку?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Так, повідомити можна через Портал Дія або надіслати заяву з використанням засобів поштового / електронного зв’язку (за технічної можливості з накладенням кваліфікованого електронного підпису, що базується на кваліфікованому сертифікаті електронного підпису).",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4932"
+       },
+       {
+        "question": "Чи буде у 2025 році подовжено надання компенсації за розміщення ВПО (програма «Прихисток»)?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Починаючи із січня 2025 року повноваження щодо призначення та виплати компенсації передані до Пенсійного фонду України (ПФУ) за рахунок коштів державного бюджету, а також коштів інших джерел, не заборонених законодавством (Постанова Кабінету Міністрів України від 31 грудня 2024 р. № 1544).",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Контакти ПФУ: ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "0 800 503 753",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "                         044 281 08 70",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 1,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "                         044 281 08 71",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 1,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "ел. пошта: ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "info@pfu.gov.ua",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": false,
+               "url": "mailto:info@pfu.gov.ua"
+              },
+              "id": "6abf7190f9101b6850ea4922"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4933"
+       },
+       {
+        "question": "Інфографіка",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Актуальні питання ВПО",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": true,
+               "url": "/api/media/file/%D0%9D%D0%B0%D0%B9%D0%BF%D0%BE%D1%88%D0%B8%D1%80%D0%B5%D0%BD%D1%96%D1%88%D1%96-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%BD%D1%8F-%D0%92%D0%9F%D0%9E.pdf"
+              },
+              "id": "6abf7190f9101b6850ea4923"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4934"
+       }
+      ]
+     }
+    },
+    {
+     "type": "block",
+     "version": 2,
+     "format": "",
+     "fields": {
+      "id": "faqmuqqa5s21",
+      "blockName": "",
+      "blockType": "faq",
+      "items": [
+       {
+        "question": "Актуальний Перелік територій, на яких ведуться (велися) бойові дії або тимчасово окупованих РФ",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Перелік територій, на яких ведуться (велися) бойові дії або тимчасово окупованих російською федерацією",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": true,
+               "url": "/api/media/file/%D0%9F%D0%B5%D1%80%D0%B5%D0%BB%D1%96%D0%BA-%D0%B2%D1%96%D0%B4-16-%D0%BB%D0%B8%D0%BF%D0%BD%D1%8F-2026-%D1%80.-%E2%84%961389-1.pdf"
+              },
+              "id": "6abf7190f9101b6850ea4924"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4935"
+       },
+       {
+        "question": "Узагальнений перелік місць тимчасового проживання",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Узагальнений перелік місць тимчасового проживання",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": true,
+               "url": "https://docs.google.com/spreadsheets/d/1dWnL41a5Tq5LjGP4S7k8ygax35aVhKEb/edit?gid=880353567#gid=880353567"
+              },
+              "id": "6abf7190f9101b6850ea4925"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4936"
+       },
+       {
+        "question": "Посібник відповідей для ВПО",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Посібник відповідей для ВПО",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": true,
+               "url": "/api/media/file/PosibnykSite2024New.pdf"
+              },
+              "id": "6abf7190f9101b6850ea4926"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4937"
+       },
+       {
+        "question": "Організаційна інфраструктура підтримки ВПО",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Інституційна_інфраструктура_підтримки_ВПО",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": true,
+               "url": "https://unity.gov.ua/wp-content/uploads/2023/11/instytuczijna_infrastruktura_pidtrymky_vpo.pdf"
+              },
+              "id": "6abf7190f9101b6850ea4927"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4938"
+       }
+      ]
+     }
+    },
+    {
+     "type": "heading",
+     "tag": "h2",
+     "version": 1,
+     "direction": "ltr",
+     "format": "",
+     "indent": 0,
+     "children": [
+      {
+       "type": "text",
+       "text": "Корисна інформація про осіб безвісти зниклих за особливих обставин або осіб, які перебувають у полоні",
+       "version": 1,
+       "detail": 0,
+       "format": 0,
+       "mode": "normal",
+       "style": ""
+      }
+     ]
+    },
+    {
+     "type": "block",
+     "version": 2,
+     "format": "",
+     "fields": {
+      "id": "faqmuqqa5s62",
+      "blockName": "",
+      "blockType": "faq",
+      "items": [
+       {
+        "question": "Офіційні ресурси для пошуку зниклих та полонених",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "✅ ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "Координаційний штаб з питань поводження з військовополоненими",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "type": "linebreak",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "🔗 ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "https://koordshtab.gov.ua",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": false,
+               "url": "https://koordshtab.gov.ua"
+              },
+              "id": "6abf7190f9101b6850ea4928"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "✅ ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "Національне інформаційне бюро (НІБ) – полонені та зниклі",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "type": "linebreak",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "📞 Гаряча лінія: ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "1648 або +380 44 287 81 65",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "type": "linebreak",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "📩 Email: ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "nib.uncp@gmail.com",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "type": "linebreak",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "🔗 ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "https://nib.gov.ua",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": false,
+               "url": "https://nib.gov.ua"
+              },
+              "id": "6abf7190f9101b6850ea4929"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "✅ ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "Червоний Хрест – реєстрація військовополонених",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "type": "linebreak",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "🔗 ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "https://www.icrc.org/",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": false,
+               "url": "https://www.icrc.org/"
+              },
+              "id": "6abf7190f9101b6850ea492a"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "✅ ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "МВС України – розшук безвісти зниклих",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "type": "linebreak",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "🔗 https://wanted.mvs.gov.ua",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea4939"
+       }
+      ]
+     }
+    },
+    {
+     "type": "heading",
+     "tag": "h3",
+     "version": 1,
+     "direction": "ltr",
+     "format": "",
+     "indent": 0,
+     "children": [
+      {
+       "type": "text",
+       "text": "Питання-відповіді щодо осіб безвісти зниклих за особливих обставин або осіб, які перебувають у полоні",
+       "version": 1,
+       "detail": 0,
+       "format": 0,
+       "mode": "normal",
+       "style": ""
+      }
+     ]
+    },
+    {
+     "type": "block",
+     "version": 2,
+     "format": "",
+     "fields": {
+      "id": "faqmuqqa5sq3",
+      "blockName": "",
+      "blockType": "faq",
+      "items": [
+       {
+        "question": "Як обліковуються зниклі безвісти?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Інформація, щодо військових та цивільних осіб, що зникли безвісти вноситься та обліковується:",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "в Єдиному реєстрі осіб, зниклих безвісти за особливих обставин, який належить Управлінню з питань осіб, зниклих безвісти за особливих обставин (Секретаріату Уповноваженого з питань осіб, зниклих безвісти за особливих обставин) МВС України;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "в реєстрі «Оборонців» НІБ (ДП «Український національний центр розбудови миру»), інформація з якого передається до Координаційного штабу з питань поводження з військовополоненими;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 2
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "в реєстрі МКЧХ (Міжнародний Комітет Червоного Хреста);",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 3
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "в реєстрі Координаційного штабу з питань поводження з військовополоненими.",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 4
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "list",
+            "version": 1,
+            "listType": "bullet",
+            "start": 1,
+            "tag": "ul"
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea493a"
+       },
+       {
+        "question": "Встановлення факту перебування в полоні?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Статус перебування в полоні з будь якого вищезазначеного реєстру може змінюватись після підтвердження країною агресором за посередництвом МКЧХ.  ",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Також для встановлення факту перебування в полоні, звільненому з полону, або родичам військовополоненого (або уповноваженому представнику) необхідно  заповнити заяву за встановленою формою. ",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "До заяви також потрібно додати наступні документи:",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Документи, що підтверджують громадянство України як особи, що була позбавлена особистої свободи так і заявника;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Документи, що підтверджують спорідненість особи, що була позбавлена особистої свободи так і заявника;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 2
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Довідка про те, що військовослужбовець перебував/ла  перебуває в місцях позбавлення особистої свободи в наслідок збройної агресії рф проти України із зазначенням строку перебування в місцях несвободи  за постановою КМУ від 20.01.2023 № 55 (для військових);",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 3
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Документи та/або відомості, що підтверджують факт та обставини позбавлення особистої свободи (для цивільних осіб):",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 4
+             },
+             {
+              "children": [
+               {
+                "children": [
+                 {
+                  "children": [
+                   {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "витяг з Єдиного державного реєстру досудових розслідувань (за наявності кримінального провадження стосовно особи);",
+                    "type": "text",
+                    "version": 1
+                   }
+                  ],
+                  "direction": null,
+                  "format": "",
+                  "indent": 1,
+                  "type": "listitem",
+                  "version": 1,
+                  "value": 1
+                 },
+                 {
+                  "children": [
+                   {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "повідомлення органів сил безпеки та сил оборони стосовно особи;",
+                    "type": "text",
+                    "version": 1
+                   }
+                  ],
+                  "direction": null,
+                  "format": "",
+                  "indent": 1,
+                  "type": "listitem",
+                  "version": 1,
+                  "value": 2
+                 },
+                 {
+                  "children": [
+                   {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "документи та/або відомості, що підтверджують факт та обставини позбавлення особи особистої свободи (lля цивільних осіб відсутнє обмеження у наданні будь – яких доказів на підтвердження факту позбавлення особи особистої свободи, тобто вони можуть подати будь-які документи, які вважають за необхідне).",
+                    "type": "text",
+                    "version": 1
+                   }
+                  ],
+                  "direction": null,
+                  "format": "",
+                  "indent": 1,
+                  "type": "listitem",
+                  "version": 1,
+                  "value": 3
+                 }
+                ],
+                "direction": null,
+                "format": "",
+                "indent": 0,
+                "type": "list",
+                "version": 1,
+                "listType": "bullet",
+                "start": 1,
+                "tag": "ul"
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 5
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Витяг з Єдиного реєстру досудових розслідувань (за наявності);",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 5
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Повідомлення органів сил безпеки та сил оборони стосовно особи (за наявності).",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 6
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "list",
+            "version": 1,
+            "listType": "bullet",
+            "start": 1,
+            "tag": "ul"
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 10,
+              "mode": "normal",
+              "style": "",
+              "text": "Документи необхідно надіслати на адресу: Міністерство розвитку громад та територій України. 01135 Київ, проспект Берестейський, 14 e-mail: ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 2,
+                "mode": "normal",
+                "style": "",
+                "text": "miu@mtu.gov.ua",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "link",
+              "version": 3,
+              "fields": {
+               "linkType": "custom",
+               "newTab": false,
+               "url": "mailto:miu@mtu.gov.ua"
+              },
+              "id": "6abf7190f9101b6850ea492b"
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 10,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "Примітка:",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": " ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 10,
+              "mode": "normal",
+              "style": "",
+              "text": "Засідання Комісії по встановленню факту скликаються у разі потреби, але не рідше ніж один раз на квартал.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 1,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea493b"
+       },
+       {
+        "question": "Чи вдалося налагодити роботу судово медичної експертизи і чи є звітність що до результату?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Постійно ведеться робота для покращення судово медичної експертизи, залучені відповідні установи, які знаходяться за кордоном, а також є можливість звернутись безпосередньо до центральної НДЕКЦ стосовно ДНК- ідентифікації та дізнатись рішення стосовно результатів експертизи за номером: ",
+              "type": "text",
+              "version": 1
+             },
+             {
+              "detail": 0,
+              "format": 1,
+              "mode": "normal",
+              "style": "",
+              "text": "044-374-34-61.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea493c"
+       },
+       {
+        "question": "Як відбувається пошук безвісті зниклих?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Після відкриття кримінального провадження (внесення даних  до Єдиного реєстру досудових розслідувань) за фактом безвісного зникнення цивільної особи чи військового, поліція розпочинає проведення слідчих дій, розшукових заходів та призначення судових експертиз;",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Також пошукові заходи можуть проводитись мобільними групами Збройних сил України на прифронтових територіях;",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           },
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "На тимчасово окупованій території України та території РФ МКЧХ за запитом потерпілого (родичі, уповноважена особа безвісті зниклого, військовополоненого/цивільного) проводить пошукові дії на території країни-агресора.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea493d"
+       },
+       {
+        "question": "Чому змінюється статус з полоненого на пошук особи?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Якщо статус полоненого підтверджено відповідно інформації отриманої з відкритих джерел, то після проведення портретної та інших експертиз, правоохоронними органами, статус у реєстрі КШ може бути змінено на пошук/розшук особи.",
+              "type": "text",
+              "version": 1
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "paragraph",
+            "version": 1,
+            "textFormat": 0,
+            "textStyle": ""
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea493e"
+       },
+       {
+        "question": "Яку допомогу в пошуку безвісти зниклих ми як рідні можемо надати владі щоб прискорити процес?",
+        "answer": {
+         "root": {
+          "children": [
+           {
+            "children": [
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Потерпілі (рідні) мають право подавати слідчому докази, які стали відомі у ході пошуку безвісти зниклої особи;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 1
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Клопотати про призначення портретної чи іншої судової експертизи, тощо;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 2
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Поговорити з побратимами, які служать у тому ж підрозділі, або брали участь у тих бойових діях, під час яких зник захисник;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 3
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Переглядати фото, відео та дописи на російських пропагандистських ресурсах, де викладають інформацію про українців, які потрапили в полон або загинули;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 4
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Зустрітися з колишніми військовополоненими, що повернулися з полону, поговорити з ними, показати фото, відео людини, яка розшукується;",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 5
+             },
+             {
+              "children": [
+               {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Бути на зв’язку та відстежувати в месенджерах, чи не з’явився номер в мережі.",
+                "type": "text",
+                "version": 1
+               }
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "listitem",
+              "version": 1,
+              "value": 6
+             }
+            ],
+            "direction": null,
+            "format": "",
+            "indent": 0,
+            "type": "list",
+            "version": 1,
+            "listType": "bullet",
+            "start": 1,
+            "tag": "ul"
+           }
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1
+         }
+        },
+        "id": "6abf7190f9101b6850ea493f"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ }
+}
