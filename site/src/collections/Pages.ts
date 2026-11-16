@@ -5,6 +5,7 @@ import { seoFields } from '../fields/seo'
 import { fillSearchText, searchTextField } from '../fields/searchText'
 import { normalizeHeadings } from '../fields/normalizeHeadings'
 import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
+import { auditDelete, auditTrash } from '../hooks/auditLog'
 import { autoSlug } from '../fields/autoSlug'
 import { requireUkrainianTitle } from '../hooks/requireUkrainianTitle'
 
@@ -42,6 +43,9 @@ export const Pages: CollectionConfig = {
     // заголовки зі старого сайту (h1, h5, h6) — до дозволених h2–h4, інакше сторінку не зберегти
     beforeValidate: [normalizeHeadings(['content'])],
     beforeChange: [requireUkrainianTitle('pages'), markEnglish, fillSearchText(['title', 'content'])],
+    // журнал видалень: кошик, відновлення, остаточне видалення (hooks/auditLog.ts)
+    afterChange: [auditTrash],
+    afterDelete: [auditDelete],
   },
   fields: [
   ...translationFields('pages'),

@@ -74,6 +74,7 @@ export interface Config {
     media: Media;
     users: User;
     visits: Visit;
+    'audit-log': AuditLog;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -93,6 +94,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     visits: VisitsSelect<false> | VisitsSelect<true>;
+    'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -415,6 +417,23 @@ export interface Visit {
   createdAt: string;
 }
 /**
+ * Хто й коли переніс у кошик, відновив або остаточно видалив новину, сторінку, відео чи файл. Записи робить сам сайт.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log".
+ */
+export interface AuditLog {
+  id: number;
+  action: 'trash' | 'restore' | 'delete';
+  section: 'news' | 'pages' | 'videos' | 'media';
+  title?: string | null;
+  docId?: string | null;
+  slug?: string | null;
+  user?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -557,6 +576,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'visits';
         value: number | Visit;
+      } | null)
+    | ({
+        relationTo: 'audit-log';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -760,6 +783,20 @@ export interface VisitsSelect<T extends boolean = true> {
   device?: T;
   lang?: T;
   country?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log_select".
+ */
+export interface AuditLogSelect<T extends boolean = true> {
+  action?: T;
+  section?: T;
+  title?: T;
+  docId?: T;
+  slug?: T;
+  user?: T;
   updatedAt?: T;
   createdAt?: T;
 }

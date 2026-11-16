@@ -3,6 +3,7 @@ import { isAdmin, isLoggedIn, notTrashedOrLoggedIn } from '../access'
 import { linkUrlHooks } from '../fields/linkUrl'
 import { enqueueVideo } from '../lib/videoOptimize'
 import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
+import { auditDelete, auditTrash } from '../hooks/auditLog'
 
 export const Videos: CollectionConfig = {
   slug: 'videos',
@@ -24,7 +25,10 @@ export const Videos: CollectionConfig = {
   // пошук в адмінці без різниці великих і малих літер
   hooks: {
     beforeOperation: [caseInsensitiveSearch()],
+    // журнал видалень: кошик, відновлення, остаточне видалення (hooks/auditLog.ts)
+    afterDelete: [auditDelete],
     afterChange: [
+      auditTrash,
       // вибрали відеофайл без обкладинки — обкладинка з кадру (і стиснення, якщо треба) у фоні (lib/videoOptimize.ts)
       ({ doc, previousDoc, operation, req }) => {
         const file = typeof doc?.file === 'object' ? doc.file?.id : doc?.file

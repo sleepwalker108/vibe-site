@@ -14,6 +14,7 @@ import { Pages } from './collections/Pages'
 import { Videos } from './collections/Videos'
 import { Topics } from './collections/Topics'
 import { Visits } from './collections/Visits'
+import { AuditLog } from './collections/AuditLog'
 import { Home } from './globals/Home'
 import { Stats } from './globals/Stats'
 import { AnnualReport } from './globals/AnnualReport'
@@ -100,7 +101,7 @@ export default buildConfig({
     defaultLocale: 'uk',
     fallback: true,
   },
-  collections: [News, Topics, Pages, Videos, Media, Users, Visits],
+  collections: [News, Topics, Pages, Videos, Media, Users, Visits, AuditLog],
   globals: [Home, Navigation, Stats, AnnualReport, Territories, Resources, Contacts, Seo],
   editor: lexicalEditor({
     // панель інструментів, таблиці, виправлені посилання + блок «Запитання — відповіді»

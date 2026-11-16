@@ -3,6 +3,7 @@ import { isLoggedIn } from '../access'
 import { enqueueVideo } from '../lib/videoOptimize'
 import { enqueuePdf } from '../lib/pdfOptimize'
 import { caseInsensitiveSearch } from '../hooks/caseInsensitiveSearch'
+import { auditDelete, auditTrash } from '../hooks/auditLog'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -28,7 +29,10 @@ export const Media: CollectionConfig = {
   hooks: {
     // пошук в адмінці без різниці великих і малих літер
     beforeOperation: [caseInsensitiveSearch()],
+    // журнал видалень: кошик, відновлення, остаточне видалення (hooks/auditLog.ts)
+    afterDelete: [auditDelete],
     afterChange: [
+      auditTrash,
       // новий PDF (або замінений файл) — «швидкий веб-перегляд» у фоні (див. lib/pdfOptimize.ts)
       ({ doc, previousDoc, operation, req }) => {
         if (doc?.mimeType === 'application/pdf' && (operation === 'create' || doc.filename !== previousDoc?.filename)) {
