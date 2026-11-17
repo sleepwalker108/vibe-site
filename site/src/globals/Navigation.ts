@@ -23,7 +23,7 @@ export const Navigation: GlobalConfig = {
     description: 'Верхнє меню. Порядок змінюється перетягуванням.',
     livePreview: { url: '/?preview=1' },
   },
-  versions: { drafts: { autosave: { interval: 400 } }, max: 30 },
+  versions: { drafts: { autosave: { interval: 1500 } }, max: 30 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
     {

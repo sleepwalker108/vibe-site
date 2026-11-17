@@ -29,7 +29,7 @@ export const Pages: CollectionConfig = {
       url: ({ data }) => `/${encodeURIComponent(data?.slug || '')}?preview=1`,
     },
   },
-  versions: { drafts: { autosave: { interval: 400 } }, maxPerDoc: 50 },
+  versions: { drafts: { autosave: { interval: 1500 } }, maxPerDoc: 50 },
   access: {
     read: publishedOrLoggedIn,
     create: isLoggedIn,

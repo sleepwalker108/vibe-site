@@ -13,7 +13,7 @@ export const Stats: GlobalConfig = {
     description: 'Загальну кількість дзвінків рахувати не треба — сайт сам додає всі категорії.',
     livePreview: { url: '/?preview=1#stats' },
   },
-  versions: { drafts: { autosave: { interval: 400 } }, max: 100 },
+  versions: { drafts: { autosave: { interval: 1500 } }, max: 100 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
     // перемикач Українська / English (як у новинах)

@@ -17,7 +17,7 @@ export const Contacts: GlobalConfig = {
     group: 'Сайт',
     livePreview: { url: '/?preview=1#footer' },
   },
-  versions: { drafts: { autosave: { interval: 400 } }, max: 50 },
+  versions: { drafts: { autosave: { interval: 1500 } }, max: 50 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
     {

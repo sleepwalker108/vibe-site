@@ -31,7 +31,7 @@ export const News: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: { interval: 400 }, // зміни видно в попередньому перегляді майже одразу
+      autosave: { interval: 1500 }, // зміни видно в попередньому перегляді майже одразу
       schedulePublish: true, // публікація за розкладом
     },
     maxPerDoc: 50,

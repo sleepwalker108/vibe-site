@@ -17,7 +17,7 @@ export const Territories: GlobalConfig = {
       'Кількість населених пунктів (НП) у підсумках сайт рахує сам — додаючи числа всіх областей. Вручну вводяться лише кількості громад (ТГ).',
     livePreview: { url: '/?preview=1#territories' },
   },
-  versions: { drafts: { autosave: { interval: 400 } }, max: 50 },
+  versions: { drafts: { autosave: { interval: 1500 } }, max: 50 },
   access: { read: () => true, update: isLoggedIn },
   fields: [
     // перемикач Українська / English (як у новинах)
