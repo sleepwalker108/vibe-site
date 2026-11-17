@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { PageSidebar } from '@/components/PageSidebar'
 import { Prose } from '@/components/Prose'
 import { SiteShell } from '@/components/SiteShell'
-import { formatDate, getClient, isDraftMode, mediaUrl, publishedOnly } from '@/lib/payload'
+import { formatDate, getClient, isDraftMode, mediaDims, mediaUrl, publishedOnly } from '@/lib/payload'
 import { getDict, localeQuery } from '@/lib/i18n'
 import type { Locale } from '@/lib/dictionary'
 import { JsonLd } from '@/components/JsonLd'
@@ -127,7 +127,13 @@ export default async function NewsItemPage({ params, searchParams }: Props) {
             </div>
           ) : cover && (
             <div className="cover">
-              <img src={cover} alt={typeof item.cover === 'object' ? item.cover?.alt || '' : ''} />
+              {/* найбільша картинка сторінки — вантажимо першочергово; розміри — щоб текст не «стрибав» */}
+              <img
+                src={cover}
+                alt={typeof item.cover === 'object' ? item.cover?.alt || '' : ''}
+                {...mediaDims(item.cover, 'wide')}
+                fetchPriority="high"
+              />
             </div>
           )}
           {item.content ? <Prose data={item.content} labels={t} /> : <p className="prose">{item.excerpt}</p>}

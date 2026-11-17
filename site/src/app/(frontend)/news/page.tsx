@@ -107,8 +107,9 @@ export default async function NewsPage({ searchParams }: Props) {
             </p>
             {news.docs.length ? (
               <div className="news-grid">
-                {news.docs.map((n) => (
-                  <NewsCard key={n.id} item={n as News} level={2} locale={locale} />
+                {news.docs.map((n, i) => (
+                  // перший ряд (3 картки) видно одразу — його картинки вантажимо без «лінивого» завантаження
+                  <NewsCard key={n.id} item={n as News} level={2} locale={locale} eager={i < 3} />
                 ))}
               </div>
             ) : (

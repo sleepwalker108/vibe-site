@@ -27,3 +27,13 @@ export const mediaUrl = (m: unknown, size: 'card' | 'wide' = 'card'): string | u
   const media = m as { url?: string | null; sizes?: Record<string, { url?: string | null } | undefined> }
   return media.sizes?.[size]?.url || media.url || undefined
 }
+
+// Розміри того самого зображення, що повертає mediaUrl (для width/height у <img>: браузер заздалегідь
+// резервує місце, і текст під картинкою не «стрибає», коли вона завантажиться)
+export const mediaDims = (m: unknown, size: 'card' | 'wide' = 'card'): { width?: number; height?: number } => {
+  if (!m || typeof m !== 'object') return {}
+  type Dims = { url?: string | null; width?: number | null; height?: number | null }
+  const media = m as Dims & { sizes?: Record<string, Dims | undefined> }
+  const s = media.sizes?.[size]?.url ? media.sizes[size] : media
+  return s?.width && s?.height ? { width: s.width, height: s.height } : {}
+}

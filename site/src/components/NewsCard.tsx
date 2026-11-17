@@ -7,10 +7,13 @@ export const NewsCard = ({
   item,
   featured = false,
   level = 3,
+  eager = false,
 }: {
   item: News
   featured?: boolean
   level?: 2 | 3
+  // картка видна одразу (перший ряд у «Новинах») — картинку вантажимо відразу, а не «ліниво» при прокрутці
+  eager?: boolean
   locale?: 'uk' | 'en' // назву категорії вже повертає база потрібною мовою
 }) => {
   const H = level === 2 ? 'h2' : 'h3'
@@ -19,7 +22,7 @@ export const NewsCard = ({
   const tag = topicName(item.topics?.[0])
   return (
     <Link className={`news-card${featured ? ' featured' : ''}`} href={`/news/${encodeURIComponent(item.slug || '')}`}>
-      <div className="img">{img ? <img src={img} alt="" loading="lazy" /> : <div className="ph"><img src="/img/logo-white.webp" alt="" loading="lazy" /></div>}</div>
+      <div className="img">{img ? <img src={img} alt="" loading={eager ? undefined : 'lazy'} /> : <div className="ph"><img src="/img/logo-white.webp" alt="" loading="lazy" /></div>}</div>
       <div className="body">
         {featured && tag && <span className="tag">{tag}</span>}
         <time>
