@@ -4,6 +4,7 @@ import type { CardsBlock, FaqBlock, StatBlock } from '@/payload-types'
 import { Fragment } from 'react'
 import { hasPhone, splitPhones } from '@/lib/phones'
 import { safeHref } from '@/lib/safeHref'
+import { videoFrameUrl } from '@/lib/videoFrameUrl'
 import { normalizeContent } from '@/fields/normalizeHeadings'
 import { DocCard, type DocLabels } from './DocCard'
 import { ResourceIcon } from './ResourceIcon'
@@ -163,7 +164,8 @@ const makeConverters = (labels: ProseLabels, links: LinkInfo = {}): JSXConverter
     }
     // відеофайл з медіатеки — плеєр (а не посилання на файл)
     if (file && typeof file === 'object' && file.url && String(file.mimeType || '').startsWith('video/')) {
-      return <video src={file.url} controls preload="metadata" playsInline aria-label={(args.node.fields?.alt || file.alt || '').trim() || undefined} />
+      // preload="none" + кадр-заставка: ролик не вантажиться (і не тримає з'єднання), доки його не запустять
+      return <video src={file.url} controls preload="none" poster={videoFrameUrl(file.url) || undefined} playsInline aria-label={(args.node.fields?.alt || file.alt || '').trim() || undefined} />
     }
     return (defaultConverters.upload as any)(args)
   },

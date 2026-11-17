@@ -1,6 +1,7 @@
 'use client'
 import { DefaultCell, Link, useConfig, useListDrawerContext } from '@payloadcms/ui'
 import type { DefaultCellComponentProps } from 'payload'
+import { videoFrameUrl } from '@/lib/videoFrameUrl'
 
 // Колонка «Назва файлу» у вигляді «Список» медіатеки: для відео замість значка — кадр із відео
 // (браузер вантажить лише початок файлу), як у вигляді «Плитки». Решта файлів — стандартна комірка Payload.
@@ -36,7 +37,8 @@ export const MediaFilenameCell = (rawProps: DefaultCellComponentProps) => {
   const content = (
     <div className="file">
       <span className="file__thumbnail thumbnail thumbnail--size-small mfc-video">
-        <video src={`${row.url}#t=0.5`} preload="metadata" muted playsInline tabIndex={-1} />
+        {/* кадр-картинка, а не <video>: відео займали з'єднання з сервером і гальмували перехід між розділами */}
+        <img src={videoFrameUrl(row.url) || ''} alt="" loading="lazy" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} />
         <span className="mfc-play" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <path d="M8 5.5v13l10.5-6.5z" />
@@ -68,7 +70,7 @@ export const MediaFilenameCell = (rawProps: DefaultCellComponentProps) => {
 
 const CSS = `
 .mfc-video { position: relative; width: calc(var(--base) * 2); background: #000; }
-.mfc-video video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; }
+.mfc-video img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; }
 .mfc-play { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
 .mfc-play svg { width: 16px; height: 16px; fill: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
 .mfc-btn { all: unset; cursor: pointer; }

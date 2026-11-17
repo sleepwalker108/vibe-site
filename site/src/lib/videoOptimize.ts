@@ -156,6 +156,65 @@ const optimizeFile = async (payload: Payload, doc: { id: number; filename: strin
   }
 }
 
+// ---------- кадр-картинка для мініатюр відео ----------
+// Мініатюри відео в медіатеці, списках і галереї раніше були справжніми <video>. Браузер тримає для кожного
+// відкрите з'єднання з сервером, поки вантажить початок ролика, а з'єднань до одного сайту лише 6 (HTTP/1.1).
+// Кілька відео на сторінці займали всі — і перехід в інший розділ адмінки не мав чим піти, «зависав» і падав
+// («Failed to fetch RSC payload»). Тепер замість відео показується звичайна картинка-кадр: робиться один раз
+// (ffmpeg, низький пріоритет, не більше двох одночасно) і зберігається в .cache/video-frames.
+const FRAMES_DIR = path.join(SITE_DIR, '.cache', 'video-frames')
+const framing = new Map<string, Promise<string | null>>()
+let framesActive = 0
+const framesWaiting: (() => void)[] = []
+const frameSlot = async () => {
+  if (framesActive >= 2) await new Promise<void>((r) => framesWaiting.push(r))
+  framesActive++
+}
+const frameDone = () => {
+  framesActive--
+  framesWaiting.shift()?.()
+}
+
+// Шлях до кадру відео `filename` з медіатеки (створює, якщо ще немає). null — файлу немає або кадр не вийшов.
+export const videoFrame = async (filename: string): Promise<string | null> => {
+  const src = path.join(MEDIA_DIR, filename)
+  let stat: fs.Stats
+  try {
+    stat = fs.statSync(src)
+  } catch {
+    return null
+  }
+  // у назві — час зміни файлу: після перестискання відео кадр зробиться заново
+  const out = path.join(FRAMES_DIR, `${filename}-${Math.round(stat.mtimeMs)}.jpg`)
+  if (fs.existsSync(out)) return out
+  const pending = framing.get(out)
+  if (pending) return pending
+  const job = (async () => {
+    await frameSlot()
+    try {
+      fs.mkdirSync(FRAMES_DIR, { recursive: true })
+      const tmp = `${out}.${process.pid}.tmp.jpg`
+      // кадр на 1-й секунді; якщо ролик коротший — найперший
+      for (const ss of ['1', '0']) {
+        try {
+          await run(['-y', '-ss', ss, '-i', src, '-frames:v', '1', '-vf', `scale='min(640,iw)':-2`, '-q:v', '4', tmp])
+          if (fs.existsSync(tmp) && fs.statSync(tmp).size > 0) {
+            fs.renameSync(tmp, out)
+            return out
+          }
+        } catch {}
+      }
+      fs.rmSync(tmp, { force: true })
+      return null
+    } finally {
+      frameDone()
+      framing.delete(out)
+    }
+  })()
+  framing.set(out, job)
+  return job
+}
+
 // Обкладинка для відео з розділу «Відео», у яких її немає
 const makePosters = async (payload: Payload, media: { id: number; filename: string; url: string }) => {
   const { docs } = await payload.find({ collection: 'videos', limit: 100, depth: 0, overrideAccess: true, locale: 'uk' })

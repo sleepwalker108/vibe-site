@@ -31,7 +31,9 @@ import { statusEndpoints } from './endpoints/status'
 import { statsSheetEndpoints } from './endpoints/statsSheet'
 import { mediaUsageEndpoints } from './endpoints/mediaUsage'
 import { mediaImportEndpoints } from './endpoints/mediaImport'
+import { videoFrameEndpoints } from './endpoints/videoFrame'
 import { cleanupEmptyDrafts } from './lib/cleanupEmptyDrafts'
+import { startSlowWatch } from './lib/slowLog'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -149,6 +151,8 @@ export default buildConfig({
     } catch (e) {
       payload.logger.warn(`Режим WAL для бази не ввімкнено: ${(e as Error).message}`)
     }
+    // «самописець» затримок (повільні запити до бази, паузи сервера) — видно в «Стан сервера»
+    startSlowWatch(payload)
     const run = () => cleanupEmptyDrafts(payload).catch((e) => payload.logger.warn(`Прибирання порожніх чернеток: ${(e as Error).message}`))
     setTimeout(run, 2 * 60_000).unref()
     setInterval(run, 6 * 3600_000).unref()
@@ -164,7 +168,7 @@ export default buildConfig({
   // GraphQL не використовується ні сайтом, ні адмінкою — вимкнено (менше точок доступу до даних)
   graphQL: { disable: true },
   // API розділів «Резервні копії» і «Стан сервера»
-  endpoints: [...backupEndpoints, ...statusEndpoints, ...statsSheetEndpoints, ...mediaUsageEndpoints, ...mediaImportEndpoints],
+  endpoints: [...backupEndpoints, ...statusEndpoints, ...statsSheetEndpoints, ...mediaUsageEndpoints, ...mediaImportEndpoints, ...videoFrameEndpoints],
   sharp,
   plugins: [],
 })

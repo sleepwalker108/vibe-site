@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { videoFrameUrl } from '@/lib/videoFrameUrl'
 
 export type GalleryVideo = {
   id: string | number
@@ -17,7 +18,9 @@ const youtubeId = (url: string) =>
 const Thumb = ({ v }: { v: GalleryVideo }) => {
   const yt = youtubeId(v.src)
   const poster = v.poster || (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : null)
-  if (poster) return <img src={poster} alt="" loading="lazy" />
+  // без власної обкладинки — кадр-картинка з самого MP4 (не <video>: ролики тримали з'єднання з сервером)
+  const frame = poster || videoFrameUrl(v.src)
+  if (frame) return <img src={frame} alt="" loading="lazy" />
   return <video src={`${v.src}#t=1.5`} preload="metadata" muted playsInline tabIndex={-1} aria-hidden="true" />
 }
 

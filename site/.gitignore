@@ -55,3 +55,6 @@ node_modules/
 
 # журнал помилок сайту (розділ «Стан сервера»)
 /logs/
+
+# кадри-мініатюри відео (lib/videoOptimize.ts → videoFrame)
+/.cache/

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { MediaDrop } from './MediaDrop'
+import { videoFrameUrl } from '@/lib/videoFrameUrl'
 import Link from 'next/link'
 
 // Медіатека «плитками», як у WordPress: перемикач «Плитки / Список» над таблицею,
@@ -290,9 +291,16 @@ export const MediaGrid = () => {
                       {thumb ? (
                         <img src={thumb} alt={d.alt || ''} loading="lazy" />
                       ) : k === 'video' && d.url ? (
-                        // кадр із відео (браузер вантажить лише початок файлу) + значок «відтворити»
+                        // кадр із відео — звичайна картинка, а не <video>: відео тримали всі з'єднання з сервером,
+                        // і перехід в інший розділ адмінки «зависав» (lib/videoOptimize.ts → videoFrame) + значок «відтворити»
                         <>
-                          <video className="mg-frame" src={`${d.url}#t=0.5`} preload="metadata" muted playsInline tabIndex={-1} />
+                          <img
+                            className="mg-frame"
+                            src={videoFrameUrl(d.url) || ''}
+                            alt=""
+                            loading="lazy"
+                            onError={(e) => (e.currentTarget.style.visibility = 'hidden')}
+                          />
                           <span className="mg-play" aria-hidden="true">
                             <svg viewBox="0 0 24 24">
                               <path d="M8 5.5v13l10.5-6.5z" />

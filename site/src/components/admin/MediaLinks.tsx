@@ -3,6 +3,7 @@ import { useDocumentInfo } from '@payloadcms/ui'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { absoluteUrl, copyText, useOrigin } from './copyText'
+import { videoFrameUrl } from '@/lib/videoFrameUrl'
 
 type MediaDoc = {
   url?: string | null
@@ -70,7 +71,8 @@ const TopVideoPreview = ({ src }: { src: string }) => {
   return createPortal(
     <>
       <style>{TOP_VIDEO_CSS}</style>
-      <video className="top-video" src={src} controls playsInline preload="metadata" />
+      {/* preload="none" + кадр-заставка: поки відео не запустили, воно не тримає з'єднання з сервером */}
+      <video className="top-video" src={src} controls playsInline preload="none" poster={videoFrameUrl(src) || undefined} />
     </>,
     box,
   )

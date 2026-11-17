@@ -3,6 +3,7 @@ import { DefaultTemplate } from '@payloadcms/next/templates'
 import { redirect } from 'next/navigation'
 import { duration, kyivTime, plural, size } from '@/lib/adminFormat'
 import { readErrors } from '@/lib/errorLog'
+import { readSlow } from '@/lib/slowLog'
 import { getServerStatus } from '@/lib/serverStatus'
 import { LinksSection, UpdatesSection } from './StatusSections'
 import { VideosSection } from './VideoOptimizer'
@@ -45,6 +46,7 @@ export const StatusView = async ({ initPageResult, params, searchParams }: Admin
   const s = await getServerStatus(req.payload)
   const errors = readErrors(15)
   const errors24 = errors.filter((e) => Date.now() - new Date(e.at).getTime() < 864e5).length
+  const slow = readSlow(20)
 
   // ---- що потребує уваги ----
   const alerts: { level: Level; text: string }[] = []
@@ -245,6 +247,30 @@ export const StatusView = async ({ initPageResult, params, searchParams }: Admin
           </ul>
         ) : (
           <p className="ss-muted">Помилок не зафіксовано.</p>
+        )}
+      </section>
+
+      <section className="ss-section">
+        <div className="ss-section-head">
+          <h2>Затримки сервера</h2>
+          <span className={`ss-chip ${slow.length ? 'warn' : 'ok'}`}>{slow.length ? `${slow.length} в журналі` : 'немає'}</span>
+        </div>
+        <p className="ss-muted">
+          Моменти, коли сервер «задумувався»: запит до бази тривав довше 0,3 с або сервер понад 1 с не відповідав нікому (саме тоді
+          адмінка не перемикає розділи). Якщо адмінка підвисла — тут видно, що саме гальмувало.
+        </p>
+        {slow.length > 0 && (
+          <ul className="ss-list">
+            {slow.map((e, i) => (
+              <li key={i}>
+                <span className="ss-when">{kyivTime(e.at)}</span>
+                <code>
+                  {e.kind === 'sql' ? 'база' : 'пауза'} · {(e.ms / 1000).toLocaleString('uk-UA', { maximumFractionDigits: 1 })} с
+                </code>
+                <span className="ss-msg">{e.detail || 'сервер не відповідав'}</span>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </>,
