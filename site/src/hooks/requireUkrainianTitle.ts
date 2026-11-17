@@ -11,7 +11,10 @@ export const requireUkrainianTitle =
     const id = originalDoc?.id
     const uk = id
       ? await req.payload
-          .findByID({ collection, id, locale: 'uk', fallbackLocale: false as never, draft: true, depth: 0, overrideAccess: true, req })
+          // БЕЗ req! Payload, отримавши req разом з locale, перемикає мову самого запиту (req.locale = 'uk'),
+          // і вся англійська публікація записувалась в українську версію — так «Корисна інформація» двічі
+          // ставала англійською. Транзакцій у нас немає (SQLite без transactionOptions), тож req тут не потрібен.
+          .findByID({ collection, id, locale: 'uk', fallbackLocale: false as never, draft: true, depth: 0, overrideAccess: true })
           .catch(() => null)
       : null
     const title = typeof uk?.title === 'string' ? uk.title.trim() : ''
