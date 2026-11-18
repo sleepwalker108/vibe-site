@@ -54,7 +54,8 @@
   .brand-name { font-size: .95rem; font-weight: 800; line-height: 1.15; white-space: pre-line; color: var(--navy); }
   .brand img { height: 54px; width: auto; transition: height .25s; }
   .topbar.scrolled .brand img { height: 44px; }
-  .nav { display: flex; gap: 4px; margin-left: auto; }
+  /* padding-inline-start: 0 — без стандартного відступу списку (40 px): він забирав місце в назви біля логотипа */
+  .nav { display: flex; gap: 4px; margin-left: auto; padding-inline-start: 0; }
   .nav > li { position: relative; list-style: none; }
   .nav > li > a { display: block; white-space: nowrap; padding: 8px 10px; border-radius: 10px; font-size: .88rem; font-weight: 600; color: var(--ink); }
   .nav > li > a:hover, .nav > li:focus-within > a { background: var(--sky); color: var(--navy); }
