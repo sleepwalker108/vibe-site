@@ -163,8 +163,15 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
           )
       // проміжки рядка: логотип | меню | кнопки; коли меню сховане під ☰ — лише один проміжок
       const gaps = (burgerMode ? 1 : 2) * parseFloat(getComputedStyle(wrap).columnGap || '0') + 4
-      // ширина самого тексту назви (без відступу, який змінюється під час анімації) + відступ 12 і риска 2
-      const textW = Math.max(...Array.from(text.children, (c) => (c as HTMLElement).scrollWidth)) + 14
+      // ширина самого тексту назви (без відступу, який змінюється під час анімації) + відступ 12 і риска 2.
+      // Міряємо сам текст (Range), а не scrollWidth рядка: у Firefox для overflow-x: clip scrollWidth дорівнює
+      // обрізаній ширині — шапка «думала», що назва вміщується, і стискала її до «…» замість сховати
+      const natural = (el: Element) => {
+        const r = document.createRange()
+        r.selectNodeContents(el)
+        return Math.ceil(r.getBoundingClientRect().width)
+      }
+      const textW = Math.max(...Array.from(text.children, natural)) + 14
       const full = img.offsetWidth + 12 + textW + navW + tools.offsetWidth + gaps
       const compact = img.offsetWidth + navW + tools.offsetWidth + gaps
       const room = wrap.clientWidth
