@@ -164,8 +164,12 @@ const makeConverters = (labels: ProseLabels, links: LinkInfo = {}): JSXConverter
     }
     // відеофайл з медіатеки — плеєр (а не посилання на файл)
     if (file && typeof file === 'object' && file.url && String(file.mimeType || '').startsWith('video/')) {
-      // preload="none" + кадр-заставка: ролик не вантажиться (і не тримає з'єднання), доки його не запустять
-      return <video src={file.url} controls preload="none" poster={videoFrameUrl(file.url) || undefined} playsInline aria-label={(args.node.fields?.alt || file.alt || '').trim() || undefined} />
+      // preload="none" + кадр-заставка: ролик не вантажиться (і не тримає з'єднання), доки його не запустять.
+      // loading="lazy" — і заставку браузер бере лише коли відео наближається до екрана (без нього постер вантажиться
+      // одразу навіть з preload="none"; браузери без підтримки атрибут просто ігнорують).
+      // width/height — пропорція 16:9 до завантаження: інакше порожнє відео має 300×150, текст «стрибає»,
+      // а «ліниве» відео може так і не потрапити в зону видимості
+      return <video src={file.url} controls preload="none" poster={videoFrameUrl(file.url) || undefined} {...({ loading: 'lazy' } as object)} width={1280} height={720} playsInline aria-label={(args.node.fields?.alt || file.alt || '').trim() || undefined} />
     }
     return (defaultConverters.upload as any)(args)
   },

@@ -775,6 +775,9 @@
     transition: max-width .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1), padding .35s, border-color .35s;
   }
   .topbar .brand-name { white-space: pre; }
+  /* запасний варіант: якщо назва все ж не вміститься (шапка ще не встигла переміряти) — «…», а не обрізана літера */
+  /* overflow-x: clip, а не hidden: обрізаємо лише по ширині — по висоті не зрізаються «хвостики» літер (у, р) */
+  .topbar .brand-kicker, .topbar .brand-name { overflow-x: clip; text-overflow: ellipsis; }
   .topbar.compact .brand { gap: 0; }
   .topbar.compact .brand-text { max-width: 0; opacity: 0; transform: translateX(-16px); padding-left: 0; border-left-color: transparent; }
 
