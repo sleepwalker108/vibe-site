@@ -54,8 +54,7 @@
   .brand-name { font-size: .95rem; font-weight: 800; line-height: 1.15; white-space: pre-line; color: var(--navy); }
   .brand img { height: 54px; width: auto; transition: height .25s; }
   .topbar.scrolled .brand img { height: 44px; }
-  /* padding-inline-start: 0 — без стандартного відступу списку (40 px): він забирав місце в назви біля логотипа */
-  .nav { display: flex; gap: 4px; margin-left: auto; padding-inline-start: 0; }
+  .nav { display: flex; gap: 4px; margin-left: auto; }
   .nav > li { position: relative; list-style: none; }
   .nav > li > a { display: block; white-space: nowrap; padding: 8px 10px; border-radius: 10px; font-size: .88rem; font-weight: 600; color: var(--ink); }
   .nav > li > a:hover, .nav > li:focus-within > a { background: var(--sky); color: var(--navy); }
@@ -775,10 +774,6 @@
     transition: max-width .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1), padding .35s, border-color .35s;
   }
   .topbar .brand-name { white-space: pre; }
-  /* запасний варіант: якщо назва все ж не вміститься (шапка ще не встигла переміряти) — «…», а не обрізана літера */
-  /* overflow-x: clip, а не hidden: обрізаємо лише по ширині — по висоті не зрізаються «хвостики» літер (у, р).
-     Шапка міряє ширину тексту через Range (Header.tsx), тож цей запасний варіант не впливає на розрахунок */
-  .topbar .brand-kicker, .topbar .brand-name { overflow-x: clip; text-overflow: ellipsis; }
   .topbar.compact .brand { gap: 0; }
   .topbar.compact .brand-text { max-width: 0; opacity: 0; transform: translateX(-16px); padding-left: 0; border-left-color: transparent; }
 

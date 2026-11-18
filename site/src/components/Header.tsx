@@ -150,28 +150,13 @@ export const Header = ({ shortName, kicker, logoUrl, menu, locale, t, contacts }
       if (!wrap || !navEl || !img || !text || !tools) return
       // вузький екран: меню під ☰ — у рядку лише логотип, назва й кнопки
       const burgerMode = getComputedStyle(navEl).display === 'none' || navEl.classList.contains('open')
-      // пункти меню + відступ меню зліва (40 px) і проміжки між пунктами: без них ширину меню недораховували,
-      // назва біля логотипа не ховалась, а стискалась — і кінець «…ТОВАРИСТВО» обрізався
-      const navCss = getComputedStyle(navEl)
       const navW = burgerMode
         ? 0
-        : Math.ceil(
-            Array.from(navEl.children).reduce((sum, li) => sum + li.getBoundingClientRect().width, 0) +
-              parseFloat(navCss.paddingLeft || '0') +
-              parseFloat(navCss.paddingRight || '0') +
-              (parseFloat(navCss.columnGap) || 0) * Math.max(0, navEl.children.length - 1),
-          )
+        : Array.from(navEl.children).reduce((sum, li) => sum + (li as HTMLElement).offsetWidth, 0)
       // проміжки рядка: логотип | меню | кнопки; коли меню сховане під ☰ — лише один проміжок
       const gaps = (burgerMode ? 1 : 2) * parseFloat(getComputedStyle(wrap).columnGap || '0') + 4
-      // ширина самого тексту назви (без відступу, який змінюється під час анімації) + відступ 12 і риска 2.
-      // Міряємо сам текст (Range), а не scrollWidth рядка: у Firefox для overflow-x: clip scrollWidth дорівнює
-      // обрізаній ширині — шапка «думала», що назва вміщується, і стискала її до «…» замість сховати
-      const natural = (el: Element) => {
-        const r = document.createRange()
-        r.selectNodeContents(el)
-        return Math.ceil(r.getBoundingClientRect().width)
-      }
-      const textW = Math.max(...Array.from(text.children, natural)) + 14
+      // ширина самого тексту назви (без відступу, який змінюється під час анімації) + відступ 12 і риска 2
+      const textW = Math.max(...Array.from(text.children, (c) => (c as HTMLElement).scrollWidth)) + 14
       const full = img.offsetWidth + 12 + textW + navW + tools.offsetWidth + gaps
       const compact = img.offsetWidth + navW + tools.offsetWidth + gaps
       const room = wrap.clientWidth
