@@ -292,7 +292,7 @@ export const MediaGrid = () => {
                         <img src={thumb} alt={d.alt || ''} loading="lazy" />
                       ) : k === 'video' && d.url ? (
                         // кадр із відео — звичайна картинка, а не <video>: відео тримали всі з'єднання з сервером,
-                        // і перехід в інший розділ адмінки «зависав» (lib/videoOptimize.ts → videoFrame) + значок «відтворити»
+                        // і перехід в інший розділ адмінки «зависав» (lib/videoOptimize.ts → кадр-картинка) + значок «відтворити»
                         <>
                           <img
                             className="mg-frame"

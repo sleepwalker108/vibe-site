@@ -3,30 +3,21 @@
 // працює синхронно: поки виконується один важкий запит, сервер не відповідає нікому — ні адмінці, ні сайту.
 // Тут записуємо (1) кожен запит до бази, що тривав довше SLOW_SQL_MS, і (2) кожну паузу, коли сервер
 // узагалі не відповідав довше LAG_MS (якщо поруч немає повільного запиту — гальмує щось інше, не база).
-import fs from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
+import { jsonlLog } from './jsonlLog'
 
 export const SLOW_LOG = path.join(process.cwd(), 'logs', 'slow.jsonl')
-const MAX_BYTES = 256 * 1024
-const KEEP = 200
 const SLOW_SQL_MS = 300
 const LAG_MS = 1000
 
 export type SlowEntry = { at: string; kind: 'sql' | 'lag'; ms: number; detail?: string }
 
+const log = jsonlLog<SlowEntry>(SLOW_LOG, { maxBytes: 256 * 1024, keep: 200 })
+
 const write = (e: SlowEntry) => {
-  try {
-    console.warn(`[повільно] ${e.kind} ${e.ms} мс${e.detail ? ` — ${e.detail}` : ''}`)
-    fs.mkdirSync(path.dirname(SLOW_LOG), { recursive: true, mode: 0o700 })
-    fs.appendFileSync(SLOW_LOG, JSON.stringify(e) + '\n', { mode: 0o600 })
-    if (fs.statSync(SLOW_LOG).size > MAX_BYTES) {
-      const lines = fs.readFileSync(SLOW_LOG, 'utf8').trim().split('\n')
-      fs.writeFileSync(SLOW_LOG, lines.slice(-KEEP).join('\n') + '\n')
-    }
-  } catch {
-    // журнал не повинен сам ламати сайт
-  }
+  console.warn(`[повільно] ${e.kind} ${e.ms} мс${e.detail ? ` — ${e.detail}` : ''}`)
+  log.append(e)
 }
 
 // той самий запит не частіше разу на хвилину — щоб журнал не забивався однаковими рядками
@@ -86,23 +77,4 @@ export const startSlowWatch = (payload: Payload) => {
 }
 
 // Останні записи — найновіші першими
-export const readSlow = (limit = 20): SlowEntry[] => {
-  try {
-    return fs
-      .readFileSync(SLOW_LOG, 'utf8')
-      .trim()
-      .split('\n')
-      .slice(-limit)
-      .reverse()
-      .map((l) => {
-        try {
-          return JSON.parse(l) as SlowEntry
-        } catch {
-          return null
-        }
-      })
-      .filter((e): e is SlowEntry => !!e)
-  } catch {
-    return []
-  }
-}
+export const readSlow = (limit = 20): SlowEntry[] => log.read(limit)

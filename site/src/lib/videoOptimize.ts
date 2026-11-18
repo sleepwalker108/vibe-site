@@ -160,59 +160,103 @@ const optimizeFile = async (payload: Payload, doc: { id: number; filename: strin
 // Мініатюри відео в медіатеці, списках і галереї раніше були справжніми <video>. Браузер тримає для кожного
 // відкрите з'єднання з сервером, поки вантажить початок ролика, а з'єднань до одного сайту лише 6 (HTTP/1.1).
 // Кілька відео на сторінці займали всі — і перехід в інший розділ адмінки не мав чим піти, «зависав» і падав
-// («Failed to fetch RSC payload»). Тепер замість відео показується звичайна картинка-кадр: робиться один раз
-// (ffmpeg, низький пріоритет, не більше двох одночасно) і зберігається в .cache/video-frames.
+// («Failed to fetch RSC payload»). Тепер замість відео показується звичайна картинка-кадр.
+// Кадр робиться у фоні (ffmpeg, низький пріоритет, по одному): одразу після завантаження відео, після його
+// стиснення і для всіх відео — після запуску сервера. Запит картинки ніколи не чекає на ffmpeg: якщо кадру ще
+// немає, одразу віддається заглушка (інакше, поки кадри робляться, запити знову займали б усі з'єднання).
+// Невдача теж запам'ятовується (файл .fail) — ffmpeg не запускається знову на кожен показ.
+// Кадри лежать у .cache/video-frames як «назва-файлу-<час зміни>.jpg»; застарілі й «осиротілі» видаляються.
 const FRAMES_DIR = path.join(SITE_DIR, '.cache', 'video-frames')
-const framing = new Map<string, Promise<string | null>>()
-let framesActive = 0
-const framesWaiting: (() => void)[] = []
-const frameSlot = async () => {
-  if (framesActive >= 2) await new Promise<void>((r) => framesWaiting.push(r))
-  framesActive++
-}
-const frameDone = () => {
-  framesActive--
-  framesWaiting.shift()?.()
+const FRAME_NAME = /^(.*)-(\d+)\.(jpg|fail)$/
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const frameFiles = (filename: string) => {
+  const src = path.join(MEDIA_DIR, filename)
+  try {
+    const stem = path.join(FRAMES_DIR, `${filename}-${Math.round(fs.statSync(src).mtimeMs)}`)
+    return { src, jpg: `${stem}.jpg`, fail: `${stem}.fail` }
+  } catch {
+    return null // такого файлу немає
+  }
 }
 
-// Шлях до кадру відео `filename` з медіатеки (створює, якщо ще немає). null — файлу немає або кадр не вийшов.
-export const videoFrame = async (filename: string): Promise<string | null> => {
-  const src = path.join(MEDIA_DIR, filename)
-  let stat: fs.Stats
+// Готовий кадр (шлях) — або null, якщо кадру ще немає чи його не вдалося зробити
+export const cachedFrame = (filename: string): string | null => {
+  const f = frameFiles(filename)
+  return f && fs.existsSync(f.jpg) ? f.jpg : null
+}
+
+// прибрати кадри цього файлу, крім поточних (після перестискання відео в нього новий час зміни)
+const pruneFrames = (filename: string, keep: string[]) => {
+  const re = new RegExp(`^${escapeRe(filename)}-\\d+\\.(jpg|fail)$`)
   try {
-    stat = fs.statSync(src)
-  } catch {
-    return null
-  }
-  // у назві — час зміни файлу: після перестискання відео кадр зробиться заново
-  const out = path.join(FRAMES_DIR, `${filename}-${Math.round(stat.mtimeMs)}.jpg`)
-  if (fs.existsSync(out)) return out
-  const pending = framing.get(out)
-  if (pending) return pending
-  const job = (async () => {
-    await frameSlot()
+    for (const n of fs.readdirSync(FRAMES_DIR)) if (re.test(n) && !keep.includes(path.join(FRAMES_DIR, n))) fs.rmSync(path.join(FRAMES_DIR, n), { force: true })
+  } catch {}
+}
+
+const makeFrame = async (filename: string) => {
+  const f = frameFiles(filename)
+  if (!f || fs.existsSync(f.jpg) || fs.existsSync(f.fail)) return
+  fs.mkdirSync(FRAMES_DIR, { recursive: true })
+  const tmp = `${f.jpg}.${process.pid}.tmp.jpg`
+  let ok = false
+  // кадр на 1-й секунді; якщо ролик коротший — найперший
+  for (const ss of ['1', '0']) {
     try {
-      fs.mkdirSync(FRAMES_DIR, { recursive: true })
-      const tmp = `${out}.${process.pid}.tmp.jpg`
-      // кадр на 1-й секунді; якщо ролик коротший — найперший
-      for (const ss of ['1', '0']) {
-        try {
-          await run(['-y', '-ss', ss, '-i', src, '-frames:v', '1', '-vf', `scale='min(640,iw)':-2`, '-q:v', '4', tmp])
-          if (fs.existsSync(tmp) && fs.statSync(tmp).size > 0) {
-            fs.renameSync(tmp, out)
-            return out
-          }
-        } catch {}
+      await run(['-y', '-ss', ss, '-i', f.src, '-frames:v', '1', '-vf', `scale='min(640,iw)':-2`, '-q:v', '4', tmp])
+      if (fs.existsSync(tmp) && fs.statSync(tmp).size > 0) {
+        fs.renameSync(tmp, f.jpg)
+        ok = true
+        break
       }
-      fs.rmSync(tmp, { force: true })
-      return null
-    } finally {
-      frameDone()
-      framing.delete(out)
+    } catch {}
+  }
+  fs.rmSync(tmp, { force: true })
+  if (!ok) fs.writeFileSync(f.fail, '')
+  pruneFrames(filename, [ok ? f.jpg : f.fail])
+}
+
+// черга кадрів: по одному, у фоні
+const frameQueue: string[] = []
+let framesBusy = false
+const frameWork = async () => {
+  if (framesBusy) return
+  framesBusy = true
+  try {
+    while (frameQueue.length) await makeFrame(frameQueue.shift()!).catch(() => {})
+  } finally {
+    framesBusy = false
+  }
+}
+
+// Поставити в чергу кадр для відео (якщо його ще немає і не було невдачі)
+export const requestFrame = (filename: string) => {
+  const f = frameFiles(filename)
+  if (!f || fs.existsSync(f.jpg) || fs.existsSync(f.fail) || frameQueue.includes(filename)) return
+  frameQueue.push(filename)
+  void frameWork()
+}
+
+// Після запуску сервера (payload.config → onInit): кадри для всіх відео, яких ще немає; кадри видалених файлів — прибрати
+export const warmFrames = async (payload: Payload) => {
+  const { docs } = await payload.find({
+    collection: 'media',
+    where: { mimeType: { like: 'video/' } },
+    limit: 0,
+    pagination: false,
+    depth: 0,
+    overrideAccess: true,
+    select: { filename: true },
+  })
+  const names = new Set(docs.map((d) => String((d as { filename?: string }).filename || '')).filter(Boolean))
+  try {
+    for (const n of fs.readdirSync(FRAMES_DIR)) {
+      const m = n.match(FRAME_NAME)
+      // позначки невдачі — теж: після перезапуску (напр. коли встановили ffmpeg) пробуємо ще раз, але лише раз
+      if (!m || !names.has(m[1]) || m[3] === 'fail') fs.rmSync(path.join(FRAMES_DIR, n), { force: true })
     }
-  })()
-  framing.set(out, job)
-  return job
+  } catch {}
+  names.forEach(requestFrame)
 }
 
 // Обкладинка для відео з розділу «Відео», у яких її немає
@@ -251,6 +295,8 @@ const work = async (payload: Payload) => {
       try {
         const r = await optimizeFile(payload, doc)
         const posters = await makePosters(payload, doc)
+        // кадр-мініатюра — після стиснення (у файлу новий час зміни — старий кадр прибереться)
+        requestFrame(doc.filename)
         state.items.push({ name: doc.filename, before: r.before, after: r.after, action: r.action + (posters ? ' · обкладинка' : '') })
         payload.logger.info(`Відео ${doc.filename}: ${r.action}, ${(r.before / 1e6).toFixed(0)} → ${(r.after / 1e6).toFixed(0)} МБ`)
       } catch (e) {

@@ -29,7 +29,7 @@ const write = async (req: PayloadRequest, action: Action, collection: string, do
         user,
       },
       overrideAccess: true,
-      req,
+      // без req: Payload змінив би мову й запасну мову самого збереження (див. hooks/requireUkrainianTitle.ts)
     })
     req.payload.logger.info(`Журнал видалень: ${action} ${collection} #${doc?.id} «${title}» — ${user}`)
   } catch (e) {

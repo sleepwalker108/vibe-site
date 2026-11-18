@@ -38,7 +38,8 @@ export const autoSlug =
             limit: 1,
             depth: 0,
             overrideAccess: true,
-            req,
+            // без req: Payload змінює в переданому req мову, запасну мову й depth — тобто налаштування
+            // самого збереження, яке зараз триває (див. hooks/requireUkrainianTitle.ts)
           })
           published = v.totalDocs > 0
         }
@@ -58,7 +59,7 @@ export const autoSlug =
         draft: true,
         trash: true,
         overrideAccess: true,
-        req,
+        // без req — див. вище
       } as never)
       if (!totalDocs) break
       slug = `${base}-${n}`

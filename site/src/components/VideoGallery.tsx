@@ -20,7 +20,8 @@ const Thumb = ({ v }: { v: GalleryVideo }) => {
   const poster = v.poster || (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : null)
   // без власної обкладинки — кадр-картинка з самого MP4 (не <video>: ролики тримали з'єднання з сервером)
   const frame = poster || videoFrameUrl(v.src)
-  if (frame) return <img src={frame} alt="" loading="lazy" />
+  // якщо картинки немає (напр. файл видалили) — лишається тло картки зі значком «відтворити», без «зламаної» картинки
+  if (frame) return <img src={frame} alt="" loading="lazy" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} />
   return <video src={`${v.src}#t=1.5`} preload="metadata" muted playsInline tabIndex={-1} aria-hidden="true" />
 }
 

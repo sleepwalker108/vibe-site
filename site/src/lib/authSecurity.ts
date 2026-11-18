@@ -51,7 +51,7 @@ export const authBeforeOperation: CollectionBeforeOperationHook = async ({ args,
   if ((operation === 'create' || operation === 'update' || operation === 'resetPassword') && typeof data?.password === 'string' && data.password) {
     let email = data.email
     if (!email && operation === 'update' && a?.id) {
-      email = ((await req.payload.findByID({ collection: 'users', id: a.id, depth: 0, overrideAccess: true, req }).catch(() => null)) as { email?: string } | null)?.email
+      email = ((await req.payload.findByID({ collection: 'users', id: a.id, depth: 0, overrideAccess: true }).catch(() => null)) as { email?: string } | null)?.email
     }
     const problem = passwordProblem(data.password, email)
     if (problem) throw new APIError(problem, 400, null, true)

@@ -3,8 +3,8 @@ import { DefaultCell, Link, useConfig, useListDrawerContext } from '@payloadcms/
 import type { DefaultCellComponentProps } from 'payload'
 import { videoFrameUrl } from '@/lib/videoFrameUrl'
 
-// Колонка «Назва файлу» у вигляді «Список» медіатеки: для відео замість значка — кадр із відео
-// (браузер вантажить лише початок файлу), як у вигляді «Плитки». Решта файлів — стандартна комірка Payload.
+// Колонка «Назва файлу» у вигляді «Список» медіатеки: для відео замість значка — кадр-картинка з відео
+// (/api/media-frame), як у вигляді «Плитки». Решта файлів — стандартна комірка Payload.
 // Клік, як і в стандартній комірці: відкриває картку файлу, а у вікні «Обрати з існуючих» — вибирає файл.
 type Row = { id?: number | string; url?: string | null; mimeType?: string | null }
 
@@ -32,20 +32,25 @@ export const MediaFilenameCell = (rawProps: DefaultCellComponentProps) => {
   const { cellData, rowData, link, linkURL, onClick, viewType } = props
   const row = (rowData || {}) as Row
 
-  if (!row.mimeType?.startsWith('video/') || !row.url) return <DefaultCell {...props} />
+  // тип файлу в рядку списку буває відсутній (поле mimeType приховане й не входить у вибрані колонки) —
+  // тоді впізнаємо відео за розширенням у назві файлу
+  const filename = String(cellData ?? '')
+  const isVideo = row.mimeType ? row.mimeType.startsWith('video/') : /\.(mp4|m4v|webm|mov|ogv)$/i.test(filename)
+  const frame = videoFrameUrl(row.url) || (filename ? `/api/media-frame/${encodeURIComponent(filename)}` : null)
+  if (!isVideo || !frame) return <DefaultCell {...props} />
 
   const content = (
     <div className="file">
       <span className="file__thumbnail thumbnail thumbnail--size-small mfc-video">
         {/* кадр-картинка, а не <video>: відео займали з'єднання з сервером і гальмували перехід між розділами */}
-        <img src={videoFrameUrl(row.url) || ''} alt="" loading="lazy" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} />
+        <img src={frame} alt="" loading="lazy" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} />
         <span className="mfc-play" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <path d="M8 5.5v13l10.5-6.5z" />
           </svg>
         </span>
       </span>
-      <span className="file__filename">{String(cellData ?? '')}</span>
+      <span className="file__filename">{filename}</span>
       <style>{CSS}</style>
     </div>
   )

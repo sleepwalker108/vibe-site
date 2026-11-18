@@ -32,7 +32,8 @@ export const normalizeLinkUrl: FieldHook = async ({ value, req }) => {
   const admin = url.match(MEDIA_ADMIN)
   if (admin) {
     try {
-      const doc = await req.payload.findByID({ collection: 'media', id: Number(admin[1]), depth: 0, req })
+      // без req: інакше Payload змінить мову й depth самого збереження (див. hooks/requireUkrainianTitle.ts)
+      const doc = await req.payload.findByID({ collection: 'media', id: Number(admin[1]), depth: 0 })
       if (doc?.filename) return mediaFileUrl(doc.filename)
     } catch {
       // файлу з таким номером немає — лишаємо як є, перевірка посилань у «Стані сервера» це покаже

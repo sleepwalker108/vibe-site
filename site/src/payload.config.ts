@@ -34,6 +34,7 @@ import { mediaImportEndpoints } from './endpoints/mediaImport'
 import { videoFrameEndpoints } from './endpoints/videoFrame'
 import { cleanupEmptyDrafts } from './lib/cleanupEmptyDrafts'
 import { startSlowWatch } from './lib/slowLog'
+import { warmFrames } from './lib/videoOptimize'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -153,6 +154,8 @@ export default buildConfig({
     }
     // «самописець» затримок (повільні запити до бази, паузи сервера) — видно в «Стан сервера»
     startSlowWatch(payload)
+    // кадри-мініатюри відео, яких ще немає (у фоні, по одному) — щоб медіатека одразу показувала кадри
+    setTimeout(() => warmFrames(payload).catch((e) => payload.logger.warn(`Кадри відео: ${(e as Error).message}`)), 30_000).unref()
     const run = () => cleanupEmptyDrafts(payload).catch((e) => payload.logger.warn(`Прибирання порожніх чернеток: ${(e as Error).message}`))
     setTimeout(run, 2 * 60_000).unref()
     setInterval(run, 6 * 3600_000).unref()
